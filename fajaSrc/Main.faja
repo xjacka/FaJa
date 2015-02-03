@@ -1,0 +1,21 @@
+:-) Moje prvni trida
+class Main
+	fields
+		b
+		c
+	endfields
+
+	methods
+
+		def foo(a)
+			var local, local1
+:-)			a <- 5
+:-)		    local <- 3
+			self:b <- a.+(local)
+		end
+
+		def bar()
+			 self.foo(self:c)
+		end
+	endmethods
+endclass

@@ -28,7 +28,7 @@ class ClassFile {
 			length + SLOT_SIZE
 		}
 		def constPoolSize = lengths.sum(0)
-		def prefixSum = createPrefixSum(lengths)
+		def constPoolIndexes = createPrefixSum(lengths).collect{ it + CONST_POOL_START}
 
 		// constant pool size set
 		setConstantPoolSize(bytes, constPoolSize)
@@ -37,11 +37,10 @@ class ClassFile {
 		def fieldsSize = fields.size() * SLOT_SIZE
 		setBytes(bytes, CONST_POOL_START + constPoolSize, fieldsSize)
 
-
 		// fields
 		fields.each{ Integer f ->
-			def ptr = prefixSum[f]
-			bytes.addAll(ByteHelper.IntegerTo2Bytes(ptr + CONST_POOL_START))
+			def ptr = constPoolIndexes[f]
+			bytes.addAll(ByteHelper.IntegerTo2Bytes(ptr))
 		}
 
 		// method size init (constPoolStart + constPoolSize + fieldsSizeSlot + fieldsSize)
@@ -49,7 +48,7 @@ class ClassFile {
 
 		// method
 		def methodLengths = methods.collect{ m ->
-			byte[] methodBytecode = m.toBytecode()
+			byte[] methodBytecode = m.toBytecode(constPoolIndexes)
 			bytes.addAll(methodBytecode)
 			methodBytecode.length
 		}
