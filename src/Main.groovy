@@ -1,1 +1,3 @@
-// zacne nahravat classfily na heap
+import faJa.Heap
+
+new Heap()

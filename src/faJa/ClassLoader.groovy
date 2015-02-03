@@ -1,8 +1,10 @@
+package faJa
+
 class ClassLoader {
 
 	Heap heap
 
-	// nahraje reprezentaci pomoci ClassFile na heapu
+	// nahraje reprezentaci pomoci faJa.ClassFile na heapu
 	def load(ClassFile classFile){
 		heap.load(classFile.toByteCode())
 	}

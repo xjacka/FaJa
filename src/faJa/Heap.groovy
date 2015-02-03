@@ -1,3 +1,5 @@
+package faJa
+
 class Heap {
 
 	// nahraje na volne misto pole bytu

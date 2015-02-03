@@ -1,5 +1,6 @@
-class ByteHelper {
+package faJa.helpers
 
+class ByteHelper {
 
 //	static int bytesToInt(byte [] bytes){
 //		int i = 0;
@@ -24,26 +25,28 @@ class ByteHelper {
 //		i
 //	}
 
-	static int bytesToPointer(byte [] bytes){
+	static int bytesToIntAt(byte [] bytes, int idx){
 		int i = 0;
-		i += bytes[0]
-		i << 8
-		i += bytes[1]
+		i += unsignedValue(bytes[idx])
+		i = i << 8
+		i += unsignedValue(bytes[idx+1])
 		i
 	}
 
 	static int bytesToInt(byte b0,byte b1){
 		int i = 0;
-		i += b0
-		i << 8
-		i += b1
+		i += unsignedValue(b0)
+		i = i << 8
+		i += unsignedValue(b1)
 		i
 	}
 
+	static int unsignedValue(byte b){
+		b & 0xFF
+	}
+
 	static Byte [] IntegerTo2Bytes(Integer i){
-		Byte [] bytes
-		bytes[0] = (i / 256).byteValue()
-		bytes[1] = (i % 256).byteValue()
+		return [ (byte)(i >>> 8), (byte)i].toArray()
 	}
 
 //	static storeIntToHeap(byte [] heap, int pos, int val ){

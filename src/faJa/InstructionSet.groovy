@@ -1,0 +1,5 @@
+package faJa
+
+
+class InstructionSet {
+}
