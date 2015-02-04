@@ -9,7 +9,7 @@ class CompilerTest {
 		Compilator compilator = new Compilator()
 		ClassFile  classFile = compilator.compile('/home/xjacka/Dokumenty/Skola/treti_semestr_MI/MI-RUN/FaJa/fajaSrc/Main.faja')
 
-		classFile
+		println(classFile.toString())
 	}
 
 }

@@ -42,6 +42,7 @@ class ClassFileTest {
 		classFile.fields = [1]
 
 		def method = new PrecompiledMethod()
+		method.signatureIndex = 2
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.LOAD, paramVal:0]))
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.INVOKE, paramVal:2]))
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.LOAD, paramVal:  1]))
@@ -52,18 +53,18 @@ class ClassFileTest {
 		byte[] bytecode = classFile.toByteCode()
 
 		// test method bytecode size
-		assert ByteHelper.bytesToIntAt(bytecode, 43) == 10
+		assert ByteHelper.bytesToIntAt(bytecode, 43) == 12
 
 		// test load instruction
-		assert bytecode[45] == Instruction.LOAD.id
+		assert bytecode[47] == Instruction.LOAD.id
 
 		// test invoke instruction
-		assert bytecode[47] == Instruction.INVOKE.id
-		assert ByteHelper.bytesToIntAt(bytecode, 48) == 18 // 18 is pointer to constant pool value 'test():faja.Number'
+		assert bytecode[49] == Instruction.INVOKE.id
+		assert ByteHelper.bytesToIntAt(bytecode, 50) == 18 // 18 is pointer to constant pool value 'test():faja.Number'
 
 		// test getfield instruction
-		assert bytecode[52] == Instruction.GETFIELD.id
-		assert ByteHelper.bytesToIntAt(bytecode, 53) == 15 // 15 is pointer to constant pool value 'a'
+		assert bytecode[54] == Instruction.GETFIELD.id
+		assert ByteHelper.bytesToIntAt(bytecode, 55) == 15 // 15 is pointer to constant pool value 'a'
 	}
 
 	def testPrefix(){

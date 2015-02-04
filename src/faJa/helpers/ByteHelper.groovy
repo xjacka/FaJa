@@ -49,6 +49,15 @@ class ByteHelper {
 		return [ (byte)(i >>> 8), (byte)i].toArray()
 	}
 
+	static String bytesToString(byte [] bytes,Integer ptr){
+		def length = ByteHelper.bytesToIntAt(bytes, ptr)
+		def start = ptr+2
+		def end = start + length - 1
+		def stringBytes = bytes[ start..end ].toArray() as byte[]
+		new String(stringBytes)
+	}
+
+
 //	static storeIntToHeap(byte [] heap, int pos, int val ){
 //		if(pos + 4 >= heap.length){
 //			throw new HeapOverflowException()
@@ -67,4 +76,16 @@ class ByteHelper {
 //
 //	}
 
+	// not tested
+	static Integer bytesToNumber(byte[] bytes, int ptr) {
+		int i = 0;
+		i += unsignedValue(bytes[ptr])
+		i = i << 8
+		i += unsignedValue(bytes[ptr+1])
+		i = i << 16
+		i += unsignedValue(bytes[ptr+1])
+		i = i << 24
+		i += unsignedValue(bytes[ptr+1])
+		i
+	}
 }

@@ -4,6 +4,7 @@ import faJa.tests.ConvertTest
 
 def convertTest = new ConvertTest()
 convertTest.test1()
+convertTest.test2()
 
 def classFileTest = new ClassFileTest()
 classFileTest.testPrefix()

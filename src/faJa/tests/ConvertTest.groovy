@@ -21,4 +21,13 @@ class ConvertTest {
 
 	}
 
+
+	def test2(){
+		def test = []
+		def testVal = 'testValue'
+		test.addAll(ByteHelper.IntegerTo2Bytes(testVal.length()))
+		test.addAll(testVal.bytes)
+
+		assert ByteHelper.bytesToString(test.toArray() as byte[], 0) == testVal
+	}
 }

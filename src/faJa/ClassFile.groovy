@@ -63,6 +63,31 @@ class ClassFile {
 		bytes.toArray() as byte []
 	}
 
+	@Override
+	String toString(){
+		StringBuilder sb = new StringBuilder()
+		sb.append('className: ' + constantPool[0])
+		sb.append('\n')
+		sb.append('ConstantPool:\n')
+		constantPool.eachWithIndex { c , i ->
+			sb.append('\t'+i + ': '+ c + '\n')
+		}
+		sb.append('Fields:\n')
+		fields.each{ Integer f ->
+			sb.append('\t' +constantPool[f] + '\n')
+		}
+		sb.append('Methods:\n')
+		methods.each{ method ->
+			sb.append(constantPool[method.signatureIndex]+'\n')
+			sb.append('\tbytecode:\n')
+			method.instructions.each{ inst ->
+				sb.append('\t\t'+ inst.instruction.toString() + ' ' + inst.paramVal +'\n')
+			}
+		}
+
+		sb.toString()
+	}
+
 	// -------------------- PRIVATE -----------------------------------
 
 	def createPrefixSum(List<Integer> lengths) {

@@ -121,6 +121,7 @@ class Compilator {
 
 		def method = new PrecompiledMethod()
 
+		method.signatureIndex = signitureIndex
 		code.each { String line ->
 			method.instructions.addAll(compileLine(line, locals, classFile.constantPool))
 		}
