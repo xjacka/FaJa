@@ -25,6 +25,10 @@ class ByteHelper {
 //		i
 //	}
 
+	static byte [] IntegerTo4Bytes(Integer i){
+		return [ (byte)(i >>> 24),(byte)(i >>> 16),(byte)(i >>> 8), (byte)i].toArray()
+	}
+
 	static int bytesToIntAt(byte [] bytes, int idx){
 		int i = 0;
 		i += unsignedValue(bytes[idx])

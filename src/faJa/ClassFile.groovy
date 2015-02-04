@@ -11,7 +11,7 @@ class ClassFile {
 	def fields = []
 	List<PrecompiledMethod> methods = []
 
-	def toByteCode(){
+	byte [] toByteCode(){
 		List<Byte> bytes = []
 
 		// class size init
@@ -55,7 +55,7 @@ class ClassFile {
 		def methodsSize = methodLengths.sum(0)
 
 		// method size
-		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize, methodsSize )
+		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE, methodsSize )
 
 		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize)
 		setClassSize(bytes, 3*SLOT_SIZE + constPoolSize + fieldsSize + methodsSize)

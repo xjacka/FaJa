@@ -20,10 +20,13 @@ class Compilator {
 	public static final String METHOD_CALL_SEPARATOR = '.'
 	public static final String FIELD_ACESSOR = ':'
 	public static final String COMMENT = ':-)'
+	public static final String INHERITANCE_KEYWORD = 'extends'
+	public static final String DEFAULT_PARENT = 'Object'
 
-	ClassFile classFile = new ClassFile()
+	ClassFile classFile
 
 	def compile(String path) {
+		classFile = new ClassFile()
 		def file = new File(path)
 
 		def lines = file.readLines()
@@ -40,7 +43,14 @@ class Compilator {
 
 	def createClass(String line){
 		if(line.trim().startsWith('class')) {
-			classFile.constantPool.add(line.replace('class ', '').trim())
+			def classNameSplit = line.replace('class ', '').trim().split(INHERITANCE_KEYWORD).collect{it.trim()}
+			classFile.constantPool.add(classNameSplit[0])
+			if(classNameSplit.size() == 1){
+				classFile.constantPool.add(DEFAULT_PARENT)
+			}else{
+				classFile.constantPool.add(classNameSplit[1])
+			}
+
 		}
 		else
 			throw new CompilerException('file not start with class definition')
@@ -144,10 +154,10 @@ class Compilator {
 		index
 	}
 
-	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT}
+	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE}
 
 	def resolveSituation(String expr){
-
+// todo Closure
 		if(expr[0] == '"' && expr[expr.length()-1] == '"'){
 			return EvalSituation.STRING
 		}
@@ -185,6 +195,7 @@ class Compilator {
 			expr = assignmentSplit[1].trim()
 		}
 		// evaluation
+		// todo Closure
 		def situation = resolveSituation(expr)
 		def instructions
 		switch(situation){

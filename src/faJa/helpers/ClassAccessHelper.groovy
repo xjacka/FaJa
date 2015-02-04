@@ -2,26 +2,28 @@ package faJa.helpers
 
 import faJa.Heap
 
-/**
- * Created by xjacka on 4.2.15.
- */
 class ClassAccessHelper {
 
 	public static int CLASS_NAME_INDEX = 4
-	public static int PARRENT_CLASS_NAME_INDEX = 6
 
 	static String getName(Heap heap, Integer ptr){
 		heap.getString(ptr + CLASS_NAME_INDEX)
 	}
 
-	static String getParrent(Heap heap, Integer ptr){
-		heap.getString(ptr + PARRENT_CLASS_NAME_INDEX)
+	static String getParent(Heap heap, Integer ptr){
+		def parentPtr = skipSection(heap, ptr + CLASS_NAME_INDEX)
+		heap.getString(parentPtr)
+	}
+
+	static Integer getObjectSize(Heap heap, Integer ptr){
+		def fieldSizePtr = getFieldsSection(heap, ptr)
+		heap.getPointer(fieldSizePtr)
 	}
 
 	// returns pointer to method bytecode or null
 	static Integer findMethod(Heap heap, Integer ptr, String signature){
 		def methodSectionPtr = getMethodSection(heap,ptr)
-		def methodSectionSize = ByteHelper.bytesToIntAt(heap, methodSectionPtr)
+		def methodSectionSize = heap.getPointer(methodSectionPtr)
 		def methodPtr = methodSectionPtr + Heap.SLOT_SIZE
 		while(methodSectionSize + methodSectionPtr > methodPtr){
 
@@ -41,10 +43,11 @@ class ClassAccessHelper {
 	// return relative pointer to date area in object
 	static Integer findFieldIndex(Heap heap, Integer ptr, String name) {
 		def fieldsPtr = getFieldsSection(heap, ptr)
-		def fieldsSize = ByteHelper.bytesToIntAt(heap, fieldsPtr)
-		def fieldCpPointer = fieldsPtr + Heap.SLOT_SIZE
+		def fieldsSize = heap.getPointer(fieldsPtr)
+		def fieldCpPointer = fieldsPtr
 		def fieldIndex = 0
 		while(fieldsSize + fieldsPtr > fieldCpPointer){
+			fieldCpPointer += Heap.SLOT_SIZE
 
 			def fieldNamePtr = ptr + heap.getPointer(fieldCpPointer)
 			def fieldName = heap.getString(fieldNamePtr)
@@ -54,9 +57,8 @@ class ClassAccessHelper {
 			}
 
 			fieldIndex += Heap.SLOT_SIZE
-			fieldCpPointer += Heap.SLOT_SIZE
 		}
-
+		return null
 	}
 
 	static Integer getFieldsSection(Heap heap, int ptr) {
@@ -67,7 +69,7 @@ class ClassAccessHelper {
 	}
 
 	static Integer skipSection(Heap heap, int ptr){
-		def sectionSize = ByteHelper.bytesToIntAt(heap, ptr)
+		def sectionSize = heap.getPointer(ptr)
 		ptr + Heap.SLOT_SIZE + sectionSize
 	}
 
@@ -78,4 +80,9 @@ class ClassAccessHelper {
 
 		methodsPtr
 	}
+
+	static Boolean isNative(Heap heap, Integer methodPointer) {
+		heap.getPointer(methodPointer) == Heap.SLOT_SIZE
+	}
+
 }

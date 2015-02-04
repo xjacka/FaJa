@@ -1,0 +1,19 @@
+:-) Moje prvni trida a celkove druha
+class Main extends Number
+	fields
+		b
+		c
+	endfields
+
+	methods
+
+		def foo(a)
+			var local, local1
+			self:b <- a.+(local)
+		end
+
+		def bar()
+			 self.foo(self:c)
+		end
+	endmethods
+endclass

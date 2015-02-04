@@ -3,11 +3,18 @@ package faJa
 import faJa.helpers.ByteHelper
 
 class Heap {
-	byte [] heap
-	public static final SLOT_SIZE = 2
-	// nahraje na volne misto pole bytu
-	def load(Byte [] bytes){
 
+	byte [] heap = new byte[1000]
+	Integer insertIndex = 0
+	public static final SLOT_SIZE = 2
+
+	// nahraje na volne misto pole bytu
+	def load(byte [] bytes){
+		def pointer = insertIndex
+		bytes.each { b ->
+			heap[insertIndex++] = b
+		}
+		pointer
 	}
 
 	def getByte(Integer ptr){

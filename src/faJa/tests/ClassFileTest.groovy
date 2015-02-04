@@ -38,7 +38,7 @@ class ClassFileTest {
 
 	def testMethods(){
 		def classFile = new ClassFile()
-		classFile.constantPool = ['TestClass', 'a', 'test()faja.Number']
+		classFile.constantPool = ['TestClass', 'a', 'test()']
 		classFile.fields = [1]
 
 		def method = new PrecompiledMethod()
@@ -53,18 +53,18 @@ class ClassFileTest {
 		byte[] bytecode = classFile.toByteCode()
 
 		// test method bytecode size
-		assert ByteHelper.bytesToIntAt(bytecode, 43) == 12
+		assert ByteHelper.bytesToIntAt(bytecode, 32) == 12
 
 		// test load instruction
-		assert bytecode[47] == Instruction.LOAD.id
+		assert bytecode[36] == Instruction.LOAD.id
 
 		// test invoke instruction
-		assert bytecode[49] == Instruction.INVOKE.id
-		assert ByteHelper.bytesToIntAt(bytecode, 50) == 18 // 18 is pointer to constant pool value 'test():faja.Number'
+		assert bytecode[38] == Instruction.INVOKE.id
+		assert ByteHelper.bytesToIntAt(bytecode, 39) == 18 // 18 is pointer to constant pool value 'test():faja.Number'
 
 		// test getfield instruction
-		assert bytecode[54] == Instruction.GETFIELD.id
-		assert ByteHelper.bytesToIntAt(bytecode, 55) == 15 // 15 is pointer to constant pool value 'a'
+		assert bytecode[43] == Instruction.GETFIELD.id
+		assert ByteHelper.bytesToIntAt(bytecode, 44) == 15 // 15 is pointer to constant pool value 'a'
 	}
 
 	def testPrefix(){
