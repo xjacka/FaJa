@@ -88,6 +88,14 @@ class ClassFile {
 		sb.toString()
 	}
 
+	String getClassName(){
+		constantPool[0]
+	}
+
+	String getParentName(){
+		constantPool[1]
+	}
+
 	// -------------------- PRIVATE -----------------------------------
 
 	def createPrefixSum(List<Integer> lengths) {

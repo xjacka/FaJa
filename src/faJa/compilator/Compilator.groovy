@@ -22,6 +22,13 @@ class Compilator {
 	public static final String COMMENT = ':-)'
 	public static final String INHERITANCE_KEYWORD = 'extends'
 	public static final String DEFAULT_PARENT = 'Object'
+	public static final String STRING_CLASS = 'String'
+	public static final String NUMBER_CLASS = 'Number'
+	public static final String BOOL_CLASS = 'Bool'
+	public static final String CLOSURE_CLASS = 'Closure'
+	public static final String SYSTEMIO_CLASS = 'SystemIO'
+	public static final String TRUE_STRING_VALUE = 'true'
+	public static final String FALSE_STRING_VALUE = 'false'
 
 	ClassFile classFile
 
@@ -157,7 +164,7 @@ class Compilator {
 	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE}
 
 	def resolveSituation(String expr){
-// todo Closure
+		// todo Closure
 		if(expr[0] == '"' && expr[expr.length()-1] == '"'){
 			return EvalSituation.STRING
 		}
@@ -326,5 +333,4 @@ class Compilator {
 		def args = wrappedArgs.substring(1, wrappedArgs.length()-1);
 		return args == '' ? [] : args.split(',').toList()
 	}
-
 }

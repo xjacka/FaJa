@@ -10,7 +10,6 @@ class BoolInit extends BaseInit{
 		classFile.constantPool = [
 		        'Bool',
 				'Object',
-				'value',
 				'==(1)',
 				'ifTrue(1)',
 				'ifFalse(1)',
@@ -19,37 +18,36 @@ class BoolInit extends BaseInit{
 				'not(0)'
 		]
 
-		classFile.fields = [2]
-
+		classFile.fields = []
 
 //		Method ==(1) - Native
 		def equals = new PrecompiledMethod()
-		equals.signatureIndex = 3
+		equals.signatureIndex = 2
 		classFile.methods.add(equals)
 
 //		Method ifTrue(1) - Native
 		def iftrue = new PrecompiledMethod()
-		iftrue.signatureIndex = 4
+		iftrue.signatureIndex = 3
 		classFile.methods.add(iftrue)
 
 //		Method ifFalse(1) - Native
 		def iffalse = new PrecompiledMethod()
-		iffalse.signatureIndex = 5
+		iffalse.signatureIndex = 4
 		classFile.methods.add(iffalse)
 
 //		Method and(1) - Native
 		def and = new PrecompiledMethod()
-		and.signatureIndex = 6
+		and.signatureIndex = 5
 		classFile.methods.add(and)
 
 //		Method or(1) - Native
 		def or = new PrecompiledMethod()
-		or.signatureIndex = 7
+		or.signatureIndex = 6
 		classFile.methods.add(or)
 
 //		Method not(0) - Native
 		def not = new PrecompiledMethod()
-		not.signatureIndex = 8
+		not.signatureIndex = 7
 		classFile.methods.add(not)
 	}
 }

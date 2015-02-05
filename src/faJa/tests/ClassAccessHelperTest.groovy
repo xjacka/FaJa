@@ -63,7 +63,7 @@ class ClassAccessHelperTest {
 
 		assert ClassAccessHelper.getParent(heap, offset) == 'Object'
 
-		assert ClassAccessHelper.getObjectSize(heap, offset) == classFile.fields.size() * Heap.SLOT_SIZE
+		assert ClassAccessHelper.getObjectSize(heap, offset) == classFile.fields.size() * Heap.SLOT_SIZE + Heap.SLOT_SIZE
 
 		assert ClassAccessHelper.isNative(heap, secondMethod) == false
 

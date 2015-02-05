@@ -7,11 +7,11 @@ class Main
 
 	methods
 
-		def foo(a)
+		def main()
 			var local, local1
-:-)			a <- 5
+			local <- b
 :-)		    local <- 3
-			self:b <- a.+(local)
+:-)			self:b <- a.+(local)
 		end
 
 		def bar()

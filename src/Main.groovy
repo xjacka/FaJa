@@ -1,3 +1,3 @@
-import faJa.Heap
+import faJa.FaJaExecutor
 
-new Heap()
+new FaJaExecutor().run(args.length != 0 ? args[0]:'../fajaSrc/Main')
