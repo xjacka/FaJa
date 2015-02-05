@@ -28,16 +28,13 @@ class FaJaExecutor {
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
 		def mainBytecodePtr = mainPtr + Heap.SLOT_SIZE + Heap.SLOT_SIZE // mainPtr + bytecodeSize + constPoolPtr
 		StackFrame mainStackFrame = new StackFrame()
-		def mainSize = heap.getPointer(mainPtr)
+		def mainSize = heap.getPointer(mainPtr) - Heap.SLOT_SIZE // mehtodSize - constPoolPtrSize
 
-		// load bytecode
-		def bytecode = []
-		while(mainPtr + mainSize > mainBytecodePtr){
-			bytecode.add(heap.getByte(mainBytecodePtr++))
-		}
-		mainStackFrame.bytecode = bytecode.toArray()
+
+		mainStackFrame.bytecode =  heap.getBytes(mainBytecodePtr, mainSize)
 		mainStackFrame.bytecodePtr = 0
-		mainStackFrame.locals = [ptr] // todo size in method
+		mainStackFrame.locals = [classLoader.singletonRegister.get(className)] // todo size in method
+		mainStackFrame.classPtr = ptr
 		mainStackFrame.methodStack = [] // todo size in method
 		mainStackFrame.parent = null
 

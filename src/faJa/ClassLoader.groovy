@@ -13,6 +13,8 @@ class ClassLoader {
 
 	private String workDir = ''
 	Map classRegister = [:]
+	Map singletonRegister = [:]
+
 	final static FAJA_EXTENSION = '.faja'
 	Compilator compilator = new Compilator()
 
@@ -54,7 +56,13 @@ class ClassLoader {
 			classFile.constantPool.add(fieldName)
 		}
 
-		load(heap, classFile)
+		classPtr = load(heap, classFile)
+		// creates singletons
+		if(classPtr != null && classFile.isSingleton){
+			Integer objPtr = heap.createObject(classPtr)
+			singletonRegister.put(classFile.className, objPtr)
+		}
+		classPtr
 	}
 
 	// nahraje reprezentaci pomoci faJa.ClassFile na heapu

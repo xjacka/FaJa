@@ -5,6 +5,7 @@ import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
 import faJa.exceptions.CompilerException
+import sun.reflect.ConstantPool
 
 class Compilator {
 
@@ -29,6 +30,8 @@ class Compilator {
 	public static final String SYSTEMIO_CLASS = 'SystemIO'
 	public static final String TRUE_STRING_VALUE = 'true'
 	public static final String FALSE_STRING_VALUE = 'false'
+	public static final String SINGLETON_KEYWORD = 'object'
+	public static final String CLASS_KEYWORD = 'class'
 
 	ClassFile classFile
 
@@ -49,8 +52,12 @@ class Compilator {
 	}
 
 	def createClass(String line){
-		if(line.trim().startsWith('class')) {
-			def classNameSplit = line.replace('class ', '').trim().split(INHERITANCE_KEYWORD).collect{it.trim()}
+		if(line.trim().startsWith(SINGLETON_KEYWORD)){
+			classFile.isSingleton = true
+			line = line.replace(SINGLETON_KEYWORD, CLASS_KEYWORD)
+		}
+		if(line.trim().startsWith(CLASS_KEYWORD)) {
+			def classNameSplit = line.replace(CLASS_KEYWORD + ' ', '').trim().split(INHERITANCE_KEYWORD).collect{it.trim()}
 			classFile.constantPool.add(classNameSplit[0])
 			if(classNameSplit.size() == 1){
 				classFile.constantPool.add(DEFAULT_PARENT)
@@ -161,7 +168,7 @@ class Compilator {
 		index
 	}
 
-	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE}
+	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE, VARIABLE, FIELD}
 
 	def resolveSituation(String expr){
 		// todo Closure
@@ -189,6 +196,12 @@ class Compilator {
 		if(isNum){
 			return EvalSituation.NUMBER
 		}
+		if(expr.startsWith(SELF_POINTER + '' + FIELD_ACESSOR)){
+			return EvalSituation.FIELD
+		}
+		if(expr == expr.find(~/[a-z0-9]+/)){
+			return EvalSituation.VARIABLE
+		}
 		throw new CompilerException('unexpected expression exception')
 	}
 
@@ -207,22 +220,28 @@ class Compilator {
 		def instructions
 		switch(situation){
 			case EvalSituation.NUMBER:
-//				instructions = processNumber()
+				instructions = processNumber(expr,constantPool)
 				break
 			case EvalSituation.STRING:
-//				instructions = processString()
+				instructions = processString(expr,constantPool)
 				break
 			case EvalSituation.BOOL:
-//				instructions = processBool()
+				instructions = processBool(expr,constantPool)
 				break
 			case EvalSituation.NULL:
-//				instructions = processNull()
+				instructions = processNull()
 				break
 			case EvalSituation.METHOD_CALL:
 				instructions = processMethodCall(expr,locals,constantPool)
 				break
 			case EvalSituation.CREATE_OBJECT:
-//				instructions = processCreateObject()
+				instructions = processCreateObject(expr,constantPool)
+				break;
+			case EvalSituation.FIELD:
+				instructions = processField(expr,constantPool)
+				break;
+			case EvalSituation.VARIABLE:
+				instructions = processVariable(expr,locals)
 				break
 		}
 
@@ -304,6 +323,68 @@ class Compilator {
 			return instructionList
 		}
 
+	}
+
+	List<PrecompiledInstruction> processBool(String expr, List<String> constantPool){
+		Integer size = constantPool.size()
+		constantPool.add(expr)
+		def initBool = new PrecompiledInstruction()
+		initBool.instruction = Instruction.INIT_BOOL
+		initBool.paramVal = size
+		[initBool]
+	}
+
+	List<PrecompiledInstruction> processNumber(String expr, List<String> constantPool){
+		Integer size = constantPool.size()
+		constantPool.add(expr)
+		def initBool = new PrecompiledInstruction()
+		initBool.instruction = Instruction.INIT_NUM
+		initBool.paramVal = size
+		[initBool]
+	}
+
+	List<PrecompiledInstruction> processString(String expr, List<String> constantPool){
+		Integer size = constantPool.size()
+		constantPool.add(expr)
+		def initBool = new PrecompiledInstruction()
+		initBool.instruction = Instruction.INIT_STRING
+		initBool.paramVal = size
+		[initBool]
+	}
+
+	List<PrecompiledInstruction> processField(String expr, List<String> constantPool){
+		def loadSelf = new PrecompiledInstruction()
+		loadSelf.instruction = Instruction.LOAD
+		loadSelf.paramVal = 0
+
+		def fieldInx = findIndex(expr.replace(SELF_POINTER + '' + FIELD_ACESSOR , ''),constantPool)
+		def getField = new PrecompiledInstruction()
+		getField.instruction = Instruction.GETFIELD
+		getField.paramVal = fieldInx
+		[loadSelf, getField]
+	}
+
+	List<PrecompiledInstruction> processVariable(String expr, Map<String , Integer> locals){
+		def load = new PrecompiledInstruction()
+		load.instruction = Instruction.LOAD
+		load.paramVal = locals.get(expr)
+		if(load.paramVal == null){
+			throw new CompilerException('local variable: ' + expr + ' not found')
+		}
+		[load]
+	}
+
+	List<PrecompiledInstruction> processNull(String expr, List<String> constantPool){
+		// todo
+	}
+
+	List<PrecompiledInstruction> processCreateObject(String expr, List<String> constantPool){
+		String className= expr.replace('.new','')
+		Integer classIdx = findIndex(className,constantPool)
+		def init = new PrecompiledInstruction()
+		init.instruction = Instruction.INIT
+		init.paramVal = classIdx
+		[init]
 	}
 
 	def createLocalsMap(List<String> definitions,List<String> argList){

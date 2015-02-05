@@ -9,9 +9,11 @@ class ClassFile {
 
 	def constantPool = []
 	def fields = []
+	def isSingleton = false
 	List<PrecompiledMethod> methods = []
 
 	byte [] toByteCode(){
+
 		List<Byte> bytes = []
 
 		// class size init
@@ -58,7 +60,7 @@ class ClassFile {
 		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE, methodsSize )
 
 		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize)
-		setClassSize(bytes, 3*SLOT_SIZE + constPoolSize + fieldsSize + methodsSize)
+		setClassSize(bytes, 3 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize)
 
 		bytes.toArray() as byte []
 	}

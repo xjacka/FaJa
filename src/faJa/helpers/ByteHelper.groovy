@@ -2,29 +2,6 @@ package faJa.helpers
 
 class ByteHelper {
 
-//	static int bytesToInt(byte [] bytes){
-//		int i = 0;
-//		i += bytes[0]
-//		i << 8
-//		i += bytes[1]
-//		i << 8
-//		i += bytes[2]
-//		i << 8
-//		i += bytes[3]
-//		i
-//	}
-//	static int bytesToInt(byte b0,byte b1, byte b2, byte b3){
-//		int i = 0;
-//		i += b0
-//		i << 8
-//		i += b1
-//		i << 8
-//		i += b2
-//		i << 8
-//		i += b3
-//		i
-//	}
-
 	static byte [] IntegerTo4Bytes(Integer i){
 		return [ (byte)(i >>> 24),(byte)(i >>> 16),(byte)(i >>> 8), (byte)i].toArray()
 	}
@@ -61,35 +38,16 @@ class ByteHelper {
 		new String(stringBytes)
 	}
 
-
-//	static storeIntToHeap(byte [] heap, int pos, int val ){
-//		if(pos + 4 >= heap.length){
-//			throw new HeapOverflowException()
-//		}
-//		byte [] bytes = [0,0,0,0]
-//		byte [] byteVal = val.byteValue()
-//		for(int i=byteVal.length; i; i--){
-//			bytes[i] = byteVal[i]
-//		}
-//		heap[pos++] = bytes[0]
-//		heap[pos++] = bytes[1]
-//		heap[pos++] = bytes[2]
-//		heap[pos] = bytes[3]
-//	}
-//	static String stringToBytes(){
-//
-//	}
-
-	// not tested
+	// todo not tested
 	static Integer bytesToNumber(byte[] bytes, int ptr) {
 		int i = 0;
 		i += unsignedValue(bytes[ptr])
 		i = i << 8
 		i += unsignedValue(bytes[ptr+1])
 		i = i << 16
-		i += unsignedValue(bytes[ptr+1])
+		i += unsignedValue(bytes[ptr+2])
 		i = i << 24
-		i += unsignedValue(bytes[ptr+1])
+		i += unsignedValue(bytes[ptr+3])
 		i
 	}
 }

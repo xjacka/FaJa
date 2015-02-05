@@ -1,5 +1,5 @@
 :-) Moje prvni trida
-class Main
+object Main
 	fields
 		b
 		c
@@ -8,10 +8,12 @@ class Main
 	methods
 
 		def main()
-			var local, local1
-			local <- b
-:-)		    local <- 3
-:-)			self:b <- a.+(local)
+			var local, local1, sout, sum
+			local <- false
+		    local1 <- false
+			sout <- SystemIO.new
+			sum <- local.not()
+			sout.out(sum)
 		end
 
 		def bar()

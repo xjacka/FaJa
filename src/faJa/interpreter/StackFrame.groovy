@@ -5,13 +5,11 @@ import faJa.helpers.ByteHelper
 
 class StackFrame {
 
-	//Integer thisInst
 	List locals
-	// List args
-	Integer parent
+	StackFrame parent
 	byte [] bytecode
 	Integer bytecodePtr
-// def method
+	Integer classPtr
 
 	List<Integer> methodStack
 
@@ -24,16 +22,17 @@ class StackFrame {
 	}
 
 	Integer getCurrentByte(){
-		if(bytecode.length > bytecodePtr ){
+		if(bytecode.length <= bytecodePtr ){
 			throw new InterpretException('byte out of bound')
 		}
 		ByteHelper.unsignedValue(bytecode[bytecodePtr])
 	}
 
 	Integer getCurrentPointer(){
-		if(bytecode.length > bytecodePtr + 1 ){
+		if(bytecode.length <= bytecodePtr + 1 ){
 			throw new InterpretException('pointer out of bound')
 		}
 		ByteHelper.bytesToIntAt(bytecode, bytecodePtr)
 	}
+
 }

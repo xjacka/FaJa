@@ -3,7 +3,7 @@ package faJa.natives
 
 class NativesRegister {
 
-	def register = [
+	static register = [
 	        '+(1)Number' : NumberNatives.plus,
 	        '-(1)Number' : NumberNatives.minus,
 	        '*(1)Number' : NumberNatives.mul,
@@ -28,10 +28,11 @@ class NativesRegister {
 	        'and(1)Bool' : BoolNatives.and,
 	        'or(1)Bool' : BoolNatives.or,
 	        'not(0)Bool' : BoolNatives.not,
+	        'toS(0)Bool' : BoolNatives.toS,
 
 	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,
 	        'readFromFile(2)SystemIO' : SystemIONatives.readFromFile,
-	        'out(1)SystemIO' : SystemIONatives.out,
+	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
 
 	        'call(0)Closure' : ClosureNatives.call,
 

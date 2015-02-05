@@ -1,6 +1,8 @@
 package faJa.helpers
 
 import faJa.Heap
+import faJa.compilator.Compilator
+import faJa.ClassLoader
 
 class ClassAccessHelper {
 
@@ -34,7 +36,7 @@ class ClassAccessHelper {
 			if (signature == methodSignature) {
 				return methodPtr
 			}
-			methodPtr = skipSection(heap, methodPtr)
+			methodPtr = skipMethod(heap, methodPtr)
 		}
 
 		return null
@@ -73,6 +75,15 @@ class ClassAccessHelper {
 		ptr + Heap.SLOT_SIZE + sectionSize
 	}
 
+	static Integer skipMethod(Heap heap, int ptr) {
+		def sectionSize = heap.getPointer(ptr)
+		ptr = ptr + Heap.SLOT_SIZE + sectionSize
+		if(sectionSize == 0) {
+			ptr += Heap.SLOT_SIZE //* 2
+		}
+		ptr
+	}
+
 	static Integer getMethodSection(Heap heap, int ptr) {
 		def constPoolPtr = ptr + Heap.SLOT_SIZE
 		def fieldsPtr = skipSection(heap, constPoolPtr)
@@ -100,15 +111,20 @@ class ClassAccessHelper {
 	}
 
 	static Boolean isNative(Heap heap, Integer methodPointer) {
-		heap.getPointer(methodPointer) == Heap.SLOT_SIZE
+		heap.getPointer(methodPointer) == 0
 	}
 
 	static String getConstantPoolValue(Heap heap, Integer classPtr, Integer constPoolPtr) {
 		heap.getString(classPtr + constPoolPtr)
 	}
 
-	static Integer findMethodWithSuper(Heap heap, Integer ptr, String signature) {
-		// todo find method by signature within class hierarchy
-
+	static List findMethodWithSuper(Heap heap, Integer ptr, String signature, ClassLoader classLoader) {
+		def methodPtr = findMethod(heap,ptr,signature)
+		while(methodPtr == null && getName(heap,ptr) != Compilator.DEFAULT_PARENT){
+			String parentName = getParent(heap,ptr)
+			ptr = classLoader.findClass(heap,parentName)
+			methodPtr = findMethod(heap,ptr,signature)
+		}
+		[ptr, methodPtr]
 	}
 }

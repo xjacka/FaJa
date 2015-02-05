@@ -5,6 +5,7 @@ import faJa.helpers.ByteHelper
 class PrecompiledMethod {
 	List<PrecompiledInstruction> instructions = []
 	Integer signatureIndex
+	Boolean isNative = false
 
 	def toBytecode(List<Integer> constPoolIndexes){
 		List<Byte> bytes = []
@@ -14,6 +15,9 @@ class PrecompiledMethod {
 			bytes.addAll(pi.constructParams(constPoolIndexes))
 		}
 		def bytecodeSize = bytes.size()
+		if(isNative){
+			bytecodeSize = 0
+		}
 		bytes.addAll(0, ByteHelper.IntegerTo2Bytes(bytecodeSize))
 		bytes.toArray()
 	}

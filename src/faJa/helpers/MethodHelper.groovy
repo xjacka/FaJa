@@ -3,12 +3,12 @@ package faJa.helpers
 import faJa.Heap
 
 /**
- * to be tested
+ * todo to be tested
  */
 class MethodHelper {
 
 	static getArgsCount(String signature){
-		String wrappedArgsCount = signature.find(~/(.*)/)
+		String wrappedArgsCount = signature.find(~/\(.*\)/)
 		String argsCount = wrappedArgsCount.substring(1, wrappedArgsCount.length() - 1)
 		argsCount.toInteger()
 	}

@@ -18,7 +18,6 @@ class Heap {
 		pointer
 	}
 
-
 //	def setByte(Integer ptr, Integer newVal){
 //		heap[ptr] = newVal.byteValue()
 //	}
@@ -41,12 +40,20 @@ class Heap {
 		ByteHelper.bytesToString(heap, ptr)
 	}
 
+	String stringFromStringObject(Integer ptr){
+		getString(ptr + Heap.SLOT_SIZE)
+	}
+
 	def getNumber(Integer ptr){
 		ByteHelper.bytesToNumber(heap, ptr)
 	}
 
+	def intFromNumberObject(Integer ptr){
+		getNumber(ptr + Heap.SLOT_SIZE)
+	}
+
 	def createObject(Integer classPtr){
-		Integer objectSize = ClassAccessHelper.getObjectSize(heap, classPtr)
+		Integer objectSize = ClassAccessHelper.getObjectSize(this, classPtr)
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(classPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex] = bytesOfClassPtr[0]
@@ -62,6 +69,10 @@ class Heap {
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
 		byte [] bytes = value.bytes
+		byte [] stringLength = ByteHelper.IntegerTo2Bytes(bytes.length)
+		heap[insertIndex++] = stringLength[0]
+		heap[insertIndex++] = stringLength[1]
+
 		bytes.length.times { i->
 			heap[insertIndex++] = bytes[i]
 		}
@@ -69,7 +80,7 @@ class Heap {
 		objectPtr
 	}
 
-	def createNumber(Integer numberClassPtr, Integer newVal){
+	Integer createNumber(Integer numberClassPtr, Integer newVal){
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(numberClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
@@ -89,7 +100,7 @@ class Heap {
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
-		heap[insertIndex++] = bytesOfClassPtr[2]
+		heap[insertIndex++] = newVal
 
 		objectPtr
 	}
@@ -100,5 +111,9 @@ class Heap {
 			bytecode[i] = heap[bytecodePtr + i]
 		}
 		bytecode
+	}
+
+	Boolean boolFromBoolObject(Integer ptr) {
+		heap[ptr + Heap.SLOT_SIZE] == 0 ? false : true
 	}
 }

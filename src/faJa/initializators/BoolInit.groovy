@@ -15,7 +15,8 @@ class BoolInit extends BaseInit{
 				'ifFalse(1)',
 				'and(1)',
 				'or(1)',
-				'not(0)'
+				'not(0)',
+		        'toS(0)'
 		]
 
 		classFile.fields = []
@@ -49,5 +50,10 @@ class BoolInit extends BaseInit{
 		def not = new PrecompiledMethod()
 		not.signatureIndex = 7
 		classFile.methods.add(not)
+
+//		Method toS(0) - Native
+		def toS = new PrecompiledMethod()
+		toS.signatureIndex = 8
+		classFile.methods.add(toS)
 	}
 }

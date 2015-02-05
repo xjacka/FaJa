@@ -8,13 +8,14 @@ import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.MethodHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.natives.NativesRegister
 
 class Interpreter {
 	Heap heap
 	List<StackFrame> stack
 	ClassLoader classLoader
 
-	static final String INSTRUCTION_SIZE = 1
+	static final Integer INSTRUCTION_SIZE = 1
 
 	Interpreter(Heap heap, List<StackFrame> stack, ClassLoader classLoader){
 		this.heap = heap
@@ -22,11 +23,14 @@ class Interpreter {
 		this.classLoader = classLoader
 	}
 
-	def interpret(){
+	Integer interpret(){
 		def currentStackFrame = stack.last()
 		processStackFrame(currentStackFrame)
 		if(!currentStackFrame.methodStack.empty) {
 			currentStackFrame.methodStack.pop()
+		}
+		else{
+			0
 		}
 
 	}
@@ -34,37 +38,37 @@ class Interpreter {
 	def processStackFrame(StackFrame currentStackFrame){
 		while(currentStackFrame.bytecode.length > currentStackFrame.bytecodePtr){
 			switch(currentStackFrame.currentByte){
-				case Instruction.INIT_BOOL:
+				case Instruction.INIT_BOOL.id:
 					processInitBool()
 					break
-				case Instruction.INIT:
+				case Instruction.INIT.id:
 					processInit()
 					break
-				case Instruction.GETFIELD:
+				case Instruction.GETFIELD.id:
 					processGetfield()
 					break
-				case Instruction.INIT_CLOSURE:
+				case Instruction.INIT_CLOSURE.id:
 					processInitClosure()
 					break
-				case Instruction.INIT_NUM:
+				case Instruction.INIT_NUM.id:
 					processInitNum()
 					break
-				case Instruction.INIT_STRING:
+				case Instruction.INIT_STRING.id:
 					processInitString()
 					break
-				case Instruction.INVOKE:
+				case Instruction.INVOKE.id:
 					processInvoke()
 					break
-				case Instruction.LOAD:
+				case Instruction.LOAD.id:
 					processLoad()
 					break
-				case Instruction.PUSH_NULL:
+				case Instruction.PUSH_NULL.id:
 					processPushNull()
 					break
-				case Instruction.PUTFIELD:
+				case Instruction.PUTFIELD.id:
 					processPutfield()
 					break
-				case Instruction.STORE:
+				case Instruction.STORE.id:
 					processStore()
 					break
 			}
@@ -80,7 +84,6 @@ class Interpreter {
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap, currentStackFrame.thisInst)
 		Integer constPoolPtr = currentStackFrame.currentPointer
 		String fieldName = ClassAccessHelper.getConstantPoolValue(heap, classPtr, constPoolPtr)
-
 
 		// get field index
 		Integer targetObjectPtr = currentStackFrame.methodStack.pop()
@@ -136,11 +139,11 @@ class Interpreter {
 	}
 
 	def processPushNull() {
-
+		// todo
 	}
 
 	def processInitClosure() {
-
+		// todo
 	}
 
 	def processInitNum() {
@@ -265,18 +268,35 @@ class Interpreter {
 			reversedArgList.push(currentStackFrame.methodStack.pop())
 		}
 
+		List resultPair = ClassAccessHelper.findMethodWithSuper(heap, targetClassPtr, methodSignature,classLoader)
+		Integer methodPtr = resultPair[1]
+		if(methodPtr == null){
+			throw new InterpretException('invoked method not found on ' + ClassAccessHelper.getName(heap, targetClassPtr))
+		}
+		if(ClassAccessHelper.isNative(heap,methodPtr)){
+			String nativeMethodClassName = ClassAccessHelper.getName(heap, resultPair[0]) // result[0] - pointer on class with method bytecode
+			Closure nativeMethod = NativesRegister.register.get(methodSignature + nativeMethodClassName)
+			reversedArgList.reverse().each {
+				currentStackFrame.methodStack.push(it)
+			}
+			currentStackFrame.methodStack.push(targetObjectPtr)
+
+			nativeMethod.call(currentStackFrame, heap, classLoader)
+			return
+		}
+
 		// new stack frame creation
 		def newStackFrame = new StackFrame()
+		newStackFrame.locals = []
 		newStackFrame.locals.add(targetObjectPtr)
 		newStackFrame.locals.addAll(reversedArgList.reverse())
 		newStackFrame.parent = currentStackFrame
 		newStackFrame.bytecodePtr = 0
-
-		Integer methodPtr = ClassAccessHelper.findMethodWithSuper(heap, targetClassPtr, methodSignature)
-		newStackFrame.bytecode = MethodHelper.getBytecode(methodPtr)
+		newStackFrame.methodStack = []
+		newStackFrame.bytecode = MethodHelper.getBytecode(heap, methodPtr)
 
 		stack.add(newStackFrame)
-		def result = interpret()
+		Integer result = interpret()
 		stack.last().methodStack.push(result)
 	}
 }
