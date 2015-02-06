@@ -57,11 +57,11 @@ class ClassFile {
 		}
 		def methodsSize = methodLengths.sum(0)
 
-		// closure size
+		// method size
 		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE, methodsSize )
 
 		// closure size init (constPoolStart + constPoolSize + fieldsSizeSlot + fieldsSize + methodsSizeSlot + methodsSize)
-		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE + + methodsSize + SLOT_SIZE, 0 )
+		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE + methodsSize + SLOT_SIZE, 0 )
 
 		// closure
 		def closureLengths = closures.collect{ c ->
@@ -100,6 +100,14 @@ class ClassFile {
 			sb.append('\tbytecode:\n')
 			method.instructions.each{ inst ->
 				sb.append('\t\t'+ inst.instruction.toString() + ' ' + inst.paramVal +'\n')
+			}
+		}
+		sb.append("Closures:\n")
+		closures.eachWithIndex { closure, i ->
+			sb.append('[' +i + ']:\n')
+			sb.append('\tbytecode:\n')
+			closure.instructions.each { instruction ->
+				sb.append('\t\t' + instruction.instruction.toString() + ' ' + instruction.paramVal +'\n')
 			}
 		}
 

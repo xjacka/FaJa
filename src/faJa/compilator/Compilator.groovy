@@ -407,7 +407,7 @@ class Compilator {
 
 	List<PrecompiledInstruction> processString(String expr, List<String> constantPool){
 		Integer size = constantPool.size()
-		constantPool.add(expr)
+		constantPool.add(expr.replaceAll('"',''))
 		def initBool = new PrecompiledInstruction()
 		initBool.instruction = Instruction.INIT_STRING
 		initBool.paramVal = size
@@ -464,6 +464,10 @@ class Compilator {
 			}
 		}
 		locals
+	}
+
+	def getDefinitionsList(List<String> definitions){
+
 	}
 
 	def createSignature(String line){
@@ -577,7 +581,7 @@ class Compilator {
 		def locals = createLocalsMap(definitions, argList)
 
 		def closure = new PrecompiledClosure()
-		closure.argsCount = argList.size()
+		closure.argsCount = argList.size() - 1 // minus self arg
 		closure.instructions = []
 
 		for(int i=0; i < code.size();){

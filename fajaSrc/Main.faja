@@ -19,11 +19,12 @@ object Main
 			sout <- SystemIO.new
 :-)            sum <- self:b.or(self:c)
 :-)            sout.out(sum)
+			sum <- 1
 	        self:closure <- { a |
 	            sout.out(a)
 	        }
 	        cl <- self:closure
-            cl.call(self:b)
+            cl.call(sum)
 		end
 	endMethods
 endClass

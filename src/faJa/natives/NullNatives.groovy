@@ -5,9 +5,6 @@ import faJa.Heap
 import faJa.compilator.Compilator
 import faJa.interpreter.StackFrame
 
-/**
- * Created by xjacka on 6.2.15.
- */
 class NullNatives {
 
 	static isNull = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->

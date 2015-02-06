@@ -3,9 +3,6 @@ package faJa.helpers
 import faJa.Heap
 import faJa.exceptions.InterpretException
 
-/**
- * Created by xjacka on 6.2.15.
- */
 class ClosureHelper {
 
 	// returns pointer to bytecode structure of closure [size, argcnt, bytecode ..]
@@ -25,7 +22,7 @@ class ClosureHelper {
 	}
 
 	static Integer getBytecodeSize(Heap heap, Integer bytecodePtr){
-		heap.getPointer(bytecodePtr)
+		heap.getPointer(bytecodePtr) - Heap.SLOT_SIZE // argCountSlot
 	}
 
 	static Integer getBytecodeArgCount(Heap heap, Integer bytecodePtr){
@@ -39,7 +36,7 @@ class ClosureHelper {
 
 	// get pointer to class where was closure initialize
 	static Integer getInitClassPtr(Heap heap, Integer objectPtr){
-		objectPtr + Heap.SLOT_SIZE
+		heap.getPointer(objectPtr + Heap.SLOT_SIZE)
 	}
 
 	static Integer getClosureIndex(Heap heap, Integer objectPtr){

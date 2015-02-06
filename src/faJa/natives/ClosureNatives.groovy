@@ -17,7 +17,6 @@ class ClosureNatives {
 			reversedArgs.push(stackFrame.methodStack.pop())
 		}
 
-
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 		StackFrame newStackFrame = new StackFrame()

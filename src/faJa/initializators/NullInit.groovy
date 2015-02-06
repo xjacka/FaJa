@@ -3,9 +3,6 @@ package faJa.initializators
 import faJa.ClassFile
 import faJa.PrecompiledMethod
 
-/**
- * Created by xjacka on 6.2.15.
- */
 class NullInit extends BaseInit {
 	NullInit() {
 		classFile = new ClassFile()
