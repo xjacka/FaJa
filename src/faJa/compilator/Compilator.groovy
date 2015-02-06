@@ -457,17 +457,21 @@ class Compilator {
 		argList.each { arg ->
 			locals.put( arg, locals.size())
 		}
-		definitions.each{ line ->
-			def args = line.split(ARGUMENT_SEPARATOR).collect { it.trim()}
-			args.each { arg ->
-				locals.put( arg, locals.size())
-			}
+		getDefinitionsList(definitions).each { arg ->
+			locals.put( arg, locals.size())
 		}
 		locals
 	}
 
-	def getDefinitionsList(List<String> definitions){
-
+	def getDefinitionsList(List<String> linesOfDefinitions){
+		def result = []
+		linesOfDefinitions.each{ line ->
+			def args = line.split(ARGUMENT_SEPARATOR).collect { it.trim()}
+			args.each { arg ->
+				result.add(arg)
+			}
+		}
+		result
 	}
 
 	def createSignature(String line){
@@ -486,12 +490,12 @@ class Compilator {
 
 	/// ------------------- Closure compiler methods ----------------------------
 
-	def compileClosure(List<String> code, Integer codePtr, ClassFile classFile, List<String> definitions, Map locals) {
+	def compileClosure(List<String> code, Integer codePtr, ClassFile classFile, List<String> linesOfDefinitions, Map locals) {
 		List instructions = []
 
 		Integer closureIdx = classFile.closures.size()
 		List<String> lineSplit = code[codePtr].split(ASSIGNMENT_OP)
-
+		List<String> definitions = getDefinitionsList(linesOfDefinitions)
 		String assignmentVar = lineSplit[0].trim()
 		String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD)+1,lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
 		List<String> args = closureArgs.split(ARGUMENT_SEPARATOR).collect{ it.trim() }
@@ -522,10 +526,10 @@ class Compilator {
 		}
 
 		// add local variables from context
-		args.addAll(definitions)
+//		args.addAll(definitions)
 
 		// create closure bytecode
-		classFile.closures.add(createClosure(classFile, closureIdx, args, closureBody))
+		classFile.closures.add(createClosure(classFile, closureIdx, args, definitions, closureBody))
 
 
 		// create instruction to init closure
@@ -564,7 +568,7 @@ class Compilator {
 	}
 
 
-	def createClosure(ClassFile classFile, Integer closureIdx, List<String> argList,List<String> methodBody){
+	def createClosure(ClassFile classFile, Integer closureIdx, List<String> argList, List<String> parentArgList, List<String> methodBody){
 
 		def definitions = [], code = []
 		methodBody.each{ line ->
@@ -577,12 +581,16 @@ class Compilator {
 				code.add(line)
 			}
 		}
+
+		def closure = new PrecompiledClosure()
+		closure.argsCount = argList.size()
+		closure.instructions = []
+
+		// add parent args to argList
+		argList.addAll(parentArgList)
 		// create Locals from closure
 		def locals = createLocalsMap(definitions, argList)
 
-		def closure = new PrecompiledClosure()
-		closure.argsCount = argList.size() - 1 // minus self arg
-		closure.instructions = []
 
 		for(int i=0; i < code.size();){
 			def result = compileLine(code[i], locals, classFile.constantPool)

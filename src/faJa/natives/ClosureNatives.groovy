@@ -23,10 +23,10 @@ class ClosureNatives {
 		newStackFrame.parent = stackFrame
 		newStackFrame.bytecodePtr = 0
 		newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-		newStackFrame.locals = [stackFrame.thisInst]
+		newStackFrame.locals = []
 		newStackFrame.methodStack = []
-		newStackFrame.locals.addAll(reversedArgs.reverse())
-		newStackFrame.locals.addAll(stackFrame.locals)
+		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+		newStackFrame.locals.addAll(1, reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
 
 		newStackFrame
 	}

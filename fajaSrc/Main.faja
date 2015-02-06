@@ -19,7 +19,7 @@ object Main
 			sout <- SystemIO.new
 :-)            sum <- self:b.or(self:c)
 :-)            sout.out(sum)
-			sum <- 1
+			sum <- self:b
 	        self:closure <- { a |
 	            sout.out(a)
 	        }
