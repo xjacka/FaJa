@@ -6,7 +6,6 @@ import faJa.PrecompiledClosure
 import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
 import faJa.exceptions.CompilerException
-import sun.reflect.ConstantPool
 
 class Compilator {
 
@@ -48,6 +47,7 @@ class Compilator {
 	ClassFile classFile
 
 	def methods = [] // for better code checking
+	def fields = [] // for better code checking
 
 	def compile(String path) {
 		classFile = new ClassFile()
@@ -107,8 +107,15 @@ class Compilator {
 		if(line.trim() == ''){
 			return
 		}
-		classFile.fields.add(classFile.constantPool.size())
-		classFile.constantPool.add(line.trim())
+		line.split(ARGUMENT_SEPARATOR).each { var ->
+			var = var.trim()
+			if(fields.contains(var)){
+				throw new CompilerException('field "' + var +'" already exists in class ' + classFile.constantPool[0])
+			}
+			fields.add(var)
+			classFile.fields.add(classFile.constantPool.size())
+			classFile.constantPool.add(var)
+		}
 	}
 
 	def createMethods(List<String> lines){
