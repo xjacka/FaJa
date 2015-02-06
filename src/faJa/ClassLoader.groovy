@@ -46,6 +46,7 @@ class ClassLoader {
 
 		// load parent class
 		ClassFile classFile = compilator.compile(workDir + className + FAJA_EXTENSION)
+		println(classFile.toString())
 		String parent = classFile.getParentName()
 		Integer parentPtr = findClass(heap, parent)
 

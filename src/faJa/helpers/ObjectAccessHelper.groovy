@@ -17,6 +17,6 @@ class ObjectAccessHelper {
 	}
 
 	static setNewValue(Heap heap, Integer objectPtr, Integer fieldIdx, Integer newVal){
-		heap.setPointer(objectPtr +  fieldIdx + Heap.SLOT_SIZE, newVal)
+		heap.setPointer(objectPtr + fieldIdx + Heap.SLOT_SIZE, newVal)
 	}
 }

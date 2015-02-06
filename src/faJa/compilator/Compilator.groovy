@@ -10,9 +10,10 @@ import sun.reflect.ConstantPool
 class Compilator {
 
 	public static final String START_FIELDS = 'fields'
-	public static final String END_FIELDS = 'endfields'
+	public static final String END_FIELDS = 'endFields'
 	public static final String START_METHODS = 'methods'
-	public static final String END_METHODS = 'endmethods'
+	public static final String END_METHODS = 'endMethods'
+	public static final String END_CLASS = 'endClass'
 	public static final String METHOD_START = 'def'
 	public static final String METHOD_END = 'end'
 	public static final String LOCAL_DEFINE = 'var'
@@ -32,8 +33,12 @@ class Compilator {
 	public static final String FALSE_STRING_VALUE = 'false'
 	public static final String SINGLETON_KEYWORD = 'object'
 	public static final String CLASS_KEYWORD = 'class'
+	public static final String METHOD_ARGUMENT_START_KEYWORD = '('
+	public static final String METHOD_ARGUMENT_START_END = ')'
 
 	ClassFile classFile
+
+	def methods = [] // for better code checking
 
 	def compile(String path) {
 		classFile = new ClassFile()
@@ -47,6 +52,9 @@ class Compilator {
 		createClass(lines[0])
 		createFields(lines)
 		createMethods(lines)
+		if(!lines.last().startsWith(END_CLASS)){
+			throw new CompilerException('class shold end with ' + END_CLASS)
+		}
 
 		classFile
 	}
@@ -128,6 +136,10 @@ class Compilator {
 
 	def createMethod(String signature,List<String> argList, List<String> methodBody){
 		def signitureIndex = classFile.constantPool.size()
+		if(methods.contains(signature)) {
+			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
+		}
+		methods.add(signature)
 		classFile.constantPool.add(signature)
 
 		def definitions = [], code = []
@@ -184,7 +196,7 @@ class Compilator {
 		if(expr.endsWith('.new')){
 			return EvalSituation.CREATE_OBJECT
 		}
-		if(expr.indexOf(METHOD_CALL_SEPARATOR) != -1){
+		if(expr.indexOf(METHOD_ARGUMENT_START_KEYWORD) != -1 && expr.indexOf(METHOD_ARGUMENT_START_END) != -1){
 			return EvalSituation.METHOD_CALL
 		}
 		def isNum = true
@@ -202,7 +214,7 @@ class Compilator {
 		if(expr == expr.find(~/[a-z0-9]+/)){
 			return EvalSituation.VARIABLE
 		}
-		throw new CompilerException('unexpected expression exception')
+		throw new CompilerException('unexpected expression "'+ expr +'" exception')
 	}
 
 	def compileLine(String line, Map locals, List<String> constantPool){
@@ -217,6 +229,9 @@ class Compilator {
 		// evaluation
 		// todo Closure
 		def situation = resolveSituation(expr)
+		if(situation == EvalSituation.METHOD_CALL && expr.indexOf(METHOD_CALL_SEPARATOR) == -1){
+			expr =  SELF_POINTER + METHOD_CALL_SEPARATOR + expr
+		}
 		def instructions
 		switch(situation){
 			case EvalSituation.NUMBER:
@@ -243,6 +258,8 @@ class Compilator {
 			case EvalSituation.VARIABLE:
 				instructions = processVariable(expr,locals)
 				break
+			default:
+				throw new CompilerException('can not parse line with: ' + expr)
 		}
 
 		instructionList.addAll(instructions)
@@ -292,13 +309,12 @@ class Compilator {
 				loadSelfInst.instruction = Instruction.LOAD
 				loadSelfInst.paramVal = 0
 
-				def putfieldInst = new PrecompiledInstruction()
-				putfieldInst.instruction = Instruction.GETFIELD
-				putfieldInst.paramVal = findIndex(argName.replace(SELF_POINTER + FIELD_ACESSOR,''), constantPool)
-
+				def getfieldInst = new PrecompiledInstruction()
+				getfieldInst.instruction = Instruction.GETFIELD
+				getfieldInst.paramVal = findIndex(argName.replace(SELF_POINTER + FIELD_ACESSOR,''), constantPool)
 
 				instructionList.add(loadSelfInst)
-				instructionList.add(putfieldInst)
+				instructionList.add(getfieldInst)
 			}
 			else{
 				def loadInst = new PrecompiledInstruction()
@@ -310,6 +326,7 @@ class Compilator {
 
 		// object is local variable
 		def local = locals.get(objectName)
+		def field = findIndex(objectName.replace(SELF_POINTER + FIELD_ACESSOR, ''),constantPool)
 		if(local != null){
 			def loadInst = new PrecompiledInstruction()
 			loadInst.instruction = Instruction.LOAD
@@ -321,6 +338,26 @@ class Compilator {
 			invokeInst.paramVal = findIndex(createSignature(methodName),constantPool)
 			instructionList.add(invokeInst)
 			return instructionList
+		}
+		else if(field != null){
+			def loadInst = new PrecompiledInstruction()
+			loadInst.instruction = Instruction.LOAD
+			loadInst.paramVal = 0
+			instructionList.add(loadInst)
+
+			def getfieldInst = new PrecompiledInstruction()
+			getfieldInst.instruction = Instruction.GETFIELD
+			getfieldInst.paramVal = field
+			instructionList.add(getfieldInst)
+
+			def invokeInst = new PrecompiledInstruction()
+			invokeInst.instruction = Instruction.INVOKE
+			invokeInst.paramVal = findIndex(createSignature(methodName),constantPool)
+			instructionList.add(invokeInst)
+			return instructionList
+		}
+		else{
+			throw new CompilerException('can not call method on not object ' + objectName)
 		}
 
 	}

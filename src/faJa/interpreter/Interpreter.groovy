@@ -102,19 +102,18 @@ class Interpreter {
 		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
-		// get new value from stack
-		Integer newValue = currentStackFrame.methodStack.pop()
-
 		// get field name
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap, currentStackFrame.thisInst)
 		Integer constPoolPtr = currentStackFrame.currentPointer
 		String fieldName = ClassAccessHelper.getConstantPoolValue(heap, classPtr, constPoolPtr)
 
-
 		// get field index
 		Integer targetObjectPtr = currentStackFrame.methodStack.pop()
 		Integer targetClassPtr = ObjectAccessHelper.getClassPointer(heap, targetObjectPtr)
 		Integer fieldIdx = ClassAccessHelper.findFieldIndex(heap, targetClassPtr, fieldName)
+
+		// get new value from stack
+		Integer newValue = currentStackFrame.methodStack.pop()
 
 		// set new field value
 		ObjectAccessHelper.setNewValue(heap,targetObjectPtr, fieldIdx, newValue)
@@ -271,7 +270,7 @@ class Interpreter {
 		List resultPair = ClassAccessHelper.findMethodWithSuper(heap, targetClassPtr, methodSignature,classLoader)
 		Integer methodPtr = resultPair[1]
 		if(methodPtr == null){
-			throw new InterpretException('invoked method not found on ' + ClassAccessHelper.getName(heap, targetClassPtr))
+			throw new InterpretException('invoked method "'+ methodSignature +'" not found on ' + ClassAccessHelper.getName(heap, targetClassPtr))
 		}
 		if(ClassAccessHelper.isNative(heap,methodPtr)){
 			String nativeMethodClassName = ClassAccessHelper.getName(heap, resultPair[0]) // result[0] - pointer on class with method bytecode

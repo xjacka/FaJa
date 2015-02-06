@@ -69,6 +69,7 @@ class ClassFile {
 	String toString(){
 		StringBuilder sb = new StringBuilder()
 		sb.append('className: ' + constantPool[0])
+		sb.append('\nparentName: ' + constantPool[1])
 		sb.append('\n')
 		sb.append('ConstantPool:\n')
 		constantPool.eachWithIndex { c , i ->

@@ -3,21 +3,21 @@ object Main
 	fields
 		b
 		c
-	endfields
+	endFields
 
 	methods
 
 		def main()
-			var local, local1, sout, sum
-			local <- false
-		    local1 <- false
-			sout <- SystemIO.new
-			sum <- local.not()
-			sout.out(sum)
+			self:b <- true
+		    self:c <- false
+		    bar()
 		end
 
 		def bar()
-			 self.foo(self:c)
+			var sout, sum
+			sout <- SystemIO.new
+            sum <- self:b.or(self:c)
+            sout.out(sum)
 		end
-	endmethods
-endclass
+	endMethods
+endClass

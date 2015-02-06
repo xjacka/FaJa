@@ -1,5 +1,6 @@
 package faJa
 
+import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
@@ -26,6 +27,9 @@ class FaJaExecutor {
 		def ptr = classLoader.findClass(heap, className)
 
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
+		if(mainPtr == null){
+			throw new InterpretException('In executed object must be main method!')
+		}
 		def mainBytecodePtr = mainPtr + Heap.SLOT_SIZE + Heap.SLOT_SIZE // mainPtr + bytecodeSize + constPoolPtr
 		StackFrame mainStackFrame = new StackFrame()
 		def mainSize = heap.getPointer(mainPtr) - Heap.SLOT_SIZE // mehtodSize - constPoolPtrSize
