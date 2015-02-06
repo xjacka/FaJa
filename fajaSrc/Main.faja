@@ -3,6 +3,7 @@ object Main
 	fields
 		b
 		c
+		closure
 	endFields
 
 	methods
@@ -14,10 +15,15 @@ object Main
 		end
 
 		def bar()
-			var sout, sum
+			var sout, sum, cl
 			sout <- SystemIO.new
-            sum <- self:b.or(self:c)
-            sout.out(sum)
+:-)            sum <- self:b.or(self:c)
+:-)            sout.out(sum)
+	        self:closure <- { a |
+	            sout.out(a)
+	        }
+	        cl <- self:closure
+            cl.call(self:b)
 		end
 	endMethods
 endClass

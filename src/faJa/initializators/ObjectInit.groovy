@@ -13,7 +13,8 @@ class ObjectInit extends BaseInit {
 		        'Object',
 				'',
 				'==(1)',
-				'toS(0)'
+				'toS(0)',
+		        'isNull(0)'
 		]
 		classFile.fields = []
 		def equals = new PrecompiledMethod()
@@ -24,6 +25,11 @@ class ObjectInit extends BaseInit {
 		def toS = new PrecompiledMethod()
 		toS.signatureIndex = 3
 		classFile.methods.add(toS)
+
+//		Method isNull(0) - Native
+		def isNull = new PrecompiledMethod()
+		isNull.signatureIndex = 4
+		classFile.methods.add(isNull)
 
 	}
 

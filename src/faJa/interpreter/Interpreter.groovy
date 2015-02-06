@@ -138,11 +138,24 @@ class Interpreter {
 	}
 
 	def processPushNull() {
-		// todo
+		StackFrame currentStackFrame = stack.last()
+		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
+		Integer nullPtr = classLoader.singletonRegister.get(Compilator.NULL_CLASS)
+		currentStackFrame.methodStack.push(nullPtr)
 	}
 
 	def processInitClosure() {
-		// todo
+		StackFrame currentStackFrame = stack.last()
+		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
+
+		Integer initClassPtr = ObjectAccessHelper.getClassPointer(heap, currentStackFrame.thisInst)
+		Integer closureClassPtr = classLoader.findClass(heap, Compilator.CLOSURE_CLASS)
+		Integer closureIdx = currentStackFrame.currentByte
+		currentStackFrame.incrementBP(Instruction.INIT_CLOSURE.params)
+		Integer newClosurePtr = heap.createClosure(closureClassPtr, initClassPtr, closureIdx)
+
+		currentStackFrame.methodStack.push(newClosurePtr)
+
 	}
 
 	def processInitNum() {
@@ -280,7 +293,12 @@ class Interpreter {
 			}
 			currentStackFrame.methodStack.push(targetObjectPtr)
 
-			nativeMethod.call(currentStackFrame, heap, classLoader)
+			StackFrame stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
+			if (stackFrame != null){
+				stack.add(stackFrame)
+				Integer result = interpret()
+				stack.last().methodStack.push(result)
+			}
 			return
 		}
 

@@ -10,6 +10,7 @@ class ClassFile {
 	def constantPool = []
 	def fields = []
 	def isSingleton = false
+	List<PrecompiledClosure> closures = []
 	List<PrecompiledMethod> methods = []
 
 	byte [] toByteCode(){
@@ -56,11 +57,25 @@ class ClassFile {
 		}
 		def methodsSize = methodLengths.sum(0)
 
-		// method size
+		// closure size
 		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE, methodsSize )
 
-		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize)
-		setClassSize(bytes, 3 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize)
+		// closure size init (constPoolStart + constPoolSize + fieldsSizeSlot + fieldsSize + methodsSizeSlot + methodsSize)
+		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE + + methodsSize + SLOT_SIZE, 0 )
+
+		// closure
+		def closureLengths = closures.collect{ c ->
+			byte[] closureBytecode = c.toBytecode(constPoolIndexes)
+			bytes.addAll(closureBytecode)
+			closureBytecode.length
+		}
+		def closuresSize = closureLengths.sum(0)
+
+		// closure size
+		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE + methodsSize + SLOT_SIZE, closuresSize )
+
+		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize  + closuresSizeSlot + closuresSize)
+		setClassSize(bytes, 4 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize + closuresSize)
 
 		bytes.toArray() as byte []
 	}

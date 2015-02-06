@@ -25,7 +25,9 @@ class Heap {
 	def getByte(Integer ptr){
 		heap[ptr] // should return unsigned ??
 	}
-
+	Integer getUnsignedByte(Integer ptr){
+		ByteHelper.unsignedValue(heap[ptr])
+	}
 	def setPointer(Integer ptr, Integer newVal){
 		def bytes = ByteHelper.IntegerTo2Bytes(newVal)
 		heap[ptr] = bytes[0]
@@ -115,5 +117,18 @@ class Heap {
 
 	Boolean boolFromBoolObject(Integer ptr) {
 		heap[ptr + Heap.SLOT_SIZE] == 0 ? false : true
+	}
+
+	Integer createClosure(Integer closureClassPtr, Integer initClassPtr, Integer closureIdx) {
+		byte [] bytesOfClosureClass = ByteHelper.IntegerTo2Bytes(closureClassPtr)
+		byte [] bytesOfInitClass = ByteHelper.IntegerTo2Bytes(initClassPtr)
+		Integer objectPtr = insertIndex
+		heap[insertIndex++] = bytesOfClosureClass[0]
+		heap[insertIndex++] = bytesOfClosureClass[1]
+		heap[insertIndex++] = bytesOfInitClass[0]
+		heap[insertIndex++] = bytesOfInitClass[1]
+		heap[insertIndex++] = closureIdx.byteValue()
+
+		objectPtr
 	}
 }

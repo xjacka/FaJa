@@ -10,15 +10,13 @@ class ClosureInit extends BaseInit{
 		classFile.constantPool = [
 		        'Closure',
 				'Object',
-				'stackFrame',
-				'bytecode',
-				'call(0)'
+				'call(1)'
 		]
 
-		classFile.fields = [2,3]
+		classFile.fields = []
 
 		def call = new PrecompiledMethod()
-		call.signatureIndex = 4
+		call.signatureIndex = 2
 		classFile.methods.add(call)
 	}
 }

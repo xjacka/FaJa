@@ -2,6 +2,7 @@ package faJa.compilator
 
 import faJa.ClassFile
 import faJa.Instruction
+import faJa.PrecompiledClosure
 import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
 import faJa.exceptions.CompilerException
@@ -23,11 +24,14 @@ class Compilator {
 	public static final String FIELD_ACESSOR = ':'
 	public static final String COMMENT = ':-)'
 	public static final String INHERITANCE_KEYWORD = 'extends'
+	public static final String CONSTRUCTOR_INVOKE_NAME = '.new'
 	public static final String DEFAULT_PARENT = 'Object'
 	public static final String STRING_CLASS = 'String'
 	public static final String NUMBER_CLASS = 'Number'
 	public static final String BOOL_CLASS = 'Bool'
 	public static final String CLOSURE_CLASS = 'Closure'
+	public static final String NULL_CLASS = 'Null'
+	public static final String NULL_KEYWORD = 'null'
 	public static final String SYSTEMIO_CLASS = 'SystemIO'
 	public static final String TRUE_STRING_VALUE = 'true'
 	public static final String FALSE_STRING_VALUE = 'false'
@@ -35,6 +39,11 @@ class Compilator {
 	public static final String CLASS_KEYWORD = 'class'
 	public static final String METHOD_ARGUMENT_START_KEYWORD = '('
 	public static final String METHOD_ARGUMENT_START_END = ')'
+	public static final String CLOSURE_OPEN_KEYWORD = '{'
+	public static final String CLOSURE_CLOSE_KEYWORD = '}'
+	public static final String ARGUMENT_SEPARATOR = ','
+	public static final String CLOSURE_PARAMS_END_KEYWORD = '|'
+
 
 	ClassFile classFile
 
@@ -158,12 +167,25 @@ class Compilator {
 		def method = new PrecompiledMethod()
 
 		method.signatureIndex = signitureIndex
-		code.each { String line ->
-			method.instructions.addAll(compileLine(line, locals, classFile.constantPool))
-		}
+//		code.each { String line ->
+//			method.instructions.addAll(compileLine(line, locals, classFile.constantPool))
+//		}
+		for(int i=0; i < code.size();){
+			def result = compileLine(code[i], locals, classFile.constantPool)
+			if(result){
+				method.instructions.addAll(result)
+				i++
+			}
+			else{
+				result = compileClosure(code, i, classFile, definitions, locals)
+				method.instructions.addAll(result[0])
+				i = result[1]
 
+			}
+		}
 		classFile.methods.add(method)
 	}
+
 
 	def findIndex(String field, List<String> constPool){
 		def index = -1
@@ -183,14 +205,16 @@ class Compilator {
 	enum EvalSituation {NUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE, VARIABLE, FIELD}
 
 	def resolveSituation(String expr){
-		// todo Closure
+		if(expr.startsWith(CLOSURE_OPEN_KEYWORD)){
+			return EvalSituation.CLOSURE
+		}
 		if(expr[0] == '"' && expr[expr.length()-1] == '"'){
 			return EvalSituation.STRING
 		}
-		if(expr == 'null'){
+		if(expr == NULL_KEYWORD){
 			return EvalSituation.NULL
 		}
-		if(expr == 'true' || expr == 'false'){
+		if(expr == TRUE_STRING_VALUE || expr == FALSE_STRING_VALUE){
 			return EvalSituation.BOOL
 		}
 		if(expr.endsWith('.new')){
@@ -227,13 +251,14 @@ class Compilator {
 			expr = assignmentSplit[1].trim()
 		}
 		// evaluation
-		// todo Closure
 		def situation = resolveSituation(expr)
 		if(situation == EvalSituation.METHOD_CALL && expr.indexOf(METHOD_CALL_SEPARATOR) == -1){
 			expr =  SELF_POINTER + METHOD_CALL_SEPARATOR + expr
 		}
 		def instructions
 		switch(situation){
+			case EvalSituation.CLOSURE:
+				return null
 			case EvalSituation.NUMBER:
 				instructions = processNumber(expr,constantPool)
 				break
@@ -412,11 +437,13 @@ class Compilator {
 	}
 
 	List<PrecompiledInstruction> processNull(String expr, List<String> constantPool){
-		// todo
+		def pushNull = new PrecompiledInstruction()
+		pushNull.instruction = Instruction.PUSH_NULL
+		[pushNull]
 	}
 
 	List<PrecompiledInstruction> processCreateObject(String expr, List<String> constantPool){
-		String className= expr.replace('.new','')
+		String className= expr.replace(CONSTRUCTOR_INVOKE_NAME,'')
 		Integer classIdx = findIndex(className,constantPool)
 		def init = new PrecompiledInstruction()
 		init.instruction = Instruction.INIT
@@ -431,7 +458,7 @@ class Compilator {
 			locals.put( arg, locals.size())
 		}
 		definitions.each{ line ->
-			def args = line.split(',').collect { it.trim()}
+			def args = line.split(ARGUMENT_SEPARATOR).collect { it.trim()}
 			args.each { arg ->
 				locals.put( arg, locals.size())
 			}
@@ -442,13 +469,130 @@ class Compilator {
 	def createSignature(String line){
 		def head = line.replace(METHOD_START + ' ', '')
 		def args = head.find(~/\(.*\)/)
-		def argsCount = args == '()' ? 0 : args.split(',').size()
+		def argsCount = args == '()' ? 0 : args.split(ARGUMENT_SEPARATOR).size()
 		head.replace(args,"(${argsCount})")
 	}
 
 	def createArgList(String line){
 		def wrappedArgs = line.find(~/\(.*\)/)
 		def args = wrappedArgs.substring(1, wrappedArgs.length()-1);
-		return args == '' ? [] : args.split(',').toList()
+		return args == '' ? [] : args.split(ARGUMENT_SEPARATOR).toList()
+	}
+
+
+	/// ------------------- Closure compiler methods ----------------------------
+
+	def compileClosure(List<String> code, Integer codePtr, ClassFile classFile, List<String> definitions, Map locals) {
+		List instructions = []
+
+		Integer closureIdx = classFile.closures.size()
+		List<String> lineSplit = code[codePtr].split(ASSIGNMENT_OP)
+
+		String assignmentVar = lineSplit[0].trim()
+		String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD)+1,lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
+		List<String> args = closureArgs.split(ARGUMENT_SEPARATOR).collect{ it.trim() }
+
+		codePtr++
+		// parse body
+		List<String> closureBody = []
+		int closureOpen = 1
+		int closureClose = 0
+		int overflowProt = 0
+		while(closureOpen){
+			// closing keyword missing protection
+			if(overflowProt++ > 2000){
+				throw new CompilerException('closure body too big or closing keyword missing')
+			}
+			def currentLine = code[codePtr].trim()
+			if(currentLine.startsWith(CLOSURE_CLOSE_KEYWORD)){
+				closureClose++
+			}
+			if(currentLine.startsWith(CLOSURE_OPEN_KEYWORD)){
+				closureOpen++
+			}
+			if(closureClose >= closureOpen){
+				codePtr++
+				break
+			}
+			closureBody.add(code[codePtr++])
+		}
+
+		// add local variables from context
+		args.addAll(definitions)
+
+		// create closure bytecode
+		classFile.closures.add(createClosure(classFile, closureIdx, args, closureBody))
+
+
+		// create instruction to init closure
+		def initClosureInst = new PrecompiledInstruction()
+		initClosureInst.instruction = Instruction.INIT_CLOSURE
+		initClosureInst.paramVal = closureIdx
+		instructions.add(initClosureInst)
+
+		// assignV value on stack
+		// assigment
+		if(assignmentVar){
+			// field assigment
+			// todo to refaktor # 1
+			if(assignmentVar.indexOf(SELF_POINTER + FIELD_ACESSOR) != -1){
+				def loadSelfInst = new PrecompiledInstruction()
+				loadSelfInst.instruction = Instruction.LOAD
+				loadSelfInst.paramVal = 0
+
+				def putfieldInst = new PrecompiledInstruction()
+				putfieldInst.instruction = Instruction.PUTFIELD
+				putfieldInst.paramVal = findIndex(assignmentVar.replace(SELF_POINTER + FIELD_ACESSOR,''), classFile.constantPool)
+
+
+				instructions.add(loadSelfInst)
+				instructions.add(putfieldInst)
+			}
+			// local var assigment
+			else{
+				def inst = new PrecompiledInstruction()
+				inst.instruction = Instruction.STORE
+				inst.paramVal = locals.get(assignmentVar)
+				instructions.add(inst)
+			}
+		}
+		[instructions, codePtr]
+	}
+
+
+	def createClosure(ClassFile classFile, Integer closureIdx, List<String> argList,List<String> methodBody){
+
+		def definitions = [], code = []
+		methodBody.each{ line ->
+			line = line.trim()
+			if(line.startsWith(LOCAL_DEFINE)){
+				line = line.replace(LOCAL_DEFINE + ' ', '')
+				definitions.add(line)
+			}
+			else{
+				code.add(line)
+			}
+		}
+		// create Locals from closure
+		def locals = createLocalsMap(definitions, argList)
+
+		def closure = new PrecompiledClosure()
+		closure.argsCount = argList.size()
+		closure.instructions = []
+
+		for(int i=0; i < code.size();){
+			def result = compileLine(code[i], locals, classFile.constantPool)
+			if(result){
+				closure.instructions.addAll(result)
+				i++
+			}
+			else{
+				result = compileClosure(code, i,  classFile, definitions, locals)
+				closure.instructions.addAll(result[0])
+				i = result[1]
+
+			}
+		}
+		closure
 	}
 }

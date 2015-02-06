@@ -38,8 +38,8 @@ class ClassLoader {
 		classRegister.put(Compilator.SYSTEMIO_CLASS,pointer)
 	}
 
-	def findClass(Heap heap, String className){
-		def classPtr = classRegister.get(className)
+	Integer findClass(Heap heap, String className){
+		Integer classPtr = classRegister.get(className)
 		if(classPtr != null){
 			return classPtr
 		}

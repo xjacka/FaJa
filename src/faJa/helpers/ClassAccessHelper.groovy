@@ -3,6 +3,7 @@ package faJa.helpers
 import faJa.Heap
 import faJa.compilator.Compilator
 import faJa.ClassLoader
+import faJa.exceptions.InterpretException
 
 class ClassAccessHelper {
 
@@ -60,6 +61,7 @@ class ClassAccessHelper {
 
 			fieldIndex += Heap.SLOT_SIZE
 		}
+		throw new InterpretException('field not found')
 		return null
 	}
 
@@ -126,5 +128,12 @@ class ClassAccessHelper {
 			methodPtr = findMethod(heap,ptr,signature)
 		}
 		[ptr, methodPtr]
+	}
+
+	static getClosureSection(Heap heap, int ptr){
+		def methodsPtr = getMethodSection(heap, ptr)
+		def closuresPtr = skipSection(heap, methodsPtr)
+
+		closuresPtr
 	}
 }

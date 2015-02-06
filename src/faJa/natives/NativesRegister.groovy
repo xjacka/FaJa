@@ -34,9 +34,16 @@ class NativesRegister {
 	        'readFromFile(2)SystemIO' : SystemIONatives.readFromFile,
 	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
 
-	        'call(0)Closure' : ClosureNatives.call,
+	        'call(1)Closure' : ClosureNatives.call,
 
 	        'equals(1)Object' : ObjectNatives.equals,
 	        'toS(0)Object' : ObjectNatives.toS,
+	        'isNull(0)Object' : ObjectNatives.isNull,
+
+	        'isNull(0)Null' : NullNatives.isNull,
+	        '==(1)Null' : NullNatives.equals,
+	        'ifTrue(1)Null' : NullNatives.ifTrue,
+	        'ifFalse(1)Null' : NullNatives.ifFalse,
+	        'toS(0)Null' : NullNatives.toS,
 	]
 }
