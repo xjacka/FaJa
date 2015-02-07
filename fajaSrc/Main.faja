@@ -27,6 +27,9 @@ object Main
                 sOut.out(b)
 	            sOut.out(sum)
 
+	            cl2 <- null
+	            sOut.out(cl2)
+
 	            cl2 <- {
 	                var x
 	                x <- "ahoj"

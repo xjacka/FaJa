@@ -1,7 +1,7 @@
 package faJa.helpers
 
 import faJa.Heap
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.ClassLoader
 import faJa.exceptions.InterpretException
 
@@ -122,7 +122,7 @@ class ClassAccessHelper {
 
 	static List findMethodWithSuper(Heap heap, Integer ptr, String signature, ClassLoader classLoader) {
 		def methodPtr = findMethod(heap,ptr,signature)
-		while(methodPtr == null && getName(heap,ptr) != Compilator.DEFAULT_PARENT){
+		while(methodPtr == null && getName(heap,ptr) != Compiler.DEFAULT_PARENT){
 			String parentName = getParent(heap,ptr)
 			ptr = classLoader.findClass(heap,parentName)
 			methodPtr = findMethod(heap,ptr,signature)

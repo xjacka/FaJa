@@ -9,7 +9,7 @@ class PrecompiledInstruction {
 
 	List<Byte> constructParams(List<Integer> constPoolIndexes) {
 		if(instruction.params == 0){
-			[]
+			return []
 		}
 		if(instruction.params == 1){
 			return [paramVal.byteValue()]

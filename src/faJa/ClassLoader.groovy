@@ -1,9 +1,10 @@
 package faJa
 
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.helpers.ClassAccessHelper
 import faJa.initializators.BoolInit
 import faJa.initializators.ClosureInit
+import faJa.initializators.NullInit
 import faJa.initializators.NumberInit
 import faJa.initializators.ObjectInit
 import faJa.initializators.StringInit
@@ -16,7 +17,7 @@ class ClassLoader {
 	Map singletonRegister = [:]
 
 	final static FAJA_EXTENSION = '.faja'
-	Compilator compilator = new Compilator()
+	Compiler compiler = new Compiler()
 
 	ClassLoader(Heap heap, String workingDir){
 		this.workDir = workingDir
@@ -25,17 +26,21 @@ class ClassLoader {
 
 	def init(Heap heap){
 		Integer pointer = heap.load(new ObjectInit().toBytecode())
-		classRegister.put(Compilator.DEFAULT_PARENT,pointer)
+		classRegister.put(Compiler.DEFAULT_PARENT,pointer)
 		pointer = heap.load(new BoolInit().toBytecode())
-		classRegister.put(Compilator.BOOL_CLASS,pointer)
+		classRegister.put(Compiler.BOOL_CLASS,pointer)
 		pointer = heap.load(new NumberInit().toBytecode())
-		classRegister.put(Compilator.NUMBER_CLASS,pointer)
+		classRegister.put(Compiler.NUMBER_CLASS,pointer)
 		pointer = heap.load(new StringInit().toBytecode())
-		classRegister.put(Compilator.STRING_CLASS,pointer)
+		classRegister.put(Compiler.STRING_CLASS,pointer)
 		pointer = heap.load(new ClosureInit().toBytecode())
-		classRegister.put(Compilator.CLOSURE_CLASS,pointer)
+		classRegister.put(Compiler.CLOSURE_CLASS,pointer)
 		pointer = heap.load(new SystemIOInit().toBytecode())
-		classRegister.put(Compilator.SYSTEMIO_CLASS,pointer)
+		classRegister.put(Compiler.SYSTEMIO_CLASS,pointer)
+		pointer = heap.load(new NullInit().toBytecode())
+		classRegister.put(Compiler.NULL_CLASS,pointer)
+		Integer objPtr = heap.createObject(pointer)
+		singletonRegister.put(Compiler.NULL_CLASS, objPtr)
 	}
 
 	Integer findClass(Heap heap, String className){
@@ -45,7 +50,7 @@ class ClassLoader {
 		}
 
 		// load parent class
-		ClassFile classFile = compilator.compile(workDir + className + FAJA_EXTENSION)
+		ClassFile classFile = compiler.compile(workDir + className + FAJA_EXTENSION)
 		println(classFile.toString())
 		String parent = classFile.getParentName()
 		Integer parentPtr = findClass(heap, parent)

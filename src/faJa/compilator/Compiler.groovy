@@ -7,7 +7,7 @@ import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
 import faJa.exceptions.CompilerException
 
-class Compilator {
+class Compiler {
 
 	public static final String START_FIELDS = 'fields'
 	public static final String END_FIELDS = 'endFields'

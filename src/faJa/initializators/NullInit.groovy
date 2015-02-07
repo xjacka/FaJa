@@ -7,7 +7,7 @@ class NullInit extends BaseInit {
 	NullInit() {
 		classFile = new ClassFile()
 		classFile.constantPool = [
-				'Number',
+				'Null',
 				'Object',
 				'==(1)',
 				'isNull(1)',
@@ -17,7 +17,7 @@ class NullInit extends BaseInit {
 		]
 		classFile.fields = []
 
-//		Method isNull(0) - Native
+//		Method ==(1) - Native
 		def equals = new PrecompiledMethod()
 		equals.signatureIndex = 2
 		classFile.methods.add(equals)
@@ -27,17 +27,17 @@ class NullInit extends BaseInit {
 		isNull.signatureIndex = 3
 		classFile.methods.add(isNull)
 
-//		Method isNull(0) - Native
+//		Method ifTrue(1) - Native
 		def ifTrue = new PrecompiledMethod()
 		ifTrue.signatureIndex = 4
 		classFile.methods.add(ifTrue)
 
-//		Method isNull(0) - Native
+//		Method ifFalse(1) - Native
 		def ifFalse = new PrecompiledMethod()
 		ifFalse.signatureIndex = 5
 		classFile.methods.add(ifFalse)
 
-//		Method isNull(0) - Native
+//		Method toS(0) - Native
 		def toS = new PrecompiledMethod()
 		toS.signatureIndex = 6
 		classFile.methods.add(toS)

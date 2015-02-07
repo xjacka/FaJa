@@ -1,7 +1,7 @@
 package faJa.natives
 
 import faJa.Heap
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.helpers.ObjectAccessHelper
 import faJa.helpers.ObjectInitHelper
 import faJa.interpreter.StackFrame
@@ -14,7 +14,7 @@ class BoolNatives {
 
 	// expect: two boolean object on stack
 	static equals = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compilator.BOOL_CLASS)
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
 		Integer bool1Ptr = stackFrame.methodStack.pop()
 		Integer bool2Ptr = stackFrame.methodStack.pop()
 
@@ -23,21 +23,21 @@ class BoolNatives {
 
 		Integer resultPtr = heap.createBool(boolClassPtr,(byte) ( bool1 == bool2 ? 1 : 0 ))
 		stackFrame.methodStack.push(resultPtr)
-	null
-}
+		null
+	}
 
 	static ifTrue = {
 
-	null
-}
+		null
+	}
 
 	static ifFalse = {
 
-	null
-}
+		null
+	}
 
 	static and = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compilator.BOOL_CLASS)
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
 		Integer bool1Ptr = stackFrame.methodStack.pop()
 		Integer bool2Ptr = stackFrame.methodStack.pop()
 
@@ -52,11 +52,11 @@ class BoolNatives {
 
 		Integer resultPtr = heap.createBool(boolClassPtr, result)
 		stackFrame.methodStack.push(resultPtr)
-	null
-}
+		null
+	}
 
 	static or = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compilator.BOOL_CLASS)
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
 		Integer bool1Ptr = stackFrame.methodStack.pop()
 		Integer bool2Ptr = stackFrame.methodStack.pop()
 
@@ -71,8 +71,8 @@ class BoolNatives {
 
 		Integer resultPtr = heap.createBool(boolClassPtr, result)
 		stackFrame.methodStack.push(resultPtr)
-	null
-}
+		null
+	}
 
 	static not = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		def arg1ptr = stackFrame.methodStack.pop()
@@ -81,15 +81,15 @@ class BoolNatives {
 
 		def pointer = heap.load(ObjectInitHelper.createBool(class1Ptr,heap.getByte(arg1ptr + Heap.SLOT_SIZE) == FALSE))
 		stackFrame.methodStack.push(pointer)
-	null
-}
+		null
+	}
 
 	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer stringClassPtr = classLoader.findClass(heap, Compilator.STRING_CLASS)
+		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
 		Integer numPtr = stackFrame.methodStack.pop()
 		Boolean bool = heap.boolFromBoolObject(numPtr)
 		Integer stringPtr = heap.createString(stringClassPtr, bool.toString())
 		stackFrame.methodStack.push(stringPtr)
-	null
-}
+		null
+	}
 }

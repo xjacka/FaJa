@@ -1,13 +1,11 @@
 package faJa.natives
 
 import faJa.Heap
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
-import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
-import org.omg.CORBA.ObjectHelper
 
 class StringNatives {
 
@@ -43,7 +41,7 @@ class StringNatives {
 				result = BoolNatives.TRUE
 			}
 		}
-		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compilator.BOOL_CLASS), result)
+		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), result)
 		stackFrame.methodStack.push(boolPtr)
 
 		null
@@ -79,7 +77,7 @@ class StringNatives {
 		Integer thisPtr = stackFrame.methodStack.pop()
 		Integer size = heap.getPointer(thisPtr + Heap.SLOT_SIZE)
 
-		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compilator.NUMBER_CLASS), size)
+		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compiler.NUMBER_CLASS), size)
 		stackFrame.methodStack.push(resultPtr)
 
 		null
