@@ -17,7 +17,7 @@ class ClassLoader {
 	Map singletonRegister = [:]
 
 	final static FAJA_EXTENSION = '.faja'
-	Compiler compiler = new Compiler()
+	Compiler compiler
 
 	ClassLoader(Heap heap, String workingDir){
 		this.workDir = workingDir
@@ -50,6 +50,7 @@ class ClassLoader {
 		}
 
 		// load parent class
+		compiler = new Compiler()
 		ClassFile classFile = compiler.compile(workDir + className + FAJA_EXTENSION)
 		println(classFile.toString())
 		String parent = classFile.getParentName()

@@ -18,6 +18,8 @@ object Main
 			sOut <- SystemIO.new
 			var cl
 
+			cl <- Main2.new
+			cl.foo(sum)
             sum <- self:b.+(self:c)
 
 	        self:closure <- { a, b |
@@ -30,13 +32,13 @@ object Main
 	            cl2 <- null
 	            sOut.out(cl2)
 
-	            cl2 <- {
-	                var x
-	                x <- "ahoj"
-	                sOut.out(x)
-	            }
-
-	            cl2.call()
+:-)	            cl2 <- {
+:-)	                var x
+:-)	                x <- "ahoj"
+:-)	                sOut.out(x)
+:-)	            }
+:-)
+:-)	            cl2.call()
 	        }
 
 :-)	        cl <- self:closure

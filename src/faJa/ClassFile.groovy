@@ -99,7 +99,7 @@ class ClassFile {
 			sb.append(constantPool[method.signatureIndex]+'\n')
 			sb.append('\tbytecode:\n')
 			method.instructions.each{ inst ->
-				sb.append('\t\t'+ inst.instruction.toString() + ' ' + (inst.paramVal?:'') +'\n')
+				sb.append('\t\t'+ inst.instruction.toString() + ' ' + (inst.paramVal==null?'':inst.paramVal) +'\n')
 			}
 		}
 		sb.append("Closures:\n")
@@ -107,7 +107,7 @@ class ClassFile {
 			sb.append('[' +i + '] (arguments: '+closure.argsCount+'):\n')
 			sb.append('\tbytecode:\n')
 			closure.instructions.each { instruction ->
-				sb.append('\t\t' + instruction.instruction.toString() + ' ' + (instruction.paramVal?:'') +'\n')
+				sb.append('\t\t' + instruction.instruction.toString() + ' ' + (instruction.paramVal==null?'':instruction.paramVal) +'\n')
 			}
 		}
 

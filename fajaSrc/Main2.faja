@@ -1,19 +1,17 @@
 :-) Moje prvni trida a celkove druha
-class Main extends Number
-	fields
-		b
-		c
-	endfields
+class Main2 extends Number
 
 	methods
-
 		def foo(a)
-			var local, local1
-			self:b <- a.+(local)
+:-)		nepodari se najit parametr a
+			bar(a)
 		end
 
-		def bar()
-			 self.foo(self:c)
+		def bar(a)
+			var sOut, c
+			c <- "ahoj"
+			sOut <- SystemIO.new
+			sOut.out(a)
 		end
-	endmethods
-endclass
+	endMethods
+endClass
