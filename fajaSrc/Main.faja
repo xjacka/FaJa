@@ -20,13 +20,24 @@ object Main
 
             sum <- self:b.+(self:c)
 
-	        self:closure <- { a |
+	        self:closure <- { a, b |
+                var cl2
+
                 sOut.out(a)
+                sOut.out(b)
 	            sOut.out(sum)
+
+	            cl2 <- {
+	                var x
+	                x <- "ahoj"
+	                sOut.out(x)
+	            }
+
+	            cl2.call()
 	        }
 
 :-)	        cl <- self:closure
-            self:closure.call(self:b)
+            self:closure.call(self:b,self:c)
 		end
 	endMethods
 endClass

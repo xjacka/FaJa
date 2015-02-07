@@ -68,6 +68,7 @@ class Compilator {
 		classFile
 	}
 
+	// create class in constant pool and set parent (default or extends)
 	def createClass(String line){
 		if(line.trim().startsWith(SINGLETON_KEYWORD)){
 			classFile.isSingleton = true
@@ -87,6 +88,7 @@ class Compilator {
 			throw new CompilerException('file not start with class definition')
 	}
 
+	// parse block with class properties
 	def createFields(List<String> lines){
 		def fields = false
 
@@ -103,6 +105,7 @@ class Compilator {
 		}
 	}
 
+	// add class fields to constant pool
 	def createField(String line){
 		if(line.trim() == ''){
 			return
@@ -118,6 +121,7 @@ class Compilator {
 		}
 	}
 
+	// parse block with method definitions
 	def createMethods(List<String> lines){
 		def methods = false
 		def method = false
@@ -150,6 +154,7 @@ class Compilator {
 		}
 	}
 
+	// parse method body without start and end keyword
 	def createMethod(String signature,List<String> argList, List<String> methodBody){
 		def signitureIndex = classFile.constantPool.size()
 		if(methods.contains(signature)) {
@@ -163,7 +168,7 @@ class Compilator {
 			line = line.trim()
 			if(line.startsWith(LOCAL_DEFINE)){
 				line = line.replace(LOCAL_DEFINE + ' ', '')
-				definitions.add(line)
+				definitions.add(line.trim())
 			}
 			else{
 				code.add(line)
@@ -174,9 +179,6 @@ class Compilator {
 		def method = new PrecompiledMethod()
 
 		method.signatureIndex = signitureIndex
-//		code.each { String line ->
-//			method.instructions.addAll(compileLine(line, locals, classFile.constantPool))
-//		}
 		for(int i=0; i < code.size();){
 			def result = compileLine(code[i], locals, classFile.constantPool)
 			if(result){
@@ -482,10 +484,11 @@ class Compilator {
 	}
 
 	def createSignature(String line){
-		def head = line.replace(METHOD_START + ' ', '')
-		def args = head.find(~/\(.*\)/)
-		def argsCount = args == '()' ? 0 : args.split(ARGUMENT_SEPARATOR).size()
-		head.replace(args,"(${argsCount})")
+		String head = line.replace(METHOD_START + ' ', '')
+		String args = head.find(~/\(.*\)/)
+		String name = head.substring(0,head.indexOf(METHOD_ARGUMENT_START_KEYWORD))
+		Integer argsCount = args == '()' ? 0 : args.split(ARGUMENT_SEPARATOR).size()
+		head.replace(args,name == 'call' ? "(0)" :"(${argsCount})")
 	}
 
 	def createArgList(String line){
@@ -504,8 +507,13 @@ class Compilator {
 		List<String> lineSplit = code[codePtr].split(ASSIGNMENT_OP)
 		List<String> definitions = getDefinitionsList(linesOfDefinitions)
 		String assignmentVar = lineSplit[0].trim()
-		String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD)+1,lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
-		List<String> args = closureArgs.split(ARGUMENT_SEPARATOR).collect{ it.trim() }
+
+		List<String> args = []
+		//pokud closure má parametry
+		if(lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) != -1) {
+			String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD) + 1, lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
+			args = closureArgs.split(ARGUMENT_SEPARATOR).collect { it.trim() }
+		}
 
 		codePtr++
 		// parse body
@@ -522,7 +530,7 @@ class Compilator {
 			if(currentLine.startsWith(CLOSURE_CLOSE_KEYWORD)){
 				closureClose++
 			}
-			if(currentLine.startsWith(CLOSURE_OPEN_KEYWORD)){
+			if(currentLine.indexOf(CLOSURE_OPEN_KEYWORD) != -1){
 				closureOpen++
 			}
 			if(closureClose >= closureOpen){
