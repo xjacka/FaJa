@@ -546,7 +546,7 @@ class Compilator {
 		}
 
 		// add local variables from context
-		args.addAll(definitions)
+//		args.addAll(definitions)
 
 		// create closure bytecode
 		classFile.closures.add(createClosure(classFile, closureIdx, args, definitions, closureBody))
