@@ -174,6 +174,8 @@ class Compilator {
 				code.add(line)
 			}
 		}
+
+		// locals contains self, arguments and local variables
 		def locals = createLocalsMap(definitions, argList)
 
 		def method = new PrecompiledMethod()
@@ -196,6 +198,7 @@ class Compilator {
 	}
 
 
+	// finds field in konstantPool or add them and return his position
 	def findIndex(String field, List<String> constPool){
 		def index = -1
 		constPool.eachWithIndex{ it, idx ->
@@ -320,6 +323,9 @@ class Compilator {
 				def inst = new PrecompiledInstruction()
 				inst.instruction = Instruction.STORE
 				inst.paramVal = locals.get(assignmentVar)
+				if(inst.paramVal == null){
+					throw new CompilerException('local variable "' + assignmentVar + '" not found')
+				}
 				instructionList.add(inst)
 			}
 		}
@@ -445,7 +451,7 @@ class Compilator {
 		[load]
 	}
 
-	List<PrecompiledInstruction> processNull(String expr, List<String> constantPool){
+	List<PrecompiledInstruction> processNull(){
 		def pushNull = new PrecompiledInstruction()
 		pushNull.instruction = Instruction.PUSH_NULL
 		[pushNull]
@@ -509,7 +515,6 @@ class Compilator {
 		String assignmentVar = lineSplit[0].trim()
 
 		List<String> args = []
-		//pokud closure má parametry
 		if(lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) != -1) {
 			String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD) + 1, lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
 			args = closureArgs.split(ARGUMENT_SEPARATOR).collect { it.trim() }
@@ -541,7 +546,7 @@ class Compilator {
 		}
 
 		// add local variables from context
-//		args.addAll(definitions)
+		args.addAll(definitions)
 
 		// create closure bytecode
 		classFile.closures.add(createClosure(classFile, closureIdx, args, definitions, closureBody))
@@ -576,13 +581,16 @@ class Compilator {
 				def inst = new PrecompiledInstruction()
 				inst.instruction = Instruction.STORE
 				inst.paramVal = locals.get(assignmentVar)
+				if(inst.paramVal == null){
+					throw new CompilerException('local variable "' + assignmentVar + '" not found')
+				}
 				instructions.add(inst)
 			}
 		}
 		[instructions, codePtr]
 	}
 
-
+	// creates closure bytecode
 	def createClosure(ClassFile classFile, Integer closureIdx, List<String> argList, List<String> parentArgList, List<String> methodBody){
 
 		def definitions = [], code = []

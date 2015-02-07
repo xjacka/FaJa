@@ -61,7 +61,7 @@ class ClassAccessHelper {
 
 			fieldIndex += Heap.SLOT_SIZE
 		}
-		throw new InterpretException('field not found')
+		throw new InterpretException('field "' + name + '" not found')
 		return null
 	}
 
