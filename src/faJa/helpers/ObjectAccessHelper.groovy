@@ -7,7 +7,7 @@ class ObjectAccessHelper {
 	// return pointer to object class
 	static Integer getClassPointer(Heap heap,Integer ptr) {
 		if(ptr == null){
-			ptr
+			return ptr
 		}
 		heap.getPointer(ptr)
 	}

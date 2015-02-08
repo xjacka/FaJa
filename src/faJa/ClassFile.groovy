@@ -102,12 +102,14 @@ class ClassFile {
 				sb.append('\t\t'+ inst.instruction.toString() + ' ' + (inst.paramVal==null?'':inst.paramVal) +'\n')
 			}
 		}
-		sb.append("Closures:\n")
-		closures.eachWithIndex { closure, i ->
-			sb.append('[' +i + '] (arguments: '+closure.argsCount+'):\n')
-			sb.append('\tbytecode:\n')
-			closure.instructions.each { instruction ->
-				sb.append('\t\t' + instruction.instruction.toString() + ' ' + (instruction.paramVal==null?'':instruction.paramVal) +'\n')
+		if(closures.size() > 0) {
+			sb.append("Closures:\n")
+			closures.eachWithIndex { closure, i ->
+				sb.append('[' + i + '] (arguments: ' + closure.argsCount + '):\n')
+				sb.append('\tbytecode:\n')
+				closure.instructions.each { instruction ->
+					sb.append('\t\t' + instruction.instruction.toString() + ' ' + (instruction.paramVal == null ? '' : instruction.paramVal) + '\n')
+				}
 			}
 		}
 
