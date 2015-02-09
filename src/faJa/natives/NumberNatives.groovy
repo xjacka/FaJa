@@ -18,7 +18,7 @@ class NumberNatives {
 		Integer resultPtr = heap.createNumber(numberClassPtr, num1 + num2)
 		stackFrame.methodStack.push(resultPtr)
 
-	null
+		null
 	}
 
 	static minus = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -31,7 +31,7 @@ class NumberNatives {
 
 		Integer resultPtr = heap.createNumber(numberClassPtr, num1 - num2)
 		stackFrame.methodStack.push(resultPtr)
-	null
+		null
 	}
 
 	static mul = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -44,7 +44,7 @@ class NumberNatives {
 
 		Integer resultPtr = heap.createNumber(numberClassPtr, num1 * num2)
 		stackFrame.methodStack.push(resultPtr)
-	null
+		null
 	}
 
 	static div = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -57,7 +57,7 @@ class NumberNatives {
 
 		Integer resultPtr = heap.createNumber(numberClassPtr, (Integer)(num1 / num2))
 		stackFrame.methodStack.push(resultPtr)
-	null
+		null
 	}
 
 	static mod = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -70,7 +70,7 @@ class NumberNatives {
 
 		Integer resultPtr = heap.createNumber(numberClassPtr, num1 % num2)
 		stackFrame.methodStack.push(resultPtr)
-	null
+		null
 	}
 
 	static equals = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -83,22 +83,22 @@ class NumberNatives {
 
 		Integer resultPtr = heap.createBool(boolClassPtr,(byte) ( num1 == num2 ? 1 : 0 ))
 		stackFrame.methodStack.push(resultPtr)
-	null
+		null
 	}
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-	null
+		null
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-	null
+		null
 	}
 
 	static init = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-	null
+		null
 	}
 
 	static toS ={ StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -107,6 +107,6 @@ class NumberNatives {
 		Integer num = heap.intFromNumberObject(numPtr)
 		Integer stringPtr = heap.createString(stringClassPtr, num.toString())
 		stackFrame.methodStack.push(stringPtr)
-	null
+		null
 	}
 }
