@@ -163,7 +163,7 @@ class Interpreter {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
-		Integer stringClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
+		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 
 		// get new number value
 		Integer constPoolPtr = currentStackFrame.currentPointer
@@ -172,7 +172,7 @@ class Interpreter {
 		Integer newNumberValue = parseInteger(ClassAccessHelper.getConstantPoolValue(heap, classPtr,constPoolPtr))
 
 		// number object initialization on heap
-		Integer newObjectPtr = heap.createNumber(stringClassPtr, newNumberValue)
+		Integer newObjectPtr = heap.createNumber(numberClassPtr, newNumberValue)
 		currentStackFrame.methodStack.add(newObjectPtr)
 
 		currentStackFrame.incrementBP(Instruction.INIT_NUM.params)

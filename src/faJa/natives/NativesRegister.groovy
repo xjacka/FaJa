@@ -14,6 +14,7 @@ class NativesRegister {
 	        'ifFalse(1)Number' : NumberNatives.ifFalse,
 	        'init(1)Number' : NumberNatives.init,
 	        'toS(0)Number' : NumberNatives.toS,
+	        'times(1)Number' : NumberNatives.times,
 
 	        'length(0)String' : StringNatives.length,
 	        '==(1)String' : StringNatives.equals,
