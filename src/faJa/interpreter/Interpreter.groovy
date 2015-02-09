@@ -201,6 +201,16 @@ class Interpreter {
 
 		// object initialization on heap
 		Integer newObjectPtr = heap.createObject(classOfNewObjectPtr)
+
+		// todo fixme
+		//initialize all fields to null
+		Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
+		Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+		fieldsCount.times {
+			ObjectAccessHelper.setNewValue(heap,newObjectPtr,it,nullPointer)
+		}
+
 		currentStackFrame.methodStack.add(newObjectPtr)
 
 		currentStackFrame.incrementBP(Instruction.INIT.params)

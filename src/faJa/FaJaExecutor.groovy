@@ -1,7 +1,9 @@
 package faJa
 
+import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
+import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 
@@ -25,6 +27,15 @@ class FaJaExecutor {
 		interpreter = new Interpreter(heap,stack,classLoader)
 
 		def ptr = classLoader.findClass(heap, className)
+
+//		//initialize all fields to null
+		Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,ptr)
+		Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+		Integer mainObjectPointer = classLoader.singletonRegister.get(className)
+		fieldsCount.times {
+			ObjectAccessHelper.setNewValue(heap,mainObjectPointer,it,nullPointer)
+		}
 
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
 		if(mainPtr == null){
