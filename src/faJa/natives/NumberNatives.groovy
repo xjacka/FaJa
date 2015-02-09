@@ -2,6 +2,7 @@ package faJa.natives
 
 import faJa.Heap
 import faJa.compilator.Compiler
+import faJa.helpers.ClosureHelper
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -87,13 +88,53 @@ class NumberNatives {
 	}
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisIntegerPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
-		null
+		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
+		if(integerValue != 0) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			return newStackFrame
+		}else{
+			return null
+		}
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisIntegerPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
-		null
+		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
+		if(integerValue == 0) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			return newStackFrame
+		}else{
+			return null
+		}
 	}
 
 	static init = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->

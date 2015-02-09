@@ -3,6 +3,7 @@ package faJa.natives
 import faJa.ClassLoader
 import faJa.Heap
 import faJa.compilator.Compiler
+import faJa.helpers.ClosureHelper
 import faJa.interpreter.StackFrame
 
 class NullNatives {
@@ -43,11 +44,22 @@ class NullNatives {
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisPtr = stackFrame.methodStack.pop()
+		Integer thisNullPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
-		// call closure
+		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+		Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
-		null
+		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+		StackFrame newStackFrame = new StackFrame()
+		newStackFrame.parent = stackFrame
+		newStackFrame.bytecodePtr = 0
+		newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+		newStackFrame.locals = []
+		newStackFrame.methodStack = []
+		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+		return newStackFrame
 	}
 }

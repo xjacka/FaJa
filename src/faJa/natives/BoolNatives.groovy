@@ -2,6 +2,9 @@ package faJa.natives
 
 import faJa.Heap
 import faJa.compilator.Compiler
+import faJa.exceptions.InterpretException
+import faJa.helpers.ClassAccessHelper
+import faJa.helpers.ClosureHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.helpers.ObjectInitHelper
 import faJa.interpreter.StackFrame
@@ -26,14 +29,54 @@ class BoolNatives {
 		null
 	}
 
-	static ifTrue = {
+	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisBoolPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
-		null
+		Boolean boolValue = heap.boolFromBoolObject(thisBoolPtr)
+		if(boolValue) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			return newStackFrame
+		}else{
+			return null
+		}
 	}
 
-	static ifFalse = {
+	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisBoolPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
-		null
+		Boolean boolValue = heap.boolFromBoolObject(thisBoolPtr)
+		if(!boolValue) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			return newStackFrame
+		}else{
+			return null
+		}
 	}
 
 	static and = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
