@@ -8,6 +8,9 @@ class PrecompiledInstruction {
 	Integer paramVal
 
 	List<Byte> constructParams(List<Integer> constPoolIndexes) {
+		if(instruction.params != 0 && paramVal == null){
+			throw new InstructionException("Instruction " + instruction.name() + " must have some parametr")
+		}
 		if(instruction.params == 0){
 			return []
 		}

@@ -352,7 +352,7 @@ class Compiler {
 				inst.instruction = Instruction.STORE
 				inst.paramVal = locals.get(assignmentVar)
 				if(inst.paramVal == null){
-					throw new CompilerException('local variable "' + assignmentVar + '" not found')
+					throw new CompilerException("Not fount local variable '" + assignmentVar + "' for " + expr + " in class " + classFile.className)
 				}
 				instructionList.add(inst)
 			}
@@ -388,6 +388,9 @@ class Compiler {
 				def loadInst = new PrecompiledInstruction()
 				loadInst.instruction = Instruction.LOAD
 				loadInst.paramVal = locals.get(argName)
+				if(loadInst.paramVal == null){
+					throw new CompilerException("Not fount local variable '" + argName + "' for " + expr + " in class " + classFile.className)
+				}
 				instructionList.add(loadInst)
 			}
 		}
@@ -610,7 +613,7 @@ class Compiler {
 				inst.instruction = Instruction.STORE
 				inst.paramVal = locals.get(assignmentVar)
 				if(inst.paramVal == null){
-					throw new CompilerException('local variable "' + assignmentVar + '" not found')
+					throw new CompilerException("Not fount local variable '" + assignmentVar + "' for " + expr + " in class " + classFile.className)
 				}
 				instructions.add(inst)
 			}
