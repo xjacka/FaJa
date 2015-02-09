@@ -19,6 +19,7 @@ object Main
 			var cl
 
 			cl <- Main2.new
+			sum <- "ahoj"
 			cl.foo(sum)
             sum <- self:b.+(self:c)
 
@@ -32,16 +33,16 @@ object Main
 	            cl2 <- null
 	            sOut.out(cl2)
 
-:-)	            cl2 <- {
-:-)	                var x
-:-)	                x <- "ahoj"
-:-)	                sOut.out(x)
-:-)	            }
-:-)
-:-)	            cl2.call()
+	            cl2 <- {
+	                var x
+	                x <- "ahoj"
+	                sOut.out(x)
+	            }
+
+	            cl2.call()
 	        }
 
-:-)	        cl <- self:closure
+	        cl <- self:closure
             self:closure.call(self:b,self:c)
 		end
 	endMethods

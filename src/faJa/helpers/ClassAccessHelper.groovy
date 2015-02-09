@@ -121,6 +121,9 @@ class ClassAccessHelper {
 	}
 
 	static List findMethodWithSuper(Heap heap, Integer ptr, String signature, ClassLoader classLoader) {
+		if(ptr == null){
+			throw new InterpretException("Can not invoke method on null object")
+		}
 		def methodPtr = findMethod(heap,ptr,signature)
 		while(methodPtr == null && getName(heap,ptr) != Compiler.DEFAULT_PARENT){
 			String parentName = getParent(heap,ptr)

@@ -280,6 +280,9 @@ class Interpreter {
 			reversedArgList.push(currentStackFrame.methodStack.pop())
 		}
 
+		if(targetClassPtr == null){
+			throw new InterpretException("Can not invoke method '"+methodSignature+"' on object with " + targetClassPtr + " class")
+		}
 		List resultPair = ClassAccessHelper.findMethodWithSuper(heap, targetClassPtr, methodSignature,classLoader)
 		Integer methodPtr = resultPair[1]
 		if(methodPtr == null){
