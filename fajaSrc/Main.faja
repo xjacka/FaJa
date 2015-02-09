@@ -7,8 +7,17 @@ object Main
 	methods
 
 		def main()
-			self:b <- 2
-		    self:c <- 4
+			self:b <- 5
+			self:c <- null
+:-)			self:c <- 10
+			var a,b,result, sOut
+			sOut <- SystemIO.new
+
+			a <- 2
+		    b <- 4
+
+			result <- a.+(b).*(a)
+			sOut.out(result)
 		    bar()
 		end
 
@@ -22,24 +31,27 @@ object Main
 			sum <- "ahoj"
 			cl.foo(sum)
             sum <- self:b.+(self:c)
+            sOut.out(sum)
 
 	        self:closure <- { a, b |
-                var cl2
+                var cl2, cl3, result
 
                 sOut.out(a)
                 sOut.out(b)
 	            sOut.out(sum)
 
+				cl3 <- null
 	            cl2 <- null
 	            sOut.out(cl2)
 
-	            cl2 <- {
-	                var x
-	                x <- "ahoj"
-	                sOut.out(x)
-	            }
+:-)	            cl2 <- {
+:-)	                var x
+:-)	                x <- "ahoj"
+:-)	                sOut.out(x)
+:-)	            }
 
-	            cl2.call()
+				result <- cl2.==(cl3)
+	            sOut.out(result)
 	        }
 
 	        cl <- self:closure

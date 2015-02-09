@@ -10,7 +10,7 @@ class NullInit extends BaseInit {
 				'Null',
 				'Object',
 				'==(1)',
-				'isNull(1)',
+				'isNull(0)',
 				'ifTrue(1)',
 				'ifFalse(1)',
 				'toS(0)'
