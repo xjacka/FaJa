@@ -3,6 +3,7 @@ package faJa.natives
 import faJa.ClassLoader
 import faJa.Heap
 import faJa.compilator.Compiler
+import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
 import faJa.interpreter.StackFrame
 
@@ -48,10 +49,14 @@ class NullNatives {
 		Integer closurePtr = stackFrame.methodStack.pop()
 
 		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 		Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
+		if(arguments > 1){
+			throw new InterpretException('Too much arguments for closure in method times(1)Number')
+		}
 		StackFrame newStackFrame = new StackFrame()
 		newStackFrame.parent = stackFrame
 		newStackFrame.bytecodePtr = 0

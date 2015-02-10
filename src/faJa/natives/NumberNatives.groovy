@@ -4,6 +4,7 @@ import faJa.Heap
 import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.compilator.Compiler
+import faJa.exceptions.InterpretException
 import faJa.helpers.ByteHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
@@ -99,9 +100,14 @@ class NumberNatives {
 		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
 		if(integerValue != 0) {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			if(arguments > 0){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
 
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -124,9 +130,14 @@ class NumberNatives {
 		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
 		if(integerValue == 0) {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			if(arguments > 0){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
 
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -163,6 +174,7 @@ class NumberNatives {
 		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
 		if(integerValue != 0) {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
@@ -178,7 +190,12 @@ class NumberNatives {
 				newStackFrame.locals = []
 				newStackFrame.methodStack = []
 				newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-				newStackFrame.locals.add(1,iterationCounter)
+				if(arguments == 1){
+					newStackFrame.locals.add(1,iterationCounter)
+				}
+				if(arguments > 1){
+					throw new InterpretException('Too much arguments for closure in method times(1)Number')
+				}
 				returnFrames.add(newStackFrame)
 			}
 			return returnFrames

@@ -55,10 +55,14 @@ class StringNatives {
 		String stringValue = heap.stringFromStringObject(thisStringPtr)
 		if(stringValue.trim() != '') {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
 			newStackFrame.bytecodePtr = 0
@@ -80,10 +84,14 @@ class StringNatives {
 		String stringValue = heap.stringFromStringObject(thisStringPtr)
 		if(stringValue.trim() == '') {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
 			newStackFrame.bytecodePtr = 0
