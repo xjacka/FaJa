@@ -28,6 +28,6 @@ class ClosureNatives {
 		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 		newStackFrame.locals.addAll(1, reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
 
-		newStackFrame
+		[newStackFrame]
 	}
 }

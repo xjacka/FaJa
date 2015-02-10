@@ -1,8 +1,13 @@
 package faJa.natives
 
 import faJa.Heap
+import faJa.Instruction
+import faJa.PrecompiledInstruction
 import faJa.compilator.Compiler
+import faJa.helpers.ByteHelper
+import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
+import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -106,7 +111,7 @@ class NumberNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return newStackFrame
+			return [newStackFrame]
 		}else{
 			return null
 		}
@@ -131,7 +136,7 @@ class NumberNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return newStackFrame
+			return [newStackFrame]
 		}else{
 			return null
 		}
@@ -149,5 +154,36 @@ class NumberNatives {
 		Integer stringPtr = heap.createString(stringClassPtr, num.toString())
 		stackFrame.methodStack.push(stringPtr)
 		null
+	}
+
+	static times = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisIntegerPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
+
+		Integer integerValue = heap.intFromNumberObject(thisIntegerPtr)
+		if(integerValue != 0) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			def returnFrames = []
+			integerValue.times {
+				def iterationCounter = heap.createNumber(classLoader.findClass(heap,Compiler.NUMBER_CLASS),it)
+
+				StackFrame newStackFrame = new StackFrame()
+				newStackFrame.parent = stackFrame
+				newStackFrame.bytecodePtr = 0
+				newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+				newStackFrame.locals = []
+				newStackFrame.methodStack = []
+				newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+				newStackFrame.locals.add(1,iterationCounter)
+				returnFrames.add(newStackFrame)
+			}
+			return returnFrames
+		}else{
+			return null
+		}
 	}
 }

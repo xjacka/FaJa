@@ -48,7 +48,7 @@ class BoolNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return newStackFrame
+			return [newStackFrame]
 		}else{
 			return null
 		}
@@ -73,7 +73,7 @@ class BoolNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return newStackFrame
+			return [newStackFrame]
 		}else{
 			return null
 		}

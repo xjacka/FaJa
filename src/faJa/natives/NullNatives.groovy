@@ -60,6 +60,6 @@ class NullNatives {
 		newStackFrame.methodStack = []
 		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-		return newStackFrame
+		return [newStackFrame]
 	}
 }

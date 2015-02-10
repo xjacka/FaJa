@@ -30,7 +30,7 @@ class Interpreter {
 			currentStackFrame.methodStack.pop()
 		}
 		else{
-			0
+			null
 		}
 
 	}
@@ -305,11 +305,15 @@ class Interpreter {
 			}
 			currentStackFrame.methodStack.push(targetObjectPtr)
 
-			StackFrame stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
+			def stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
 			if (stackFrame != null){
-				stack.add(stackFrame)
-				Integer result = interpret()
-				stack.last().methodStack.push(result)
+				stackFrame.each{ sf ->
+					stack.add(sf)
+					Integer result = interpret()
+					if(result != null){
+						stack.last().methodStack.push(result)
+					}
+				}
 			}
 			return
 		}
@@ -326,6 +330,8 @@ class Interpreter {
 
 		stack.add(newStackFrame)
 		Integer result = interpret()
-		stack.last().methodStack.push(result)
+		if(result != null){
+			stack.last().methodStack.push(result)
+		}
 	}
 }
