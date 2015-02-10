@@ -44,9 +44,9 @@ class ByteHelper {
 		i += unsignedValue(bytes[ptr])
 		i = i << 8
 		i += unsignedValue(bytes[ptr+1])
-		i = i << 16
+		i = i << 8
 		i += unsignedValue(bytes[ptr+2])
-		i = i << 24
+		i = i << 8
 		i += unsignedValue(bytes[ptr+3])
 		i
 	}

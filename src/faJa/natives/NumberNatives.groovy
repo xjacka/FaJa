@@ -181,8 +181,6 @@ class NumberNatives {
 
 			def returnFrames = []
 			integerValue.times {
-				def iterationCounter = heap.createNumber(classLoader.findClass(heap,Compiler.NUMBER_CLASS),it)
-
 				StackFrame newStackFrame = new StackFrame()
 				newStackFrame.parent = stackFrame
 				newStackFrame.bytecodePtr = 0
@@ -191,6 +189,7 @@ class NumberNatives {
 				newStackFrame.methodStack = []
 				newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 				if(arguments == 1){
+					Integer iterationCounter = heap.createNumber(classLoader.findClass(heap,Compiler.NUMBER_CLASS),it)
 					newStackFrame.locals.add(1,iterationCounter)
 				}
 				if(arguments > 1){
