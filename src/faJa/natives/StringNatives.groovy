@@ -1,13 +1,12 @@
 package faJa.natives
 
 import faJa.Heap
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
-import faJa.helpers.ClassAccessHelper
+import faJa.helpers.ClosureHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
-import org.omg.CORBA.ObjectHelper
 
 class StringNatives {
 
@@ -44,43 +43,75 @@ class StringNatives {
 				result = BoolNatives.TRUE
 			}
 		}
-		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compilator.BOOL_CLASS), result)
+		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), result)
 		stackFrame.methodStack.push(boolPtr)
 
 		null
 	}
-// todo
+
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisPtr = stackFrame.methodStack.pop()
+		Integer thisStringPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
-		if(heap.stringFromStringObject(thisPtr) != ''){
-			// call closure
-		}
+		String stringValue = heap.stringFromStringObject(thisStringPtr)
+		if(stringValue.trim() != '') {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
-		null
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			return [newStackFrame]
+		}else{
+			return null
+		}
 	}
-// todo
+
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisPtr = stackFrame.methodStack.pop()
+		Integer thisStringPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
+		String stringValue = heap.stringFromStringObject(thisStringPtr)
+		if(stringValue.trim() == '') {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
 
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
-		if(heap.stringFromStringObject(thisPtr) == ''){
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			}
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			// call closure
+			return [newStackFrame]
+		}else{
+			return null
 		}
-
-
-		null
 	}
 
 	static length = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer thisPtr = stackFrame.methodStack.pop()
 		Integer size = heap.getPointer(thisPtr + Heap.SLOT_SIZE)
 
-		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compilator.NUMBER_CLASS), size)
+		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compiler.NUMBER_CLASS), size)
 		stackFrame.methodStack.push(resultPtr)
 
 		null

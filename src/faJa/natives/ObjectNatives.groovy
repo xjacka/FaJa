@@ -1,15 +1,18 @@
 package faJa.natives
 
 import faJa.Heap
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
+import faJa.helpers.ClassAccessHelper
+import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
 class ObjectNatives {
 
 	static toS ={ StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisPtr  =stackFrame.methodStack.pop()
-		Integer strPtr = heap.createString(classLoader.findClass(heap, Compilator.STRING_CLASS), 'Object@' + thisPtr) //
+		Integer thisPtr = stackFrame.methodStack.pop()
+		String objectClassName = ClassAccessHelper.getName(heap, ObjectAccessHelper.getClassPointer(heap, thisPtr))
+		Integer strPtr = heap.createString(classLoader.findClass(heap, Compiler.STRING_CLASS), objectClassName + '@' + thisPtr)
 		stackFrame.methodStack.push(strPtr)
 
 		null
@@ -24,14 +27,15 @@ class ObjectNatives {
 		}else{
 			result = BoolNatives.FALSE
 		}
-		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compilator.BOOL_CLASS), result)
+		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), result)
 		stackFrame.methodStack.push(boolPtr)
 
 		null
 	}
+
 	static isNull = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		stackFrame.methodStack.pop()
-		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compilator.BOOL_CLASS), BoolNatives.FALSE)
+		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), BoolNatives.FALSE)
 		stackFrame.methodStack.push(boolPtr)
 
 		null

@@ -19,7 +19,8 @@ class NumberInit extends BaseInit {
 				'ifTrue(1)',
 				'ifFalse(1)',
 				'init(1)',
-				'toS(0)'
+				'toS(0)',
+				'times(1)'
 		]
 		classFile.fields = []
 
@@ -72,5 +73,10 @@ class NumberInit extends BaseInit {
 		def toS = new PrecompiledMethod()
 		toS.signatureIndex = 11
 		classFile.methods.add(toS)
+
+//		Method times(1) - Native
+		def times = new PrecompiledMethod()
+		times.signatureIndex = 12
+		classFile.methods.add(times)
 	}
 }

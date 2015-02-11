@@ -5,7 +5,7 @@ import faJa.helpers.ClassAccessHelper
 
 class Heap {
 
-	byte [] heap = new byte[100000]
+	byte [] heap = new byte[65536]
 	Integer insertIndex = 0
 	public static final SLOT_SIZE = 2
 

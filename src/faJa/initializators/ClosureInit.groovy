@@ -10,7 +10,7 @@ class ClosureInit extends BaseInit{
 		classFile.constantPool = [
 		        'Closure',
 				'Object',
-				'call(1)'
+				'call(0)'
 		]
 
 		classFile.fields = []

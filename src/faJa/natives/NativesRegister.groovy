@@ -14,6 +14,7 @@ class NativesRegister {
 	        'ifFalse(1)Number' : NumberNatives.ifFalse,
 	        'init(1)Number' : NumberNatives.init,
 	        'toS(0)Number' : NumberNatives.toS,
+	        'times(1)Number' : NumberNatives.times,
 
 	        'length(0)String' : StringNatives.length,
 	        '==(1)String' : StringNatives.equals,
@@ -34,9 +35,9 @@ class NativesRegister {
 	        'readFromFile(2)SystemIO' : SystemIONatives.readFromFile,
 	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
 
-	        'call(1)Closure' : ClosureNatives.call,
+	        'call(0)Closure' : ClosureNatives.call,
 
-	        'equals(1)Object' : ObjectNatives.equals,
+	        '==(1)Object' : ObjectNatives.equals,
 	        'toS(0)Object' : ObjectNatives.toS,
 	        'isNull(0)Object' : ObjectNatives.isNull,
 

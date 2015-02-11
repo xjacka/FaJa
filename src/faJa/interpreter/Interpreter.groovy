@@ -3,7 +3,7 @@ package faJa.interpreter
 import faJa.Heap
 import faJa.Instruction
 import faJa.ClassLoader
-import faJa.compilator.Compilator
+import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.MethodHelper
@@ -143,7 +143,7 @@ class Interpreter {
 
 	def processPushNull() {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
-		Integer nullPtr = classLoader.singletonRegister.get(Compilator.NULL_CLASS)
+		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		currentStackFrame.methodStack.push(nullPtr)
 	}
 
@@ -151,7 +151,7 @@ class Interpreter {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		Integer initClassPtr = ObjectAccessHelper.getClassPointer(heap, currentStackFrame.thisInst)
-		Integer closureClassPtr = classLoader.findClass(heap, Compilator.CLOSURE_CLASS)
+		Integer closureClassPtr = classLoader.findClass(heap, Compiler.CLOSURE_CLASS)
 		Integer closureIdx = currentStackFrame.currentByte
 		currentStackFrame.incrementBP(Instruction.INIT_CLOSURE.params)
 		Integer newClosurePtr = heap.createClosure(closureClassPtr, initClassPtr, closureIdx)
@@ -164,7 +164,7 @@ class Interpreter {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
-		Integer stringClassPtr = classLoader.findClass(heap, Compilator.NUMBER_CLASS)
+		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 
 		// get new number value
 		Integer constPoolPtr = currentStackFrame.currentPointer
@@ -173,7 +173,7 @@ class Interpreter {
 		Integer newNumberValue = parseInteger(ClassAccessHelper.getConstantPoolValue(heap, classPtr,constPoolPtr))
 
 		// number object initialization on heap
-		Integer newObjectPtr = heap.createNumber(stringClassPtr, newNumberValue)
+		Integer newObjectPtr = heap.createNumber(numberClassPtr, newNumberValue)
 		currentStackFrame.methodStack.add(newObjectPtr)
 
 		currentStackFrame.incrementBP(Instruction.INIT_NUM.params)
@@ -199,8 +199,22 @@ class Interpreter {
 		String classOfNewObject = ClassAccessHelper.getConstantPoolValue(heap, classPtr,constPoolPtr)
 		Integer classOfNewObjectPtr = classLoader.findClass(heap, classOfNewObject)
 
-		// object initialization on heap
-		Integer newObjectPtr = heap.createObject(classOfNewObjectPtr)
+		Integer newObjectPtr
+		if(classLoader.singletonRegister.containsKey(classOfNewObject)){
+			newObjectPtr = classLoader.singletonRegister.get(classOfNewObject)
+		} else{
+			// object initialization on heap
+			newObjectPtr = heap.createObject(classOfNewObjectPtr)
+
+			//initialize all fields to null
+			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
+			Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			fieldsCount.times { field ->
+				ObjectAccessHelper.setNewValue(heap,newObjectPtr,field * Heap.SLOT_SIZE,nullPointer)
+			}
+		}
+
 		currentStackFrame.methodStack.add(newObjectPtr)
 
 		currentStackFrame.incrementBP(Instruction.INIT.params)
@@ -210,7 +224,7 @@ class Interpreter {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
-		Integer boolClassPtr = classLoader.findClass(heap, Compilator.BOOL_CLASS)
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
 
 		// get new bool value
 		Integer constPoolPtr = currentStackFrame.currentPointer
@@ -227,10 +241,10 @@ class Interpreter {
 	}
 
 	private parseByte(String toParse){
-		if(toParse == Compilator.TRUE_STRING_VALUE){
+		if(toParse == Compiler.TRUE_STRING_VALUE){
 			return 1
 		}
-		if(toParse == Compilator.FALSE_STRING_VALUE){
+		if(toParse == Compiler.FALSE_STRING_VALUE){
 			return 0
 		}
 		throw new InterpretException('parse bool from constant pool failed')
@@ -240,7 +254,7 @@ class Interpreter {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
-		Integer stringClassPtr = classLoader.findClass(heap, Compilator.STRING_CLASS)
+		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
 
 		// get new string value
 		Integer constPoolPtr = currentStackFrame.currentPointer
@@ -277,6 +291,9 @@ class Interpreter {
 			reversedArgList.push(currentStackFrame.methodStack.pop())
 		}
 
+		if(targetClassPtr == null){
+			throw new InterpretException("Can not invoke method '"+methodSignature+"' on object with " + targetClassPtr + " class")
+		}
 		List resultPair = ClassAccessHelper.findMethodWithSuper(heap, targetClassPtr, methodSignature,classLoader)
 		Integer methodPtr = resultPair[1]
 		if(methodPtr == null){
@@ -290,12 +307,16 @@ class Interpreter {
 			}
 			currentStackFrame.methodStack.push(targetObjectPtr)
 
-			nativeMethod.call(currentStackFrame, heap, classLoader)
-//			if (stackFrame != null){
-//				stack.add(stackFrame)
-//				Integer result = interpret()
-//				stack.last().methodStack.push(result)
-//			}
+			def stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
+			if (stackFrame != null){
+				stackFrame.each{ sf ->
+					stack.add(sf)
+					Integer result = interpret()
+					if(result != null){
+						stack.last().methodStack.push(result)
+					}
+				}
+			}
 			return
 		}
 
