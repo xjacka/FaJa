@@ -37,7 +37,7 @@ class NativesRegister {
 
 	        'call(0)Closure' : ClosureNatives.call,
 
-	        'equals(1)Object' : ObjectNatives.equals,
+	        '==(1)Object' : ObjectNatives.equals,
 	        'toS(0)Object' : ObjectNatives.toS,
 	        'isNull(0)Object' : ObjectNatives.isNull,
 
