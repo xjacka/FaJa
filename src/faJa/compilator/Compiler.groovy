@@ -108,6 +108,10 @@ class Compiler {
 			if(classNameSplit.size() == 1){
 				classFile.constantPool.add(DEFAULT_PARENT)
 			}else{
+				ArrayList<String> nativeClass = [STRING_CLASS, NULL_CLASS, NUMBER_CLASS, BOOL_CLASS, CLOSURE_CLASS, SYSTEMIO_CLASS]
+				if(nativeClass.contains(classNameSplit[1])){
+					throw new CompilerException('Could not extend class from default class ' + classNameSplit[1])
+				}
 				classFile.constantPool.add(classNameSplit[1])
 			}
 
