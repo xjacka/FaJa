@@ -25,7 +25,8 @@ class StringNatives {
 		}
 
 		String result  = heap.stringFromStringObject(thisPtr) + heap.stringFromStringObject(otherStringPtr)
-		heap.createString(stringClassPtr, result)
+		Integer newStringPtr = heap.createString(stringClassPtr, result)
+		stackFrame.methodStack.push(newStringPtr)
 
 		null
 	}
@@ -86,7 +87,7 @@ class StringNatives {
 	}
 
 	static toS ={ StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		// empty, leaves
+		// empty, leaves string arg on stack
 		null
 	}
 }

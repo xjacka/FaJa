@@ -9,8 +9,6 @@ class FaJaExecutor {
 
 	Heap heap
 	ClassLoader classLoader
-	List<StackFrame> stack
-	Interpreter interpreter
 
 	static final MAIN_METHOD_SIGNATURE = 'main(0)'
 
@@ -21,8 +19,6 @@ class FaJaExecutor {
 
 		heap = new Heap()
 		classLoader = new ClassLoader(heap, workingDir)
-		stack = new ArrayList<>()
-		interpreter = new Interpreter(heap,stack,classLoader)
 
 		def ptr = classLoader.findClass(heap, className)
 
@@ -42,8 +38,6 @@ class FaJaExecutor {
 		mainStackFrame.methodStack = [] // todo size in method
 		mainStackFrame.parent = null
 
-		stack.add(mainStackFrame)
-
-		interpreter.interpret()
+		new Interpreter(heap, mainStackFrame, classLoader).interpret()
 	}
 }

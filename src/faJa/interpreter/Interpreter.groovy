@@ -12,30 +12,31 @@ import faJa.natives.NativesRegister
 
 class Interpreter {
 	Heap heap
-	List<StackFrame> stack
+//	List<StackFrame> stack
 	ClassLoader classLoader
-
+	StackFrame currentStackFrame
 	static final Integer INSTRUCTION_SIZE = 1
 
-	Interpreter(Heap heap, List<StackFrame> stack, ClassLoader classLoader){
+	Interpreter(Heap heap, StackFrame stackFrame, ClassLoader classLoader){
 		this.heap = heap
-		this.stack = stack
+		this.currentStackFrame = stackFrame
+//		this.stack = stack
 		this.classLoader = classLoader
 	}
 
-	Integer interpret(){
-		def currentStackFrame = stack.last()
-		processStackFrame(currentStackFrame)
-		if(!currentStackFrame.methodStack.empty) {
-			currentStackFrame.methodStack.pop()
-		}
-		else{
-			0
-		}
+//	Integer interpret(){
+//		def currentStackFrame = stack.last()
+//		processStackFrame(currentStackFrame)
+//		if(!currentStackFrame.methodStack.empty) {
+//			currentStackFrame.methodStack.pop()
+//		}
+//		else{
+//			0
+//		}
+//
+//	}
 
-	}
-
-	def processStackFrame(StackFrame currentStackFrame){
+	def interpret(){
 		while(currentStackFrame.bytecode.length > currentStackFrame.bytecodePtr){
 			switch(currentStackFrame.currentByte){
 				case Instruction.INIT_BOOL.id:
@@ -73,11 +74,17 @@ class Interpreter {
 					break
 			}
 		}
-		stack.pop()
+		if(currentStackFrame.parent){
+			try {
+				currentStackFrame.parent.methodStack.push(currentStackFrame.methodStack.pop())
+			}catch (Exception e){
+				e.printStackTrace()
+				throw InterpretException('return value exception')
+			}
+		}
 	}
 
 	def processGetfield() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get field name
@@ -99,7 +106,6 @@ class Interpreter {
 	}
 
 	def processPutfield() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get field name
@@ -122,7 +128,6 @@ class Interpreter {
 	}
 
 	def processLoad() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 		Integer localIdx = currentStackFrame.currentByte
 		currentStackFrame.methodStack.add(currentStackFrame.locals[localIdx])
@@ -130,7 +135,6 @@ class Interpreter {
 	}
 
 	def processStore() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 		Integer localIdx = currentStackFrame.currentByte
 		currentStackFrame.locals[localIdx] = currentStackFrame.methodStack.pop()
@@ -138,14 +142,12 @@ class Interpreter {
 	}
 
 	def processPushNull() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 		Integer nullPtr = classLoader.singletonRegister.get(Compilator.NULL_CLASS)
 		currentStackFrame.methodStack.push(nullPtr)
 	}
 
 	def processInitClosure() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		Integer initClassPtr = ObjectAccessHelper.getClassPointer(heap, currentStackFrame.thisInst)
@@ -159,7 +161,6 @@ class Interpreter {
 	}
 
 	def processInitNum() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
@@ -189,7 +190,6 @@ class Interpreter {
 	}
 
 	def processInit() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
@@ -207,7 +207,6 @@ class Interpreter {
 	}
 
 	def processInitBool() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
@@ -238,7 +237,6 @@ class Interpreter {
 	}
 
 	def processInitString() {
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to class of new object
@@ -259,7 +257,6 @@ class Interpreter {
 
 	// method invoke: first loads arguments on stack and then target object pointer
 	def processInvoke(){
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get target object class
@@ -293,12 +290,12 @@ class Interpreter {
 			}
 			currentStackFrame.methodStack.push(targetObjectPtr)
 
-			StackFrame stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
-			if (stackFrame != null){
-				stack.add(stackFrame)
-				Integer result = interpret()
-				stack.last().methodStack.push(result)
-			}
+			nativeMethod.call(currentStackFrame, heap, classLoader)
+//			if (stackFrame != null){
+//				stack.add(stackFrame)
+//				Integer result = interpret()
+//				stack.last().methodStack.push(result)
+//			}
 			return
 		}
 
@@ -312,8 +309,6 @@ class Interpreter {
 		newStackFrame.methodStack = []
 		newStackFrame.bytecode = MethodHelper.getBytecode(heap, methodPtr)
 
-		stack.add(newStackFrame)
-		Integer result = interpret()
-		stack.last().methodStack.push(result)
+		new Interpreter(heap, newStackFrame, classLoader).interpret()
 	}
 }

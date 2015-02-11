@@ -18,7 +18,7 @@ class SystemIONatives {
 
 	static innerOut = { StackFrame currentStackFrame, Heap heap, ClassLoader classLoader ->
 		currentStackFrame.methodStack.pop()
-		Integer stringPtr = currentStackFrame.methodStack.pop()
+		Integer stringPtr = currentStackFrame.methodStack.last() // pop and push
 		println(heap.stringFromStringObject(stringPtr))
 
 		null

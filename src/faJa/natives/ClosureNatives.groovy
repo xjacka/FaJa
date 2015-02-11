@@ -2,6 +2,7 @@ package faJa.natives
 
 import faJa.Heap
 import faJa.helpers.ClosureHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -28,6 +29,6 @@ class ClosureNatives {
 		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 		newStackFrame.locals.addAll(1, reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
 
-		newStackFrame
+		new Interpreter(heap, newStackFrame, classLoader).interpret()
 	}
 }

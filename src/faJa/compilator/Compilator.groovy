@@ -177,7 +177,7 @@ class Compilator {
 				i++
 			}
 			else{
-				result = compileClosure(code, i, classFile, definitions, locals)
+				result = compileClosure(code, i, classFile, createArgsForClosure(definitions , argList),  locals)
 				method.instructions.addAll(result[0])
 				i = result[1]
 
@@ -462,7 +462,16 @@ class Compilator {
 		}
 		locals
 	}
-
+	def createArgsForClosure(List<String> definitions,List<String> argList){
+		def locals = []
+		argList.each { arg ->
+			locals.add( arg )
+		}
+		getDefinitionsList(definitions).each { arg ->
+			locals.add( arg )
+		}
+		locals
+	}
 	def getDefinitionsList(List<String> linesOfDefinitions){
 		def result = []
 		linesOfDefinitions.each{ line ->
@@ -490,12 +499,11 @@ class Compilator {
 
 	/// ------------------- Closure compiler methods ----------------------------
 
-	def compileClosure(List<String> code, Integer codePtr, ClassFile classFile, List<String> linesOfDefinitions, Map locals) {
+	def compileClosure(List<String> code, Integer codePtr, ClassFile classFile, List<String> parentLocalList, Map locals) {
 		List instructions = []
 
 		Integer closureIdx = classFile.closures.size()
 		List<String> lineSplit = code[codePtr].split(ASSIGNMENT_OP)
-		List<String> definitions = getDefinitionsList(linesOfDefinitions)
 		String assignmentVar = lineSplit[0].trim()
 		String closureArgs = lineSplit[1].substring(lineSplit[1].indexOf(CLOSURE_OPEN_KEYWORD)+1,lineSplit[1].indexOf(CLOSURE_PARAMS_END_KEYWORD) - 1)
 		List<String> args = closureArgs.split(ARGUMENT_SEPARATOR).collect{ it.trim() }
@@ -529,7 +537,7 @@ class Compilator {
 //		args.addAll(definitions)
 
 		// create closure bytecode
-		classFile.closures.add(createClosure(classFile, closureIdx, args, definitions, closureBody))
+		classFile.closures.add(createClosure(classFile, closureIdx, args, parentLocalList, closureBody))
 
 
 		// create instruction to init closure
@@ -599,7 +607,7 @@ class Compilator {
 				i++
 			}
 			else{
-				result = compileClosure(code, i,  classFile, definitions, locals)
+				result = compileClosure(code, i,  classFile, createArgsForClosure(definitions, argList), locals)
 				closure.instructions.addAll(result[0])
 				i = result[1]
 
