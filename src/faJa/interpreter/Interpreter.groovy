@@ -199,15 +199,20 @@ class Interpreter {
 		String classOfNewObject = ClassAccessHelper.getConstantPoolValue(heap, classPtr,constPoolPtr)
 		Integer classOfNewObjectPtr = classLoader.findClass(heap, classOfNewObject)
 
-		// object initialization on heap
-		Integer newObjectPtr = heap.createObject(classOfNewObjectPtr)
+		Integer newObjectPtr
+		if(classLoader.singletonRegister.containsKey(classOfNewObject)){
+			newObjectPtr = classLoader.singletonRegister.get(classOfNewObject)
+		} else{
+			// object initialization on heap
+			newObjectPtr = heap.createObject(classOfNewObjectPtr)
 
-		//initialize all fields to null
-		Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
-		Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
-		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
-		fieldsCount.times { field ->
-			ObjectAccessHelper.setNewValue(heap,newObjectPtr,field * 2,nullPointer)
+			//initialize all fields to null
+			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
+			Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			fieldsCount.times { field ->
+				ObjectAccessHelper.setNewValue(heap,newObjectPtr,field * Heap.SLOT_SIZE,nullPointer)
+			}
 		}
 
 		currentStackFrame.methodStack.add(newObjectPtr)
