@@ -34,7 +34,7 @@ class FaJaExecutor {
 		Integer nullObjectPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer mainObjectPointer = classLoader.singletonRegister.get(className)
 		fieldsCount.times { field ->
-			ObjectAccessHelper.setNewValue(heap, mainObjectPointer, field * 2, nullObjectPointer)
+			ObjectAccessHelper.setNewValue(heap, mainObjectPointer, field * Heap.SLOT_SIZE, nullObjectPointer)
 		}
 
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
