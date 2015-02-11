@@ -29,6 +29,7 @@ class Compiler {
 	public static final String NUMBER_CLASS = 'Number'
 	public static final String BOOL_CLASS = 'Bool'
 	public static final String CLOSURE_CLASS = 'Closure'
+	public static final String ARRAY_CLASS = 'Array'
 	public static final String NULL_CLASS = 'Null'
 	public static final String NULL_KEYWORD = 'null'
 	public static final String SYSTEMIO_CLASS = 'SystemIO'
@@ -493,11 +494,17 @@ class Compiler {
 	}
 
 	List<PrecompiledInstruction> processCreateObject(String expr, List<String> constantPool){
-		String className= expr.replace(CONSTRUCTOR_INVOKE_NAME,'')
-		Integer classIdx = findIndex(className,constantPool)
-		def init = new PrecompiledInstruction()
-		init.instruction = Instruction.INIT
-		init.paramVal = classIdx
+		String className = expr.replace(CONSTRUCTOR_INVOKE_NAME,'')
+		PrecompiledInstruction init
+		if(className == ARRAY_CLASS){
+			init = new PrecompiledInstruction()
+			init.instruction = Instruction.INIT_ARRAY
+		} else {
+			Integer classIdx = findIndex(className, constantPool)
+			init = new PrecompiledInstruction()
+			init.instruction = Instruction.INIT
+			init.paramVal = classIdx
+		}
 		[init]
 	}
 

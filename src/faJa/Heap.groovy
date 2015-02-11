@@ -1,7 +1,9 @@
 package faJa
 
+import faJa.compilator.Compiler
 import faJa.helpers.ByteHelper
 import faJa.helpers.ClassAccessHelper
+import faJa.helpers.ObjectAccessHelper
 
 class Heap {
 
@@ -128,6 +130,45 @@ class Heap {
 		heap[insertIndex++] = bytesOfInitClass[0]
 		heap[insertIndex++] = bytesOfInitClass[1]
 		heap[insertIndex++] = closureIdx.byteValue()
+
+		objectPtr
+	}
+
+	Integer createArray(Integer arrayClassPtr, Integer size, Integer initializeObjectPointer) {
+		// creates pointer to Array class
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(arrayClassPtr)
+		Integer objectPtr = insertIndex
+		heap[insertIndex++] = bytesOfClassPtr[0]
+		heap[insertIndex++] = bytesOfClassPtr[1]
+
+		// creates index of last array value
+		byte [] lastInsertedIndex = ByteHelper.IntegerTo2Bytes(0)
+		heap[insertIndex++] = lastInsertedIndex[0]
+		heap[insertIndex++] = lastInsertedIndex[1]
+
+		// save pointer to pointer to array
+		Integer saveInsertIndex = insertIndex
+		insertIndex += Heap.SLOT_SIZE
+		byte [] arrayPointer = ByteHelper.IntegerTo2Bytes(createArrayObject(size,initializeObjectPointer))
+		heap[saveInsertIndex] = arrayPointer[0]
+		heap[saveInsertIndex+1] = arrayPointer[1]
+
+		objectPtr
+	}
+
+	private Integer createArrayObject(Integer size, Integer initializeObjectPointer) {
+		Integer objectPtr = insertIndex
+
+		// insert length of initialized array
+		byte [] arraySize = ByteHelper.IntegerTo2Bytes(size)
+		heap[insertIndex++] = arraySize[0]
+		heap[insertIndex++] = arraySize[1]
+
+		// insert pointers to null object into array
+		size.times {
+			setPointer(insertIndex,initializeObjectPointer)
+			insertIndex += Heap.SLOT_SIZE
+		}
 
 		objectPtr
 	}

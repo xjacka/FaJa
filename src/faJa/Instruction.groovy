@@ -31,7 +31,8 @@ enum Instruction {
 	INIT_STRING(7, 2),  // create string object without constructor
 	INIT_BOOL(8, 2),    // create bool object without constructor
 	PUSH_NULL(9, 0),    // push null object to stack
-	INIT_CLOSURE(10, 1) // create closure
+	INIT_CLOSURE(10, 1),// create closure
+	INIT_ARRAY(11, 0)   // create array with default length
 
 	Instruction(int id, int params) {
 		this.id = id

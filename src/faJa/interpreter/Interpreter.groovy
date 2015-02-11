@@ -16,6 +16,7 @@ class Interpreter {
 	ClassLoader classLoader
 
 	static final Integer INSTRUCTION_SIZE = 1
+	static final Integer DEFAULT_ARRAY_SIZE = 50
 
 	Interpreter(Heap heap, List<StackFrame> stack, ClassLoader classLoader){
 		this.heap = heap
@@ -71,6 +72,10 @@ class Interpreter {
 				case Instruction.STORE.id:
 					processStore()
 					break
+				case Instruction.INIT_ARRAY.id:
+					processInitArray()
+					break
+				default: throw new InterpretException("Unexpected instruction found")
 			}
 		}
 		stack.pop()
@@ -176,6 +181,19 @@ class Interpreter {
 		currentStackFrame.methodStack.add(newObjectPtr)
 
 		currentStackFrame.incrementBP(Instruction.INIT_NUM.params)
+	}
+
+	def processInitArray(){
+		StackFrame currentStackFrame = stack.last()
+		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
+
+		// get pointer to array class
+		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
+
+		// array object initialization on heap
+		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+		Integer newObjectPtr = heap.createArray(arrayClassPtr, DEFAULT_ARRAY_SIZE, nullPointer)
+		currentStackFrame.methodStack.add(newObjectPtr)
 	}
 
 	private parseInteger(String toParse){
