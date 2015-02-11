@@ -19,6 +19,13 @@ class NumberNatives {
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
 
+		// todo controll all object parents
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		if(Compiler.NUMBER_CLASS != class2){
+			throw new InterpretException("Can not invoke method .+(1) on " + Compiler.NUMBER_CLASS + " with argument of type " + class2)
+		}
+
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
 
@@ -33,6 +40,13 @@ class NumberNatives {
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
 
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		if(Compiler.NUMBER_CLASS != class2){
+			throw new InterpretException("Can not invoke method .-(1) on " + Compiler.NUMBER_CLASS + " with argument of type " + class2)
+		}
+
+
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
 
@@ -45,6 +59,12 @@ class NumberNatives {
 		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
+
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		if(Compiler.NUMBER_CLASS != class2){
+			throw new InterpretException("Can not invoke method .*(1) on " + Compiler.NUMBER_CLASS + " with argument of type " + class2)
+		}
 
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
@@ -59,6 +79,12 @@ class NumberNatives {
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
 
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		if(Compiler.NUMBER_CLASS != class2){
+			throw new InterpretException("Can not invoke method ./(1) on " + Compiler.NUMBER_CLASS + " with argument of type " + class2)
+		}
+
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
 
@@ -71,6 +97,12 @@ class NumberNatives {
 		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
+
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		if(Compiler.NUMBER_CLASS != class2){
+			throw new InterpretException("Can not invoke method .%(1) on " + Compiler.NUMBER_CLASS + " with argument of type " + class2)
+		}
 
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
@@ -88,7 +120,16 @@ class NumberNatives {
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
 
-		Integer resultPtr = heap.createBool(boolClassPtr,(byte) ( num1 == num2 ? 1 : 0 ))
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
+
+		Integer resultPtr
+		if(Compiler.NUMBER_CLASS != class2){
+			resultPtr = heap.createBool(boolClassPtr,(byte) 0)
+		}
+		else{
+			resultPtr = heap.createBool(boolClassPtr,(byte) ( num1 == num2 ? 1 : 0 ))
+		}
+
 		stackFrame.methodStack.push(resultPtr)
 		null
 	}
