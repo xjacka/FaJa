@@ -46,7 +46,13 @@ class ArrayNatives {
 		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
 
 		if(index >= sizeOfInitializedArry){
-			throw new InterpretException("Array out of bound")
+			Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			Integer newArrayObjectPtr = heap.createArrayObject(index * 2,nullPtr) // resize 2x
+			ObjectAccessHelper.setNewValue(heap, arrayPtr, Heap.SLOT_SIZE, newArrayObjectPtr)
+			index.times {
+				heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE)))
+			}
+			arrayObjectPtr = newArrayObjectPtr
 		}
 
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,index * Heap.SLOT_SIZE,addingItemPtr)
@@ -71,7 +77,13 @@ class ArrayNatives {
 		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
 
 		if(index >= sizeOfInitializedArry){
-			throw new InterpretException("Array out of bound")
+			Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			Integer newArrayObjectPtr = heap.createArrayObject(itemIndex + 10,nullPtr) // resize to insert index + 10
+			ObjectAccessHelper.setNewValue(heap, arrayPtr, Heap.SLOT_SIZE, newArrayObjectPtr)
+			index.times {
+				heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE)))
+			}
+			arrayObjectPtr = newArrayObjectPtr
 		}
 
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,itemIndex * Heap.SLOT_SIZE,addingItemPtr)
@@ -105,9 +117,10 @@ class ArrayNatives {
 
 		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
 
-		if(index == 0){
+		if(index <= 0){
 			throw new InterpretException("Array out of bound")
 		}
+
 		index -= 1
 		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,index * Heap.SLOT_SIZE)
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,index * Heap.SLOT_SIZE,classLoader.singletonRegister.get(Compiler.NULL_CLASS))

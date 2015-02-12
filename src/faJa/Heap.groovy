@@ -27,9 +27,11 @@ class Heap {
 	def getByte(Integer ptr){
 		heap[ptr] // should return unsigned ??
 	}
+
 	Integer getUnsignedByte(Integer ptr){
 		ByteHelper.unsignedValue(heap[ptr])
 	}
+
 	def setPointer(Integer ptr, Integer newVal){
 		def bytes = ByteHelper.IntegerTo2Bytes(newVal)
 		heap[ptr] = bytes[0]
@@ -156,7 +158,7 @@ class Heap {
 		objectPtr
 	}
 
-	private Integer createArrayObject(Integer size, Integer initializeObjectPointer) {
+	Integer createArrayObject(Integer size, Integer initializeObjectPointer) {
 		Integer objectPtr = insertIndex
 
 		// insert length of initialized array
