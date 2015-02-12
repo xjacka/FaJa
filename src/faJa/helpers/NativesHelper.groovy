@@ -1,15 +1,14 @@
 package faJa.helpers
 
 import faJa.Heap
-import faJa.Instruction
-import faJa.PrecompiledInstruction
 import faJa.exceptions.InterpretException
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.natives.NativesRegister
 
 class NativesHelper {
 
-	static callMethodFromNative(Heap heap, StackFrame parentStackFrame, Integer objectPtr, String methodSignature, faJa.ClassLoader classLoader){
+	static callMethodFromNative(Heap heap, StackFrame parentStackFrame, Integer objectPtr, String methodSignature, faJa.ClassLoader classLoader,List reversedArgList = []){
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap,objectPtr)
 		def resultPair = ClassAccessHelper.findMethodWithSuper(heap,classPtr,methodSignature,classLoader)
 
@@ -27,22 +26,16 @@ class NativesHelper {
 			return
 		}
 
-//		byte [] instructions = new byte[2]
-//
-//		PrecompiledInstruction invokeInst = new PrecompiledInstruction()
-//		invokeInst.instruction = Instruction.INVOKE
-//		invokeInst.paramVal = 0
-//
-//		instructions[0] = invokeInst.instruction.id
-//		instructions[1] = invokeInst.paramVal.byteValue()
-//
-//		StackFrame newStackFrame = new StackFrame()
-//		newStackFrame.parent = parentStackFrame
-//		newStackFrame.bytecodePtr = 0
-//		newStackFrame.bytecode = instructions
-//		newStackFrame.locals = []
-//		newStackFrame.methodStack = [objectPtr]
-//		newStackFrame.locals.addAll(parentStackFrame.locals) // insert current context
+		StackFrame newStackFrame = new StackFrame()
+		newStackFrame.parent = parentStackFrame
+		newStackFrame.bytecodePtr = 0
+		newStackFrame.bytecode = MethodHelper.getBytecode(heap, methodPtr)
+		newStackFrame.locals = [objectPtr]
+		newStackFrame.locals.addAll(reversedArgList.reverse())
+		newStackFrame.methodStack = []
 
+		parentStackFrame.methodStack.push(objectPtr)
+
+		new Interpreter(heap, newStackFrame, classLoader).interpret()
 	}
 }

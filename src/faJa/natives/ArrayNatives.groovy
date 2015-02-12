@@ -25,7 +25,7 @@ class ArrayNatives {
 		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
 		Integer arrayPtr = stackFrame.methodStack.pop()
 
-		String arrayStr = "["
+		List<String> arrayStr = []
 		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
 
 		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
@@ -34,11 +34,10 @@ class ArrayNatives {
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'toS(0)',classLoader)
 			Integer itemStrPtr = stackFrame.methodStack.pop()
 			String itemStr = heap.stringFromStringObject(itemStrPtr)
-			arrayStr += itemStr + ', '
+			arrayStr += itemStr
 		}
-		arrayStr += "]"
 
-		Integer stringPtr = heap.createString(stringClassPtr, arrayStr.toString())
+		Integer stringPtr = heap.createString(stringClassPtr, "[" + arrayStr.join(", ") + "]")
 		stackFrame.methodStack.push(stringPtr)
 
 		null
