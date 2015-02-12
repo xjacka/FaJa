@@ -12,7 +12,9 @@ import faJa.exceptions.CompilerException
 class Assigment implements Expression{
 	String assignee
 	Expression assigned
-
+	public Assigment(String assignee){
+		this.assignee = assignee
+	}
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		if(!assigned){
@@ -29,6 +31,6 @@ class Assigment implements Expression{
 
 	@Override
 	String toString(){
-		assigned + ' <- ' + assigned.toString()
+		assignee + ' <- ' + assigned.toString()
 	}
 }

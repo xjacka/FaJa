@@ -43,7 +43,7 @@ class MethodCall implements Expression{
 
 	@Override
 	String toString(){
-		String res = '.' + methodName
+		String res = '.' + methodName + '(' + args.join(',') + ')'
 		if(nextMemberAccess){
 			res+= nextMemberAccess.toString()
 		}

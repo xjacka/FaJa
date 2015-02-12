@@ -1,6 +1,8 @@
 package faJa.tests
 
+import faJa.compilator.evaluation.Expression
 import faJa.compilator.parser.ClosureParser
+import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
 
 /**
@@ -59,6 +61,22 @@ class ParserTest {
 
 		ClosureParser closureParser = new ClosureParser()
 		assert closureParser.afterClosureEnd('   }  ') != null
+
+	}
+
+	def  testParsing(){
+		List<String> body = []
+		body.add('var a <- 5, b <- "test"')
+		body.add('self:test.call(1,2,true)')
+		body.add('self:test <- a.call()')
+		body.add('self:test <- null')
+
+		Code code = new Code(body)
+		Parser parser = new Parser()
+		List<Expression> expressionList = parser.parseCode(code)
+		expressionList.each{
+			println(it.toString())
+		}
 
 	}
 }

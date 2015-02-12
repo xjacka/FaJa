@@ -19,7 +19,7 @@ class ClosureParser extends Parser{
 				}
 				return expressionList
 			}
-			expressionList(parse(code.nextLine(), code))
+			expressionList.add(parse(code.nextLine(), code))
 		}
 	}
 

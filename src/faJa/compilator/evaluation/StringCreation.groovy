@@ -8,7 +8,7 @@ import faJa.compilator.LocalVariables
 /**
  * Created by Kamil on 12. 2. 2015.
  */
-class StringCreation {
+class StringCreation implements Expression {
 	String value
 	Expression memberAccess = null
 	public StringCreation(String value){

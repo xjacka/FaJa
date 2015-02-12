@@ -28,4 +28,5 @@ objectInitHelperTest.testNumber()
 
 
 ParserTest parserTest = new ParserTest()
-parserTest.testActionResolvers()
+//parserTest.testActionResolvers()
+parserTest.testParsing()

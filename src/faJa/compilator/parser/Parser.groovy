@@ -26,8 +26,9 @@ class Parser {
 	List<Expression> parseCode(Code code){
 		List<Expression> expressionList = []
 		while(code.hasNextLine()){
-			expressionList(parse(code.nextLine(), code))
+			expressionList.add(parse(code.nextLine(), code))
 		}
+		expressionList
 	}
 
 	Expression parse(String line, Code code){
@@ -41,19 +42,22 @@ class Parser {
 		// check string creation
 		if(startString(line) != null){
 			StringCreation stringCreation = new StringCreation(cleanString(line))
-			stringCreation.memberAccess = parse(line.substring(startString(line).length()))
+			String nextToken = line.substring(line.indexOf('"', startString(line).length())+ 1)
+			stringCreation.memberAccess = parse(nextToken, code)
 			return stringCreation
 		}
 		// check number creation
 		if(startNumber(line) != null){
 			NumberCreation numberCreation = new NumberCreation(cleanNumber(line))
-			numberCreation.memberAccess = parse(line.substring(startNumber(line).length()))
+			String nextToken = line.substring(startNumber(line).length())
+			numberCreation.memberAccess = parse(nextToken, code)
 			return numberCreation
 		}
 		// check bool creation
 		if(startBool(line) != null){
 			BoolCreation boolCreation = new BoolCreation(startBool(line))
-			boolCreation.memberAccess = parse(line.substring(startBool(line).length()))
+			String nextToken = line.substring(startBool(line).length())
+			boolCreation.memberAccess = parse(nextToken, code)
 			return boolCreation
 		}
 		// check closure creation
@@ -65,11 +69,12 @@ class Parser {
 		if(startDeclaration(line) != null){
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
 			if(hasDefinition(line)){
-				declaration.definition = new Assigment(declaration.varName)
-				declaration.definition.assigned = parse(line.substring(startDeclaration(line).length()))
+				String rest = skipToSameLevelComma(line)
+				String nextToken = line.substring(line.indexOf('var') + 'var'.length(), line.length() - rest.length())
+				declaration.definition = parse(nextToken, code)
 			}
 			if(nextDeclaration(line).trim() != '' ){
-				declaration.nextDeclaration = parse('var ' + nextDeclaration(line))
+				declaration.nextDeclaration = parse('var ' + nextDeclaration(line), code)
 			}
 			return declaration
 
@@ -78,33 +83,38 @@ class Parser {
 		if(startAssignment(line) != null){
 			Assigment result = new Assigment()
 			result.assignee = cleanAssignee(line)
-			result.assigned = parse(line.substring(line.indexOf(Compiler.ARGUMENT_SEPARATOR) + Compiler.ARGUMENT_SEPARATOR.length()))
+			String nextToken = line.substring(line.indexOf(Compiler.ASSIGNMENT_OP) + Compiler.ASSIGNMENT_OP.length())
+			result.assigned = parse(nextToken, code)
 			return result
 		}
 		// check field assignment
 		if(startFieldAssigment(line)){
 			FieldAssignment result = new FieldAssignment()
-			result.field = cleanFieldAssigmee(startAssignment(line))
-			result.assigned = parse(line.substring(line.indexOf(Compiler.ARGUMENT_SEPARATOR) + Compiler.ARGUMENT_SEPARATOR.length()))
+			result.field = cleanFieldAssignee(line)
+			String nextToken = line.substring(line.indexOf(Compiler.ASSIGNMENT_OP) + Compiler.ASSIGNMENT_OP.length())
+			result.assigned = parse(nextToken, code)
 			return result
 		}
 		// check objectCreation
 		if(startObjectCreation(line) != null){
 			ObjectCreation objectCreation = new ObjectCreation(cleanClassName(line))
-			objectCreation.memberAccess = parse(line.substring(startObjectCreation(line).length()))
+			String nextToken = line.substring(startObjectCreation(line).length())
+			objectCreation.memberAccess = parse(nextToken, code)
 			return objectCreation
 		}
 		// check objectAccess
 		if(startObject(line)){
 			ObjectAccess objectAccess = new ObjectAccess(cleanVarName(line))
-			objectAccess.memberAccess = parse(line.substring(startObject(line).length()))
+			String nextToken = line.substring(startObject(line).length())
+			objectAccess.memberAccess = parse(nextToken, code)
 			return objectAccess
 		}
 
 		// check field access
 		if(startAccessField(line)){
 			FieldAccess fieldAccess = new FieldAccess(cleanFieldName(line))
-			 fieldAccess.nextMemberAccess = parse(line.substring(startAccessField(line).length()))
+			String nextToken =line.substring(startAccessField(line).length())
+			fieldAccess.nextMemberAccess = parse(nextToken, code)
 			return fieldAccess
 		}
 
@@ -113,9 +123,10 @@ class Parser {
 			MethodCall methodCall = new MethodCall(cleanMethodName(line))
 			List<String> args = methodArgs(line)
 			args.each {
-				methodCall.args.add(parse(it))
+				methodCall.args.add(parse(it, code))
 			}
-			methodCall.nextMemberAccess = parse(line.substring(startMethodCall(line).length() + betweenParentheses(line).length() + ')'.length()))
+			String nextToken = line.substring(startMethodCall(line).length() + betweenParentheses(line).length() + ')'.length())
+			methodCall.nextMemberAccess = parse(nextToken, code)
 			return methodCall
 		}
 		throw new CompilerException('unexpected token on line: ' + line)
@@ -167,7 +178,7 @@ class Parser {
 	def startFieldAssigment(String line){
 		line.find(~/^ *(:[a-zA-Z0-9]*)? +<\-/)
 	}
-	def cleanFieldAssigmee(String line){
+	def cleanFieldAssignee(String line){
 		cleanAssignee(startFieldAssigment(line)).substring(1)
 	}
 	// field access
@@ -221,7 +232,11 @@ class Parser {
 		return true
 	}
 	def nextDeclaration(String line){
-		skipToSameLevelComma( line.substring(startDeclaration(line).length())).substring(1)
+		String rest = skipToSameLevelComma( line.substring(startDeclaration(line).length()))
+		if(rest == ''){
+			return ''
+		}
+		rest.substring(1)
 	}
 	def startDeclaration(String line){
 		String tmp = line.find(~/^ *var +[a-z]+[a-zA-Z0-9]*/)

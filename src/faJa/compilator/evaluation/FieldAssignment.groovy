@@ -31,7 +31,7 @@ class FieldAssignment implements Expression{
 
 	@Override
 	String toString(){
-		String res = field + ' <-'
+		String res = ':' + field + ' <- '
 		if(assigned){
 			res+= assigned.toString()
 		}
