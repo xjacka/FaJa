@@ -36,11 +36,11 @@ class StringNatives {
 		Integer otherPtr = stackFrame.methodStack.pop()
 
 		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
-		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
+		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, otherPtr)
 
 		Byte result = BoolNatives.FALSE
 		if(stringClassPtr == otherClassPtr){
-			if(heap.stringFromStringObject(thisPtr) == heap.stringFromStringObject(otherClassPtr)){
+			if(heap.stringFromStringObject(thisPtr) == heap.stringFromStringObject(otherPtr)){
 				result = BoolNatives.TRUE
 			}
 		}

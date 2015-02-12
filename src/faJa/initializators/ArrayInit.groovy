@@ -20,7 +20,8 @@ class ArrayInit extends BaseInit {
 				'get(1)',
 				'push(1)',
 				'pop(0)',
-				'top(0)'
+				'top(0)',
+				'size(0)'
 		]
 
 		classFile.fields = []
@@ -80,5 +81,9 @@ class ArrayInit extends BaseInit {
 		top.signatureIndex = 12
 		classFile.methods.add(top)
 
+//		Method size(0) - Native
+		def size = new PrecompiledMethod()
+		size.signatureIndex = 13
+		classFile.methods.add(size)
 	}
 }
