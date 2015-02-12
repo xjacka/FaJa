@@ -4,6 +4,7 @@ import faJa.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
+import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
@@ -16,12 +17,13 @@ class StringNatives {
 		Integer otherPtr = stackFrame.methodStack.pop()
 
 		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
-		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
+		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, otherPtr)
 
 		Integer otherStringPtr = otherPtr
 		if(stringClassPtr != otherClassPtr){
-			otherStringPtr = null // todo call to string  on other object
-			throw new InterpretException('argument of String::plus must be string')
+			NativesHelper.callMethodFromNative(heap,stackFrame,otherPtr,'toS(0)',classLoader)
+			otherStringPtr = stackFrame.methodStack.pop()
+//			throw new InterpretException('argument of String::plus must be string')
 		}
 
 		String result  = heap.stringFromStringObject(thisPtr) + heap.stringFromStringObject(otherStringPtr)
