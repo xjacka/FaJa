@@ -26,4 +26,13 @@ class BoolCreation implements Expression{
 		}
 		return result
 	}
+
+	@Override
+	String toString(){
+		String res = bool
+		if(memberAccess){
+			res+= memberAccess.toString()
+		}
+		res
+	}
 }

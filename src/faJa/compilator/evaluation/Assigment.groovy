@@ -26,4 +26,9 @@ class Assigment implements Expression{
 		result.add(inst)
 		return result
 	}
+
+	@Override
+	String toString(){
+		assigned + ' <- ' + assigned.toString()
+	}
 }

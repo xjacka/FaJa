@@ -39,4 +39,14 @@ class MethodCall implements Expression{
 	String getSignature(){
 		methodName + '(' + args.size() + ')'
 	}
+
+
+	@Override
+	String toString(){
+		String res = '.' + methodName
+		if(nextMemberAccess){
+			res+= nextMemberAccess.toString()
+		}
+		res
+	}
 }

@@ -30,4 +30,13 @@ class ObjectAccess implements Expression {
 		inst.paramVal = locals.findIndexByName(varName)
 		[inst]
 	}
+
+	@Override
+	String toString(){
+		String res = varName
+		if(memberAccess){
+			res+= memberAccess.toString()
+		}
+		res
+	}
 }

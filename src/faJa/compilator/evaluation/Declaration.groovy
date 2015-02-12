@@ -28,4 +28,20 @@ class Declaration implements Expression{
 		}
 		result
 	}
+
+	@Override
+	String toString(){
+		'var ' + toStringWithoutVar()
+	}
+
+	String toStringWithoutVar(){
+		String res = varName
+		if(definition){
+			res = definition.toString()
+		}
+		if(nextDeclaration){
+			res+= ', ' + nextDeclaration.toStringWithoutVar()
+		}
+		res
+	}
 }

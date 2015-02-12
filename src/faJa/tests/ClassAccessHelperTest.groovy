@@ -5,6 +5,7 @@ import faJa.Heap
 import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
+import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 
 class ClassAccessHelperTest {
@@ -28,6 +29,7 @@ class ClassAccessHelperTest {
 
 		def method3 = new PrecompiledMethod()
 		method3.signatureIndex = 6
+		method3.isNative = true
 
 		classFile.methods.add(method1)
 		classFile.methods.add(method2)
@@ -56,9 +58,13 @@ class ClassAccessHelperTest {
 
 		assert ClassAccessHelper.findFieldIndex(heap, offset, 'a' ) == 0
 		assert ClassAccessHelper.findFieldIndex(heap, offset, 'b' ) == 2
-
-		assert ClassAccessHelper.findFieldIndex(heap, offset, 'unkown' ) == null
-
+boolean  testSuccess = false
+try {
+	ClassAccessHelper.findFieldIndex(heap, offset, 'unkown') == null
+}catch(InterpretException e){
+	testSuccess = true
+}
+		assert testSuccess == true
 		assert ClassAccessHelper.getName(heap, offset) == 'TestClass'
 
 		assert ClassAccessHelper.getParent(heap, offset) == 'Object'

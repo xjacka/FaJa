@@ -24,6 +24,13 @@ class ClosureCreation implements Expression{
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<String> closureArgList = locals.asList()
+		List<PrecompiledInstruction> result = []
+		// load context on stack
+		closureArgList.each { localName ->
+			PrecompiledInstruction load = new PrecompiledInstruction()
+			load.instruction = Instruction.LOAD
+			load.paramVal = locals.findIndexByName(localName)
+		}
 		closureArgList.addAll(1, args)
 		List<PrecompiledInstruction> bytecode = new MethodCompiler().compileMethod(closureArgList,new ClosureParser(), code)
 		PrecompiledClosure precompiledClosure = new PrecompiledClosure()
@@ -36,6 +43,14 @@ class ClosureCreation implements Expression{
 		initClosureInst.instruction = Instruction.INIT_CLOSURE
 		initClosureInst.paramVal = closureIdx
 
-		[initClosureInst]
+		result.add(initClosureInst)
+
+		result
+	}
+
+	@Override
+	String toString(){
+		String res = '{' + args.join(',') + ' | ..closurebody.. }'
+		res
 	}
 }

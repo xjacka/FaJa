@@ -4,7 +4,7 @@ import faJa.ClassFile
 import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.compilator.LocalVariables
-import faJa.compilator.Compiler
+
 /**
  * Created by Kamil on 12. 2. 2015.
  */
@@ -20,7 +20,7 @@ class ObjectCreation implements Expression{
 
 	String className
 
-	MethodCall methodCall = null
+	MethodCall memberAccess = null
 
 	ObjectCreation(String className){
 		this.className = className
@@ -34,10 +34,17 @@ class ObjectCreation implements Expression{
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(className)
 		List<PrecompiledInstruction> result = [inst]
-		if(methodCall){
-			result.addAll(methodCall.eval(classFile, locals))
+		if(memberAccess){
+			result.addAll(memberAccess.eval(classFile, locals))
 		}
 		result
 	}
-
+	@Override
+	String toString(){
+		String res = className '.new'
+		if(memberAccess){
+			res+= memberAccess.toString()
+		}
+		res
+	}
 }
