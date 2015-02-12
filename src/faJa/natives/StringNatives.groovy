@@ -5,6 +5,7 @@ import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -72,7 +73,7 @@ class StringNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}else{
 			return null
 		}
@@ -101,7 +102,7 @@ class StringNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}else{
 			return null
 		}

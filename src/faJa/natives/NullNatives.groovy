@@ -5,6 +5,7 @@ import faJa.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 
 class NullNatives {
@@ -65,6 +66,7 @@ class NullNatives {
 		newStackFrame.methodStack = []
 		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-		return [newStackFrame]
+		new Interpreter(heap, newStackFrame, classLoader).interpret()
+		null
 	}
 }

@@ -1,5 +1,5 @@
 :-) Moje prvni trida a celkove druha
-class Main2 extends Number
+class Main2
 
 	methods
 		def foo(a)

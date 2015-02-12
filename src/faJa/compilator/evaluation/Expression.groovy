@@ -1,0 +1,12 @@
+package faJa.compilator.evaluation
+
+import faJa.ClassFile
+import faJa.PrecompiledInstruction
+import faJa.compilator.LocalVariables
+
+/**
+ * Created by Kamil on 11. 2. 2015.
+ */
+public interface Expression {
+	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals);
+}

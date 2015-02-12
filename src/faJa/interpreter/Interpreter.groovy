@@ -307,16 +307,7 @@ class Interpreter {
 			}
 			currentStackFrame.methodStack.push(targetObjectPtr)
 
-			def stackFrame = nativeMethod.call(currentStackFrame, heap, classLoader)
-			if (stackFrame != null){
-				stackFrame.each{ sf ->
-					stack.add(sf)
-					Integer result = interpret()
-					if(result != null){
-						stack.last().methodStack.push(result)
-					}
-				}
-			}
+			nativeMethod.call(currentStackFrame, heap, classLoader)
 			return
 		}
 

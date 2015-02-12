@@ -9,6 +9,7 @@ import faJa.helpers.ByteHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -158,7 +159,7 @@ class NumberNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}else{
 			return null
 		}
@@ -188,7 +189,7 @@ class NumberNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}else{
 			return null
 		}
@@ -238,7 +239,9 @@ class NumberNatives {
 				}
 				returnFrames.add(newStackFrame)
 			}
-			return returnFrames
+			returnFrames.each { StackFrame sf ->
+				new Interpreter(heap, sf, classLoader).interpret()
+			}
 		}else{
 			return null
 		}

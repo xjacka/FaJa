@@ -8,8 +8,8 @@ object Main
 
 		def main()
 			self:b <- 5
-			self:c <- null
-:-)			self:c <- 10
+:-)			self:c <- null
+			self:c <- 10
 			var a,b,result, sOut
 			sOut <- SystemIO.new
 
@@ -54,7 +54,12 @@ object Main
 	            sOut.out(result)
 	        }
 
-	        cl <- self:closure
+	        cl <- {
+	        	var s
+	        	s <- "test"
+	         	sOut.out(s)
+	        }
+	        self:c.times(cl)
             self:closure.call(self:b,self:c)
 		end
 	endMethods

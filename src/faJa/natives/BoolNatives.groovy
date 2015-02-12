@@ -7,6 +7,7 @@ import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.helpers.ObjectInitHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.ClassLoader
 
@@ -52,10 +53,9 @@ class BoolNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
-		}else{
-			return null
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
+		null
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -81,10 +81,10 @@ class BoolNatives {
 			newStackFrame.methodStack = []
 			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
-			return [newStackFrame]
-		}else{
-			return null
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
+
+		null
 	}
 
 	static and = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
