@@ -91,8 +91,37 @@ class ArrayNatives {
 	}
 
 	static each = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisArrayPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
-		null
+		Integer index = ObjectAccessHelper.valueOf(heap,thisArrayPtr,0)
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,thisArrayPtr,Heap.SLOT_SIZE)
+
+		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
+		Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			if(arguments == 1){
+				newStackFrame.locals.add(1,resultPtr)
+			}
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method each(1)Array')
+			}
+
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
+		}
 	}
 
 	static collect = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
