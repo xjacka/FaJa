@@ -1,7 +1,11 @@
 package faJa.compilator
 
 import faJa.ClassFile
+import faJa.PrecompiledInstruction
 import faJa.PrecompiledMethod
+import faJa.compilator.evaluation.Expression
+import faJa.compilator.parser.Code
+import faJa.compilator.parser.Parser
 import faJa.exceptions.CompilerException
 
 /**
@@ -12,42 +16,35 @@ class MethodCompiler {
 
 	def addSignitureToClassFile(String signature){
 		def signitureIndex = classFile.constantPool.size()
-		if(methods.contains(signature)) {
-			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
-		}
-		methods.add(signature)
+//		if(methods.contains(signature)) {
+//			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
+//		}
+//		methods.add(signature)
 		classFile.constantPool.add(signature)
 		signitureIndex
 	}
+
+	def compileMethod(List<String> argList,Parser parser,  Code code){
+		LocalVariables locals = new LocalVariables()
+		locals.addLocalVariables(argList)
+		List<Expression> expressionList = parser.parseCode(code)
+		List<PrecompiledInstruction> bytecode = []
+		expressionList.each { Expression ex ->
+			bytecode.addAll(ex.eval(classFile, locals))
+		}
+		return bytecode
+	}
 	// parse method body without start and end keyword
-	def compileMethod(String signature, List<String> argList, List<String> code){
+	def createMethod(String signature, List<String> argList, List<String> methodBody){
 		def method = new PrecompiledMethod()
 
 		Integer signitureIndex = addSignitureToClassFile(signature)
 		method.signatureIndex = signitureIndex
 
-		LocalVariables locals = new LocalVariables()
-		locals.addLocalVariables(argList)
+		Code code = new Code(methodBody)
+		method.instructions = compileMethod(argList, new Parser(), code)
 
-
-		for(int i=0; i < code.size();){
-			def result = compileLine(code[i], locals, classFile.constantPool)
-			if(result){
-				method.instructions.addAll(result)
-				i++
-			}
-			else{
-				result = compileClosure(code, i, classFile, createArgsForClosure(definitions , argList),  locals)
-				method.instructions.addAll(result[0])
-				i = result[1]
-
-			}
-		}
 		classFile.methods.add(method)
-	}
-
-	def initLocals(){
-
 	}
 
 }

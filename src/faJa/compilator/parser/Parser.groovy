@@ -1,14 +1,19 @@
 package faJa.compilator.parser
 
 import faJa.compilator.evaluation.Assigment
+import faJa.compilator.evaluation.BoolCreation
+import faJa.compilator.evaluation.ClosureCreation
 import faJa.compilator.evaluation.Declaration
 import faJa.compilator.evaluation.EmptyExpression
 import faJa.compilator.evaluation.Expression
 import  faJa.compilator.Compiler
 import faJa.compilator.evaluation.FieldAccess
+import faJa.compilator.evaluation.FieldAssignment
 import faJa.compilator.evaluation.MethodCall
+import faJa.compilator.evaluation.NumberCreation
 import faJa.compilator.evaluation.ObjectAccess
 import faJa.compilator.evaluation.ObjectCreation
+import faJa.compilator.evaluation.StringCreation
 import faJa.exceptions.CompilerException
 
 /**
@@ -16,18 +21,41 @@ import faJa.exceptions.CompilerException
  */
 class Parser {
 
-	enum EvalSituation {ASSINUMBER, STRING, BOOL, NULL, METHOD_CALL, CREATE_OBJECT, CLOSURE, VARIABLE, FIELD}
 
+	List<Expression> parseCode(Code code){
+		List<Expression> expressionList = []
+		while(code.hasNextLine()){
+			expressionList(parse(code.nextLine(), code))
+		}
+	}
 
-	def Expression parse(String line){
+	Expression parse(String line, Code code){
 		if(line.trim() == ''){
 			return new EmptyExpression()
 		}
 		// check string creation
-		// check string number
-		// check string bool
-		// check string closure
-
+		if(startString(line) != null){
+			StringCreation stringCreation = new StringCreation(cleanString(line))
+			stringCreation.memberAccess = parse(line.substring(startString(line).length()))
+			return stringCreation
+		}
+		// check number creation
+		if(startNumber(line) != null){
+			NumberCreation numberCreation = new NumberCreation(cleanNumber(line))
+			numberCreation.memberAccess = parse(line.substring(startNumber(line).length()))
+			return numberCreation
+		}
+		// check bool creation
+		if(startBool(line) != null){
+			BoolCreation boolCreation = new BoolCreation(cleanBool(line))
+			boolCreation.memberAccess = parse(line.substring(startBool(line).length()))
+			return boolCreation
+		}
+		// check closure creation
+		if(startClosure(line)){
+			List args = closureArgList(line)
+			return new ClosureCreation(args, code)
+		}
 		// check declaration
 		if(startDeclaration(line) != null){
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
@@ -45,7 +73,15 @@ class Parser {
 		if(startAssignment(line) != null){
 			Assigment result = new Assigment()
 			result.assignee = cleanAssignee(startAssignment(line))
-			result.assigned = parse(line.substring(line.indexOf(Compiler.ARGUMENT_SEPARATOR + Compiler.ARGUMENT_SEPARATOR.length())))
+			result.assigned = parse(line.substring(line.indexOf(Compiler.ARGUMENT_SEPARATOR) + Compiler.ARGUMENT_SEPARATOR.length()))
+			return result
+		}
+		// check field assignment
+
+		if(startFieldAssigment(line)){
+			FieldAssignment result = new FieldAssignment()
+			result.field = cleanFieldAssigmee(startAssignment(line))
+			result.assigned = parse(line.substring(line.indexOf(Compiler.ARGUMENT_SEPARATOR) + Compiler.ARGUMENT_SEPARATOR.length()))
 			return result
 		}
 		// check objectCreation
@@ -81,75 +117,112 @@ class Parser {
 		throw new CompilerException('unexpected token on line: ' + line)
 	}
 
-	// field assigment
-	private startFieldAssigment(String line){
-		line.find(~/$ *(:[a-zA-Z0-9]*)? +<\-/)
+	String cleanBool(def s) {
+
+		// todo
 	}
-	private cleanFieldAssigment(String line){
+
+	String startBool(def s) {
+// todo
 
 	}
+
+	def cleanString(def s) {
+// todo
+	}
+
+	def startString(String s) {
+// todo
+	}
+// closure creation
+	protected startClosure(String line){
+		line.find(~/$ *\{/)
+	}
+	protected closureArgList(String line){
+		if(line.indexOf('|') == -1){
+			return []
+		}
+		String args = line.substring(line.indexOf('{') + 1, line.indexOf('|'))
+		args.split(',').collect { it.trim() }
+	}
+	// number creation
+	protected startNumber(String line){
+		line.find(~/$ *[0-9]+/)
+	}
+	protected Integer cleanNumber(String line){
+		startNumber(line).trim().toInteger()
+	}
+
+	// field assigment
+	protected startFieldAssigment(String line){
+		line.find(~/$ *(:[a-zA-Z0-9]*)? +<\-/)
+	}
+	protected cleanFieldAssigmee(String line){
+		cleanAssignee(startFieldAssigment(line)).substring(1)
+	}
 	// field access
-	private startAccessField(String line){
+	protected startAccessField(String line){
 		line.find(~/$ *:[a-z]+[a-zA-Z0-9]*/)
 	}
-	private cleanFieldName(String line){
+	protected cleanFieldName(String line){
 		startAccessField(line).trim().substring(1)
 	}
 	// method call
-	private startMethodCall(String line){
+	protected startMethodCall(String line){
 		line.find(~/$ *\.[a-z]+[a-zA-Z0-9]*\(/)
 	}
-	private cleanMethodName(String line){
+	protected cleanMethodName(String line){
 		line.substring(line.indexOf('.') + 1, line.indexOf('('))
 	}
 	// ObjectCreation
-	private startObjectCreation(String line) {
+	protected startObjectCreation(String line) {
 		line.find(~/$ *[A-Z]+[a-zA-Z0-9]*\.new/)
 	}
-	private cleanClassName(String line){
+	protected cleanClassName(String line){
 		String tmp = startObjectCreation(line)
 		tmp.substring(0,tmp.length() - '.new'.length()).trim()
 	}
 // ObjectAccess
-	private startObject(String line){
+	protected startObject(String line){
 		line.find(~/$ *[a-z]+[a-zA-Z0-9]*/)
 	}
-	private cleanVarName(String line){
+	protected cleanVarName(String line){
 		line.find(~/$ *[a-z]+[a-zA-Z0-9]*/).trim()
 	}
 
 	/// Assignment
-	private cleanAssignee(String assignee){
+	protected cleanAssignee(String assignee){
 		assignee.substring(0, assignee.indexOf(Compiler.ARGUMENT_SEPARATOR)).trim()
 	}
-	private startAssignment(String line){
+	protected startAssignment(String line){
 		line.find(~/$ *[a-z]+[a-zA-Z0-9]* +<\-/)
 	}
 
 
 	/// Declaration
-	private cleanDeclaration(String declaration){
+	protected cleanDeclaration(String declaration){
 		declaration.substring(declaration.indexOf("var") + "var".length()).trim()
 	}
-	private hasDefinition(String line){
+	protected hasDefinition(String line){
 		String followingString = line.substring(startDeclaration(line).length()).trim()
 		if(followingString == "" || followingString.startsWith(',')){
 			return false
 		}
 		return true
 	}
-	private nextDeclaration(String line){
+	protected nextDeclaration(String line){
 		skipToSameLevelComma( line.substring(startDeclaration(line).length())).substring(1)
 	}
-	private startDeclaration(String line){
+	protected startDeclaration(String line){
 		line.find(~/$ *var +[a-z]+[a-zA-Z0-9]*/)
 	}
 
 	/// skip
-	private String skipToSameLevelComma(String line){
+	protected String skipToSameLevelComma(String line){
 		int openParentheses = 0
 		int closeParentheses = 0
 		int cntr = 0
+		// hledat v dalsi methode pokud se nenajdou na jednom radku?
 		while(cntr < line.length()){
 			if(line[cntr] == openParentheses){
 				openParentheses++
@@ -166,7 +239,7 @@ class Parser {
 	}
 
 	// method call
-	private List<String> methodArgs(String line){
+	protected List<String> methodArgs(String line){
 		String args = betweenParentheses(line).trim()
 		List<String> result = []
 		while(args != ''){
@@ -177,12 +250,13 @@ class Parser {
 		}
 		result
 	}
-	private String betweenParentheses(String line){
+	protected String betweenParentheses(String line){
 		Integer firstParenthesesIdx = line.indexOf('(')
 		line = line.substring(firstParenthesesIdx + 1)
 		int openParentheses = 1
 		int closeParentheses = 0
 		int cntr = 0
+		// hledat v dalsi methode pokud se nenajdou na jednom radku?
 		while(cntr < line.length()){
 			if(line[cntr] == openParentheses){
 				openParentheses++
