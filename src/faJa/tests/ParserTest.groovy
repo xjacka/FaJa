@@ -31,8 +31,8 @@ class ParserTest {
 		assert parser.startObject("    a5sdfsd5") != null
 		assert parser.cleanVarName("    a5sdfsd5") == 'a5sdfsd5'
 
-		assert parser.startFieldAssigment(':dasdasda <-') != null
-		assert parser.cleanFieldAssigmee(':dasdasda <-') == 'dasdasda'
+		assert parser.startFieldAssigment(':dasdasda <- asd ') != null
+		assert parser.cleanFieldAssignee(':dasdasda <- asd') == 'dasdasda'
 
 
 		assert parser.startAccessField('  :adsadadsa') != null
@@ -70,6 +70,7 @@ class ParserTest {
 		body.add('self:test.call(1,2,true)')
 		body.add('self:test <- a.call()')
 		body.add('self:test <- null')
+		body.add('self:test <- [ a, 2]')
 
 		Code code = new Code(body)
 		Parser parser = new Parser()

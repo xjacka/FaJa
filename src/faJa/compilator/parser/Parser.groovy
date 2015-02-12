@@ -1,5 +1,6 @@
 package faJa.compilator.parser
 
+import faJa.compilator.evaluation.ArrayCreation
 import faJa.compilator.evaluation.Assigment
 import faJa.compilator.evaluation.BoolCreation
 import faJa.compilator.evaluation.ClosureCreation
@@ -39,6 +40,16 @@ class Parser {
 		if(startNull(line)){
 			return new NullLoad()
 		}
+		// check array
+		if(startArray(line) != null){
+			String args = betweenParentheses(line, '[', ']')
+			List<String> argList = args.split(',').collect{it.trim()}
+			ArrayCreation arrayCreation = new ArrayCreation(argList)
+			String nextToken = line.substring(line.indexOf(']') + 1 )
+			arrayCreation.memberAccess = parse(nextToken, code)
+			return arrayCreation
+		}
+
 		// check string creation
 		if(startString(line) != null){
 			StringCreation stringCreation = new StringCreation(cleanString(line))
@@ -154,6 +165,11 @@ class Parser {
 
 	def startString(String line) {
 		line.find(~/^ *"/)
+	}
+
+	// closure array
+	def startArray(String line){
+		line.find(~/^ *\[/)
 	}
 // closure creation
 	def startClosure(String line){
@@ -282,18 +298,18 @@ class Parser {
 		}
 		result
 	}
-	def String betweenParentheses(String line){
-		Integer firstParenthesesIdx = line.indexOf('(')
+	def String betweenParentheses(String line, String open = '(', String close = ')'){
+		Integer firstParenthesesIdx = line.indexOf(open)
 		line = line.substring(firstParenthesesIdx + 1)
 		int openParentheses = 1
 		int closeParentheses = 0
 		int cntr = 0
 		// hledat v dalsi methode pokud se nenajdou na jednom radku?
 		while(cntr < line.length()){
-			if(line[cntr] == openParentheses){
+			if(line[cntr] == open){
 				openParentheses++
 			}
-			if(line[cntr] == closeParentheses){
+			if(line[cntr] == close){
 				closeParentheses++
 			}
 			if(openParentheses == closeParentheses){
@@ -301,6 +317,6 @@ class Parser {
 			}
 			cntr++
 		}
-		line.substring(0, cntr-1)
+		line.substring(0, cntr)
 	}
 }
