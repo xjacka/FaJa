@@ -65,7 +65,7 @@ class StringNatives {
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 			if(arguments > 1){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+				throw new InterpretException('Too much arguments for closure in method iftrue(1)String')
 			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -94,7 +94,7 @@ class StringNatives {
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 			if(arguments > 1){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+				throw new InterpretException('Too much arguments for closure in method ifFalse(1)String')
 			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
