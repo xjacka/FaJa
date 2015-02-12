@@ -26,7 +26,9 @@ class LocalVariables {
 	}
 
 	List<String> asList(){
-		localVariables
+		List newList = []
+		newList.addAll(localVariables)
+		return newList
 	}
 
 	Integer findIndexByName(String name){
