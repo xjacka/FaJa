@@ -31,8 +31,8 @@ class ParserTest {
 		assert parser.startObject("    a5sdfsd5") != null
 		assert parser.cleanVarName("    a5sdfsd5") == 'a5sdfsd5'
 
-		assert parser.startFieldAssigment(':dasdasda <-') != null
-		assert parser.cleanFieldAssigmee(':dasdasda <-') == 'dasdasda'
+		assert parser.startFieldAssigment(':dasdasda <- asd ') != null
+		assert parser.cleanFieldAssignee(':dasdasda <- asd') == 'dasdasda'
 
 
 		assert parser.startAccessField('  :adsadadsa') != null
