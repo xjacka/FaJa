@@ -254,4 +254,29 @@ class ArrayNatives {
 		stackFrame.methodStack.push(resultPtr)
 		null
 	}
+
+	static contains = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer arrayPtr = stackFrame.methodStack.pop()
+		Integer objectPtr = stackFrame.methodStack.pop()
+
+		Byte result = 0
+		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+
+			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'==(1)',classLoader,[objectPtr])
+			Integer compareResult = stackFrame.methodStack.pop()
+
+			if(heap.boolFromBoolObject(compareResult) == true){
+				result = 1
+				return
+			}
+		}
+
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
+		Integer resultPtr = heap.createBool(boolClassPtr, result)
+		stackFrame.methodStack.push(resultPtr)
+		null
+	}
 }

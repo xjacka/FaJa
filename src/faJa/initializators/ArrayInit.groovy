@@ -21,7 +21,8 @@ class ArrayInit extends BaseInit {
 				'push(1)',
 				'pop(0)',
 				'top(0)',
-				'size(0)'
+				'size(0)',
+				'contains(1)'
 		]
 
 		classFile.fields = []
@@ -85,5 +86,10 @@ class ArrayInit extends BaseInit {
 		def size = new PrecompiledMethod()
 		size.signatureIndex = 13
 		classFile.methods.add(size)
+
+//		Method contains(1) - Native
+		def contains = new PrecompiledMethod()
+		contains.signatureIndex = 14
+		classFile.methods.add(contains)
 	}
 }
