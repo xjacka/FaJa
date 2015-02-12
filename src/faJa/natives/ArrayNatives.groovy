@@ -127,6 +127,10 @@ class ArrayNatives {
 
 	}
 
+	static select = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+
+	}
+
 	static add1 = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer arrayPtr = stackFrame.methodStack.pop()
 		Integer addingItemPtr = stackFrame.methodStack.pop()

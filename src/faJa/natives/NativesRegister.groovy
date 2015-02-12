@@ -59,6 +59,7 @@ class NativesRegister {
 	        'pop(0)Array': ArrayNatives.pop,
 	        'top(0)Array': ArrayNatives.top,
 	        'size(0)Array': ArrayNatives.size,
-	        'contains(1)Array': ArrayNatives.contains
+	        'contains(1)Array': ArrayNatives.contains,
+	        'select(1)Array': ArrayNatives.select
 	]
 }
