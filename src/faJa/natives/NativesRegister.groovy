@@ -46,5 +46,17 @@ class NativesRegister {
 	        'ifTrue(1)Null' : NullNatives.ifTrue,
 	        'ifFalse(1)Null' : NullNatives.ifFalse,
 	        'toS(0)Null' : NullNatives.toS,
+
+	        'ifTrue(1)Array': ArrayNatives.ifTrue,
+	        'ifFalse(1)Array': ArrayNatives.ifFalse,
+	        'toS(0)Array': ArrayNatives.toS,
+	        'each(1)Array': ArrayNatives.each,
+	        'collect(1)Array': ArrayNatives.collect,
+	        'add(1)Array': ArrayNatives.add1,
+	        'add(2)Array': ArrayNatives.add2,
+	        'get(1)Array': ArrayNatives.get,
+	        'push(1)Array': ArrayNatives.push,
+	        'pop(0)Array': ArrayNatives.pop,
+	        'top(0)Array': ArrayNatives.top
 	]
 }

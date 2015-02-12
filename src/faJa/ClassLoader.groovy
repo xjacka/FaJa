@@ -2,6 +2,7 @@ package faJa
 
 import faJa.compilator.Compiler
 import faJa.helpers.ClassAccessHelper
+import faJa.initializators.ArrayInit
 import faJa.initializators.BoolInit
 import faJa.initializators.ClosureInit
 import faJa.initializators.NullInit
@@ -27,16 +28,25 @@ class ClassLoader {
 	def init(Heap heap){
 		Integer pointer = heap.load(new ObjectInit().toBytecode())
 		classRegister.put(Compiler.DEFAULT_PARENT,pointer)
+
 		pointer = heap.load(new BoolInit().toBytecode())
 		classRegister.put(Compiler.BOOL_CLASS,pointer)
+
 		pointer = heap.load(new NumberInit().toBytecode())
 		classRegister.put(Compiler.NUMBER_CLASS,pointer)
+
 		pointer = heap.load(new StringInit().toBytecode())
 		classRegister.put(Compiler.STRING_CLASS,pointer)
+
 		pointer = heap.load(new ClosureInit().toBytecode())
 		classRegister.put(Compiler.CLOSURE_CLASS,pointer)
+
 		pointer = heap.load(new SystemIOInit().toBytecode())
 		classRegister.put(Compiler.SYSTEMIO_CLASS,pointer)
+
+		pointer = heap.load(new ArrayInit().toBytecode())
+		classRegister.put(Compiler.ARRAY_CLASS,pointer)
+
 		pointer = heap.load(new NullInit().toBytecode())
 		classRegister.put(Compiler.NULL_CLASS,pointer)
 		Integer objPtr = heap.createObject(pointer)
