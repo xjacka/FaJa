@@ -20,7 +20,6 @@ class NumberNatives {
 		Integer num1Ptr = stackFrame.methodStack.pop()
 		Integer num2Ptr = stackFrame.methodStack.pop()
 
-		// todo controll all object parents
 		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,num2Ptr))
 
 		if(Compiler.NUMBER_CLASS != class2){

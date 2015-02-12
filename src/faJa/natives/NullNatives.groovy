@@ -55,7 +55,7 @@ class NullNatives {
 
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
-		if(arguments > 1){
+		if(arguments > 0){
 			throw new InterpretException('Too much arguments for closure in method times(1)Number')
 		}
 		StackFrame newStackFrame = new StackFrame()
