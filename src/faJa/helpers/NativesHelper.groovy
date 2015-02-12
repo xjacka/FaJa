@@ -20,6 +20,9 @@ class NativesHelper {
 			String nativeMethodClassName = ClassAccessHelper.getName(heap, resultPair[0]) // result[0] - pointer on class with method bytecode
 			Closure nativeMethod = NativesRegister.register.get(methodSignature + nativeMethodClassName)
 
+			reversedArgList.reverse().each{
+				parentStackFrame.methodStack.push(it)
+			}
 			parentStackFrame.methodStack.push(objectPtr)
 
 			nativeMethod.call(parentStackFrame, heap, classLoader)
