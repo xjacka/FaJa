@@ -4,9 +4,9 @@ import faJa.ClassLoader
 import faJa.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
-import faJa.helpers.ByteHelper
-import faJa.helpers.ClassAccessHelper
+import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 
 class ArrayNatives {
@@ -22,6 +22,24 @@ class ArrayNatives {
 	}
 
 	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
+		Integer arrayPtr = stackFrame.methodStack.pop()
+
+		String arrayStr = "["
+		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
+
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'toS(0)',classLoader)
+			Integer itemStrPtr = stackFrame.methodStack.pop()
+			String itemStr = heap.stringFromStringObject(itemStrPtr)
+			arrayStr += itemStr + ', '
+		}
+		arrayStr += "]"
+
+		Integer stringPtr = heap.createString(stringClassPtr, arrayStr.toString())
+		stackFrame.methodStack.push(stringPtr)
 
 		null
 	}
@@ -140,6 +158,25 @@ class ArrayNatives {
 
 		stackFrame.methodStack.push(resultPtr)
 
+		null
+	}
+
+	static size = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer arrayPtr = stackFrame.methodStack.pop()
+		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
+
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+		Integer items = 0
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			if(resultPtr != nullPtr){
+				items++
+			}
+		}
+		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
+		Integer resultPtr = heap.createNumber(numberClassPtr, items)
+		stackFrame.methodStack.push(resultPtr)
 		null
 	}
 }
