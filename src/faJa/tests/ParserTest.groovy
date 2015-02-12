@@ -70,6 +70,7 @@ class ParserTest {
 		body.add('self:test.call(1,2,true)')
 		body.add('self:test <- a.call()')
 		body.add('self:test <- null')
+		body.add('self:test <- [ a, 2]')
 
 		Code code = new Code(body)
 		Parser parser = new Parser()
