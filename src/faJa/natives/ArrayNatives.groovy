@@ -37,7 +37,7 @@ class ArrayNatives {
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
-		null
+		stackFrame.methodStack.push(thisArrayPtr)
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -65,7 +65,7 @@ class ArrayNatives {
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
-		null
+		stackFrame.methodStack.push(thisArrayPtr)
 	}
 
 	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -86,8 +86,6 @@ class ArrayNatives {
 
 		Integer stringPtr = heap.createString(stringClassPtr, "[" + arrayStr.join(", ") + "]")
 		stackFrame.methodStack.push(stringPtr)
-
-		null
 	}
 
 	static each = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -122,11 +120,11 @@ class ArrayNatives {
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
+		stackFrame.methodStack.push(thisArrayPtr)
 	}
 
 	static collect = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-		null
 	}
 
 	static add1 = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -154,8 +152,6 @@ class ArrayNatives {
 		ObjectAccessHelper.setNewValue(heap,arrayPtr,0,index)
 
 		stackFrame.methodStack.push(arrayPtr)
-
-		null
 	}
 
 	static add2 = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -184,7 +180,6 @@ class ArrayNatives {
 		ObjectAccessHelper.setNewValue(heap,arrayPtr,0,itemIndex+1)
 
 		stackFrame.methodStack.push(arrayPtr)
-		null
 	}
 
 	static get = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -196,8 +191,6 @@ class ArrayNatives {
 		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,indexValue * Heap.SLOT_SIZE)
 
 		stackFrame.methodStack.push(resultPtr)
-
-		null
 	}
 
 	static push = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -220,8 +213,6 @@ class ArrayNatives {
 		ObjectAccessHelper.setNewValue(heap,arrayPtr,0,index)
 
 		stackFrame.methodStack.push(resultPtr)
-
-		null
 	}
 
 	static top = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -232,8 +223,6 @@ class ArrayNatives {
 		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,(index - 1) * Heap.SLOT_SIZE)
 
 		stackFrame.methodStack.push(resultPtr)
-
-		null
 	}
 
 	static size = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -252,6 +241,29 @@ class ArrayNatives {
 		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 		Integer resultPtr = heap.createNumber(numberClassPtr, items)
 		stackFrame.methodStack.push(resultPtr)
-		null
+	}
+
+	static contains = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer arrayPtr = stackFrame.methodStack.pop()
+		Integer objectPtr = stackFrame.methodStack.pop()
+
+		Byte result = 0
+		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+
+			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'==(1)',classLoader,[objectPtr])
+			Integer compareResult = stackFrame.methodStack.pop()
+
+			if(heap.boolFromBoolObject(compareResult) == true){
+				result = 1
+				return
+			}
+		}
+
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
+		Integer resultPtr = heap.createBool(boolClassPtr, result)
+		stackFrame.methodStack.push(resultPtr)
 	}
 }
