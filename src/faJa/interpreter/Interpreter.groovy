@@ -185,7 +185,6 @@ class Interpreter {
 	}
 
 	def processInitArray(){
-		StackFrame currentStackFrame = stack.last()
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
 		// get pointer to array class

@@ -57,6 +57,7 @@ class NativesRegister {
 	        'get(1)Array': ArrayNatives.get,
 	        'push(1)Array': ArrayNatives.push,
 	        'pop(0)Array': ArrayNatives.pop,
-	        'top(0)Array': ArrayNatives.top
+	        'top(0)Array': ArrayNatives.top,
+	        'size(0)Array': ArrayNatives.size
 	]
 }

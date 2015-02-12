@@ -4,6 +4,7 @@ import faJa.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
+import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
@@ -16,12 +17,13 @@ class StringNatives {
 		Integer otherPtr = stackFrame.methodStack.pop()
 
 		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
-		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
+		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, otherPtr)
 
 		Integer otherStringPtr = otherPtr
 		if(stringClassPtr != otherClassPtr){
-			otherStringPtr = null // todo call to string  on other object
-			throw new InterpretException('argument of String::plus must be string')
+			NativesHelper.callMethodFromNative(heap,stackFrame,otherPtr,'toS(0)',classLoader)
+			otherStringPtr = stackFrame.methodStack.pop()
+//			throw new InterpretException('argument of String::plus must be string')
 		}
 
 		String result  = heap.stringFromStringObject(thisPtr) + heap.stringFromStringObject(otherStringPtr)
@@ -36,11 +38,11 @@ class StringNatives {
 		Integer otherPtr = stackFrame.methodStack.pop()
 
 		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
-		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
+		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, otherPtr)
 
 		Byte result = BoolNatives.FALSE
 		if(stringClassPtr == otherClassPtr){
-			if(heap.stringFromStringObject(thisPtr) == heap.stringFromStringObject(otherClassPtr)){
+			if(heap.stringFromStringObject(thisPtr) == heap.stringFromStringObject(otherPtr)){
 				result = BoolNatives.TRUE
 			}
 		}
@@ -62,8 +64,8 @@ class StringNatives {
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
-			if(arguments > 1){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			if(arguments > 0){
+				throw new InterpretException('Too much arguments for closure in method iftrue(1)String')
 			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -91,8 +93,8 @@ class StringNatives {
 
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
-			if(arguments > 1){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
+			if(arguments > 0){
+				throw new InterpretException('Too much arguments for closure in method ifFalse(1)String')
 			}
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
