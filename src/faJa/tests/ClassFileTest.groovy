@@ -16,7 +16,7 @@ class ClassFileTest {
 		byte[] bytecode = classFile.toByteCode()
 
 		// test class size
-		assert ByteHelper.bytesToIntAt(bytecode, 0) == 51
+		assert ByteHelper.bytesToIntAt(bytecode, 0) == 53
 
 		// test constant pool size
 		assert ByteHelper.bytesToIntAt(bytecode, 2) == 39

@@ -26,4 +26,14 @@ class NumberCreation implements Expression {
 		}
 		return result
 	}
+
+
+	@Override
+	String toString(){
+		String res = number
+		if(memberAccess){
+			res+= memberAccess.toString()
+		}
+		res
+	}
 }

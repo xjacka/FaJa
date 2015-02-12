@@ -27,4 +27,14 @@ class FieldAssignment implements Expression{
 		List<PrecompiledInstruction> result = assigned.eval(classFile, locals)
 		result.add(inst)
 	}
+
+
+	@Override
+	String toString(){
+		String res = field + ' <-'
+		if(assigned){
+			res+= assigned.toString()
+		}
+		res
+	}
 }

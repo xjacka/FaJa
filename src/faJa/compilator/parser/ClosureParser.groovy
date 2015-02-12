@@ -24,11 +24,11 @@ class ClosureParser extends Parser{
 	}
 
 
-	protected startsWithClosureEnd(String line){
-		line.find(~/$ *\}/) != null
+	def startsWithClosureEnd(String line){
+		line.find(~/^ *\}/) != null
 	}
 
-	protected afterClosureEnd(String line){
+	def afterClosureEnd(String line){
 		line.substring(line.indexOf('}') + 1).trim()
 	}
 }

@@ -26,4 +26,13 @@ class FieldAccess implements Expression{
 		}
 		result
 	}
+
+	@Override
+	String toString(){
+		String res = ':' + fieldName
+		if(nextMemberAccess){
+			res+= nextMemberAccess.toString()
+		}
+		res
+	}
 }

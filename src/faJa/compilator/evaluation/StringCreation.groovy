@@ -26,4 +26,12 @@ class StringCreation {
 		}
 		return result
 	}
+	@Override
+	String toString(){
+		String res = '"' + value +'"'
+		if(memberAccess){
+			res+= memberAccess.toString()
+		}
+		res
+	}
 }
