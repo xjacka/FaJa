@@ -26,6 +26,7 @@ class NativesRegister {
 	        'ifTrue(1)String' : StringNatives.ifTrue,
 	        'ifFalse(1)String' : StringNatives.ifFalse,
 	        'toS(0)String' : StringNatives.toS,
+	        'toNumber(0)String' : StringNatives.toNumber,
 
 	        '==(1)Bool' : BoolNatives.equals,
 	        'ifTrue(1)Bool' : BoolNatives.ifTrue,

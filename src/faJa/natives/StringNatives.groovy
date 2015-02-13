@@ -2,6 +2,7 @@ package faJa.natives
 
 import faJa.Heap
 import faJa.compilator.Compiler
+import faJa.exceptions.InputException
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClosureHelper
 import faJa.helpers.NativesHelper
@@ -66,7 +67,20 @@ class StringNatives {
 		stackFrame.methodStack.push(resultPtr)
 	}
 
-	static toS ={ StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		// empty, leaves string arg on stack
+	}
+
+	static toNumber = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisPtr = stackFrame.methodStack.pop()
+		String stringObj = heap.stringFromStringObject(thisPtr)
+
+		try {
+			Integer newNumberPtr = heap.createNumber(classLoader.findClass(heap, Compiler.NUMBER_CLASS), Integer.parseInt(stringObj))
+			stackFrame.methodStack.push(newNumberPtr)
+		}
+		catch (NumberFormatException e){
+			throw new InputException("String value can not be cast to Number")
+		}
 	}
 }
