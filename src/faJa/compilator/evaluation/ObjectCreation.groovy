@@ -31,12 +31,9 @@ class ObjectCreation implements Expression{
 //		if(buildingClassInit){}
 		PrecompiledInstruction inst  = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT
-		inst.paramVal = classFile.constantPool.size()
-		classFile.constantPool.add(className)
+		inst.paramVal = classFile.constantPool.add(className)
+
 		List<PrecompiledInstruction> result = []
-		if(memberAccess){
-			result.addAll(memberAccess.argEval(classFile, locals))
-		}
 		result.add(inst)
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
@@ -44,10 +41,7 @@ class ObjectCreation implements Expression{
 		result
 	}
 
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
+
 	@Override
 	String toString(){
 		String res = className + '.new'

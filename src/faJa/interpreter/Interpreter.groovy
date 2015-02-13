@@ -274,10 +274,6 @@ class Interpreter {
 	def processInvoke(){
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 
-		// get target object class
-		Integer targetObjectPtr = currentStackFrame.methodStack.pop()
-		Integer targetClassPtr = ObjectAccessHelper.getClassPointer(heap, targetObjectPtr)
-
 		// get method signature
 		Integer constPoolPtr = currentStackFrame.currentPointer
 		currentStackFrame.incrementBP(Instruction.INVOKE.params)
@@ -291,6 +287,10 @@ class Interpreter {
 		argsCount.times{
 			reversedArgList.push(currentStackFrame.methodStack.pop())
 		}
+
+		// get target object class
+		Integer targetObjectPtr = currentStackFrame.methodStack.pop()
+		Integer targetClassPtr = ObjectAccessHelper.getClassPointer(heap, targetObjectPtr)
 
 		if(targetClassPtr == null){
 			throw new InterpretException("Can not invoke method '"+methodSignature+"' on object with " + targetClassPtr + " class")

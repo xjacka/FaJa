@@ -56,11 +56,6 @@ class ClosureCreation implements Expression{
 	}
 
 	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
-
-	@Override
 	String toString(){
 		String res = '{' + args.join(',') + ' | \n'
 		body.each {

@@ -94,7 +94,7 @@ class ClassFile {
 	static CONST_POOL_START = 4
 	static SLOT_SIZE = 2
 
-	def constantPool = []
+	def constantPool = new ConstantPool()
 	def fields = []
 	def isSingleton = false
 	List<PrecompiledClosure> closures = []
@@ -107,21 +107,10 @@ class ClassFile {
 		// class size init
 		setClassSize(bytes, 0)
 
-		// constant pool size init
-		setConstantPoolSize(bytes, 0)
+		bytes.addAll(constantPool.toBytecode())
 
-		// constant pool
-		def lengths = constantPool.collect { String it ->
-			def length = it.bytes.length
-			bytes.addAll(ByteHelper.IntegerTo2Bytes(length))
-			bytes.addAll(it.bytes)
-			length + SLOT_SIZE
-		}
-		def constPoolSize = lengths.sum(0)
-		def constPoolIndexes = createPrefixSum(lengths).collect{ it + CONST_POOL_START}
-
-		// constant pool size set
-		setConstantPoolSize(bytes, constPoolSize)
+		def constPoolSize = constantPool.size()
+		def constPoolIndexes = constantPool.constantPoolIndexes()
 
 		// fields size
 		def fieldsSize = fields.size() * SLOT_SIZE
@@ -170,21 +159,18 @@ class ClassFile {
 	@Override
 	String toString(){
 		StringBuilder sb = new StringBuilder()
-		sb.append(isSingleton ? 'objectName:' : 'className: ')
-		sb.append(constantPool[0])
-		sb.append('\nparentName: ' + constantPool[1])
+		sb.append(isSingleton ? 'objectName: ' : 'className: ')
+		sb.append(constantPool.get(0))
+		sb.append('\nparentName: ' + constantPool.get(1))
 		sb.append('\n')
-		sb.append('ConstantPool:\n')
-		constantPool.eachWithIndex { c , i ->
-			sb.append('\t'+i + ': '+ c + '\n')
-		}
+		sb.append(constantPool.toString())
 		sb.append('Fields:\n')
 		fields.each{ Integer f ->
-			sb.append('\t' +constantPool[f] + '\n')
+			sb.append('\t' +constantPool.get(f) + '\n')
 		}
 		sb.append('Methods:\n')
 		methods.each{ method ->
-			sb.append(" " + constantPool[method.signatureIndex]+':\n')
+			sb.append(" " + constantPool.get(method.signatureIndex)+':\n')
 			method.instructions.each{ inst ->
 				sb.append('\t'+ inst.instruction.toString().padRight(12) + ' ' + (inst.paramVal==null?'':inst.paramVal).toString().padRight(3))
 				sb.append(getComment(inst) +'\n' )
@@ -217,31 +203,21 @@ class ClassFile {
 	}
 
 	String getClassName(){
-		constantPool[0]
+		constantPool.get(0)
 	}
 
 	String getParentName(){
-		constantPool[1]
+		constantPool.get(1)
 	}
 
 	// -------------------- PRIVATE -----------------------------------
 
 	def createPrefixSum(List<Integer> lengths) {
-		lengths.add(0,0)
-		def prefixSum = []
-		lengths.inject(0) { acc, len ->
-			prefixSum << (acc + len)
-			acc + len
-		}
-		prefixSum
+		constantPool.createPrefixSum(lengths)
 	}
 
 	def setClassSize(List bytes, int size){
 		setBytes(bytes, 0, size)
-	}
-
-	def setConstantPoolSize(List bytes, int size){
-		setBytes(bytes, 2, size)
 	}
 
 	def setBytes(List bytes,int start,int value){

@@ -20,9 +20,6 @@ class ArrayCreation  implements Expression{
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<PrecompiledInstruction> result = []
-		if(memberAccess){
-			result.addAll(memberAccess.argEval(classFile, locals))
-		}
 		result.addAll(initArray())
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
@@ -37,10 +34,6 @@ class ArrayCreation  implements Expression{
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_ARRAY
 		[inst]
-	}
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
 	}
 
 

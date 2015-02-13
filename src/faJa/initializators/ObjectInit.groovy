@@ -14,26 +14,23 @@ class ObjectInit extends BaseInit {
 
 	ObjectInit(){
 		classFile = new ClassFile()
-		classFile.constantPool = [
-		        'Object',
-				'',
-				'==(1)',
-				'toS(0)',
-		        'isNull(0)'
-		]
+
+		classFile.constantPool.add('Object')
+		classFile.constantPool.add('')
+
 		classFile.fields = []
 		def equals = new PrecompiledMethod()
-		equals.signatureIndex = 2
+		equals.signatureIndex = classFile.constantPool.add('==(1)')
 		classFile.methods.add(equals)
 
 //		Method toS(0) - Native
 		def toS = new PrecompiledMethod()
-		toS.signatureIndex = 3
+		toS.signatureIndex = classFile.constantPool.add('toS(0)')
 		classFile.methods.add(toS)
 
 //		Method isNull(0) - Native
 		def isNull = new PrecompiledMethod()
-		isNull.signatureIndex = 4
+		isNull.signatureIndex = classFile.constantPool.add('isNull(0)')
 		classFile.methods.add(isNull)
 
 	}

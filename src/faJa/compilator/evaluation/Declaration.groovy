@@ -29,10 +29,7 @@ class Declaration implements Expression{
 		result
 	}
 
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
+
 
 	@Override
 	String toString(){

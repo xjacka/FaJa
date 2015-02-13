@@ -15,15 +15,15 @@ class MethodCompiler {
 	public  MethodCompiler(ClassFile classFile){
 		this.classFile = classFile
 	}
-	def addSignitureToClassFile(String signature){
-		def signitureIndex = classFile.constantPool.size()
-//		if(methods.contains(signature)) {
-//			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
-//		}
-//		methods.add(signature)
-		classFile.constantPool.add(signature)
-		signitureIndex
-	}
+//	def addSignitureToClassFile(String signature){
+//		def signitureIndex = classFile.constantPool.size()
+////		if(methods.contains(signature)) {
+////			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
+////		}
+////		methods.add(signature)
+//		classFile.constantPool.add(signature)
+//		signitureIndex
+//	}
 
 	def compileMethod(List<String> argList,Parser parser,  Code code){
 		LocalVariables locals = new LocalVariables()
@@ -39,8 +39,7 @@ class MethodCompiler {
 	def createMethod(String signature, List<String> argList, List<String> methodBody){
 		def method = new PrecompiledMethod()
 
-		Integer signitureIndex = addSignitureToClassFile(signature)
-		method.signatureIndex = signitureIndex
+		method.signatureIndex = classFile.constantPool.add(signature)
 
 		Code code = new Code(methodBody)
 		method.instructions = compileMethod(argList, new Parser(), code)

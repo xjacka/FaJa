@@ -71,8 +71,7 @@ class ClassLoader {
 		// adds parent field in current class classFile
 		List parentFields = ClassAccessHelper.getAllFieldNames(heap, parentPtr)
 		parentFields.each{ fieldName ->
-			classFile.fields.add(classFile.constantPool.size())
-			classFile.constantPool.add(fieldName)
+			classFile.fields.add(classFile.constantPool.add(fieldName))
 		}
 
 		classPtr = load(heap, classFile)

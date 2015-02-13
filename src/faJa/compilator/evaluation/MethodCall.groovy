@@ -21,11 +21,10 @@ class MethodCall implements Expression{
 		List<PrecompiledInstruction> result = []
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INVOKE
-		inst.paramVal = classFile.constantPool.size()
-		classFile.constantPool.add(signature)
+		inst.paramVal = classFile.constantPool.add(signature)
 
-		if(nextMemberAccess){
-			result.addAll(nextMemberAccess.argEval(classFile, locals))
+		args.each{
+			result.addAll(it.eval(classFile, locals))
 		}
 
 		result.add(inst)
@@ -35,15 +34,6 @@ class MethodCall implements Expression{
 		}
 
 		return result
-	}
-
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		List<PrecompiledInstruction> result = []
-		args.each {
-			result.addAll(it.eval(classFile, locals))
-		}
-		result
 	}
 
 	String getSignature(){

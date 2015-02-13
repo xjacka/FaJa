@@ -15,10 +15,7 @@ class NullLoad implements Expression{
 		inst.instruction = Instruction.PUSH_NULL
 		[inst]
 	}
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
+
 	@Override
 	String toString(){
 		'null'

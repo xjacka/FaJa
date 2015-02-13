@@ -18,14 +18,11 @@ class NumberCreation implements Expression {
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<PrecompiledInstruction> result = []
-		if(memberAccess){
-			result.addAll(memberAccess.argEval(classFile, locals))
-		}
 
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_NUM
-		inst.paramVal = classFile.constantPool.size()
-		classFile.constantPool.add(number.toString())
+		inst.paramVal = classFile.constantPool.add(number.toString())
+
 		result.add(inst)
 
 		if(memberAccess){
@@ -34,10 +31,7 @@ class NumberCreation implements Expression {
 		return result
 	}
 
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
+
 	@Override
 	String toString(){
 		String res = number

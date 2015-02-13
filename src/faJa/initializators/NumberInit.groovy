@@ -18,100 +18,84 @@ class NumberInit extends BaseInit {
 
 	NumberInit(){
 		classFile = new ClassFile()
-		classFile.constantPool = [
-				'Number',
-				'Object',
-				'==(1)',
-				'+(1)',
-				'-(1)',
-				'*(1)',
-				'/(1)',
-				'%(1)',
-				'ifTrue(1)',
-				'ifFalse(1)',
-				'init(1)',
-				'toS(0)',
-				'times(1)',
-				'<(1)',
-				'>(1)',
-				'>=(1)',
-				'<=(1)'
-		]
+		classFile.constantPool.add('Number')
+		classFile.constantPool.add('Object')
+
 		classFile.fields = []
 
 //		Method ==(1) - Native
 		def equals = new PrecompiledMethod()
-		equals.signatureIndex = 2
+		equals.signatureIndex = classFile.constantPool.add('==(1)')
 		classFile.methods.add(equals)
 
 //		Method +(1) - Native
 		def plus = new PrecompiledMethod()
-		plus.signatureIndex = 3
+		plus.signatureIndex = classFile.constantPool.add('+(1)')
 		classFile.methods.add(plus)
 
 //		Method -(1) - Native
 		def minus = new PrecompiledMethod()
-		minus.signatureIndex = 4
+		minus.signatureIndex = classFile.constantPool.add('-(1)')
 		classFile.methods.add(minus)
 
 //		Method *(1) - Native
 		def mul = new PrecompiledMethod()
-		mul.signatureIndex = 5
+		mul.signatureIndex = classFile.constantPool.add('*(1)')
 		classFile.methods.add(mul)
 
 //		Method /(1) - Native
 		def div = new PrecompiledMethod()
-		div.signatureIndex = 6
+		div.signatureIndex = classFile.constantPool.add('/(1)')
 		classFile.methods.add(div)
 
 //		Method %(1) - Native
 		def mod = new PrecompiledMethod()
-		mod.signatureIndex = 7
+		mod.signatureIndex = classFile.constantPool.add('%(1)')
 		classFile.methods.add(mod)
 
 //		Method ifTrue(1) - Native
 		def iftrue = new PrecompiledMethod()
-		iftrue.signatureIndex = 8
+		iftrue.signatureIndex = classFile.constantPool.add('ifTrue(1)')
 		classFile.methods.add(iftrue)
 
 //		Method ifFalse(1) - Native
 		def iffalse = new PrecompiledMethod()
-		iffalse.signatureIndex = 9
+		iffalse.signatureIndex = classFile.constantPool.add('ifFalse(1)')
 		classFile.methods.add(iffalse)
 
 //		Method init(1) - Native
 		def init = new PrecompiledMethod()
-		init.signatureIndex = 10
+		init.signatureIndex = classFile.constantPool.add('init(1)')
 		classFile.methods.add(init)
 
 //		Method toS(0) - Native
 		def toS = new PrecompiledMethod()
-		toS.signatureIndex = 11
+		toS.signatureIndex = classFile.constantPool.add('toS(0)')
 		classFile.methods.add(toS)
 
 //		Method times(1) - Native
 		def times = new PrecompiledMethod()
-		times.signatureIndex = 12
+		times.signatureIndex = classFile.constantPool.add('times(1)')
 		classFile.methods.add(times)
 
 //		Method <(1) - Native
 		def lessThen = new PrecompiledMethod()
-		lessThen.signatureIndex = 13
+		lessThen.signatureIndex = classFile.constantPool.add('<(1)')
 		classFile.methods.add(lessThen)
 
 //		Method >(1) - Native
 		def greaterThen = new PrecompiledMethod()
-		greaterThen.signatureIndex = 14
+		greaterThen.signatureIndex = classFile.constantPool.add('>(1)')
 		classFile.methods.add(greaterThen)
 
 //		Method >=(1) - Native
 		def greaterOrEqualThen = new PrecompiledMethod()
-		greaterOrEqualThen.signatureIndex = 15
+		greaterOrEqualThen.signatureIndex = classFile.constantPool.add('>=(1)')
 		classFile.methods.add(greaterOrEqualThen)
 
 //		Method <=(1) - Native
 		def lessOrEqualThen = new PrecompiledMethod()
-		lessOrEqualThen.signatureIndex = 16
+		lessOrEqualThen.signatureIndex = classFile.constantPool.add('<=(1)')
 		classFile.methods.add(lessOrEqualThen)
 	}
 }

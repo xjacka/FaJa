@@ -1,7 +1,6 @@
 package faJa.tests
 
 import faJa.compilator.evaluation.Expression
-import faJa.compilator.parser.ClosureParser
 import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
 
@@ -57,10 +56,6 @@ class ParserTest {
 		assert parser.cleanString(' "dadssad"') == 'dadssad'
 
 		assert parser.betweenParentheses('.call(sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new)', new Code([])) == 'sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new'
-
-
-		ClosureParser closureParser = new ClosureParser()
-		assert closureParser.afterClosureEnd('   }  ') != null
 
 	}
 
