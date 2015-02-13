@@ -17,14 +17,17 @@ class NumberCreation implements Expression {
 	}
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
-		PrecompiledInstruction inst = new PrecompiledInstruction()
-		inst.instruction = Instruction.INIT_NUM
-		inst.paramVal = number
 		List<PrecompiledInstruction> result = []
 		if(memberAccess){
 			result.addAll(memberAccess.argEval(classFile, locals))
 		}
+
+		PrecompiledInstruction inst = new PrecompiledInstruction()
+		inst.instruction = Instruction.INIT_NUM
+		inst.paramVal = classFile.constantPool.size()
+		classFile.constantPool.add(number)
 		result.add(inst)
+		
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
