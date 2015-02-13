@@ -4,6 +4,29 @@ import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.ConstantPool
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *      ARRAY OBJECT
+ *           |
+ *           V
+ * +--------------------+
+ * |    arrayClassPtr   |
+ * +--------------------+        index of first empty place
+ * |    insertIndex     |........................................
+ * +--------------------+                                       :
+ * |    arrayObjectPtr  |                                       :
+ * +--------------------+                                       :
+ *          |                                                   :
+ *          +-----------> +-------------------------+           :
+ *                        |     initializedSize     |           :
+ *                        +-------------------------+           :
+ *                   1;   |         item_1          |           :
+ *                        +-------------------------+           :
+ *                   2:   |         item_2          |           :
+ *                        +-------------------------+           :
+ *                   3:   |         .....           |<..........:
+ *                        +-------------------------+
+ *
+ */
 class ArrayInit extends BaseInit {
 
 	ArrayInit() {

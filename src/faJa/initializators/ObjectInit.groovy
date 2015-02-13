@@ -3,6 +3,13 @@ package faJa.initializators
 import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *      OBJECT OBJECT
+ * +--------------------+
+ * |   objectClassPtr   |
+ * +--------------------+
+ *
+ */
 class ObjectInit extends BaseInit {
 
 	ObjectInit(){

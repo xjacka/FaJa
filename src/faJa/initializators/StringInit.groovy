@@ -3,6 +3,21 @@ package faJa.initializators
 import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *      STRING OBJECT
+ * +--------------------+
+ * |   stringClassPtr   |
+ * +--------------------+
+ * |     stringSize     |
+ * +====================+
+ * |      char_1        |
+ * +--------------------+
+ * |      char_2        |
+ * +--------------------+
+ * |       ....         |
+ * +--------------------+
+ *
+ */
 class StringInit extends BaseInit{
 	StringInit(){
 		classFile = new ClassFile()

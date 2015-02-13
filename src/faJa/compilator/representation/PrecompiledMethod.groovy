@@ -1,8 +1,17 @@
 package faJa.compilator.representation
 
-import faJa.compilator.representation.PrecompiledInstruction
 import faJa.helpers.ByteHelper
 
+/**
+ *              METHOD
+ * ++==============================++
+ * ||        method_size_2         ||
+ * ++------------------------------++
+ * ||       signatureIndex_2       ||
+ * ++------------------------------++
+ * ||          xxxxxxx             || <- bytecode
+ * ++==============================++
+ */
 class PrecompiledMethod {
 	List<PrecompiledInstruction> instructions = []
 	Integer signatureIndex

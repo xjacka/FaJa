@@ -10,7 +10,7 @@ package faJa.interpreter
  * | 1  | LOAD        |   localPropertyIndex      (1) |                 -> newVal           |
  * | 2  | STORE       |   localPropertyIndex      (1) | val             ->                  |
  * | 3  | GETFIELD    |   constantPoolPointer     (2) | object          -> field            |
- * | 4  | PUTFIELD    |   constantPoolPointer     (2) | val, object   ->                  |
+ * | 4  | PUTFIELD    |   constantPoolPointer     (2) | val, object     ->                  |
  * | 5  | INIT        |   constantPoolPointer     (2) |                 -> newObject        |
  * | 6  | INIT_NUM    |   constantPoolPointer     (2) |                 -> newNumberObject  |
  * | 7  | INIT_STRING |   constantPoolPointer     (2) |                 -> newStringObject  |
@@ -19,6 +19,7 @@ package faJa.interpreter
  * | 10 | INIT_CLOSURE|   indexOfClosureInClass   (1) | initObject      -> newClosureObject |
  * | 11 | INIT_ARRAY  |                           (0) |                 -> newArrayObject   |
  * +----+-------------+-------------------------------+-------------------------------------+
+ *
  */
 enum Instruction {
 	INVOKE(0,2),        // 2 bytes pointer to constanPool

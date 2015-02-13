@@ -50,7 +50,7 @@ class Compiler {
 	def methods = [] // for better code checking
 	def fields = [] // for better code checking
 
-	def compile(String path) {
+	ClassFile compile(String path) {
 		classFile = new ClassFile()
 		def file = new File(path)
 

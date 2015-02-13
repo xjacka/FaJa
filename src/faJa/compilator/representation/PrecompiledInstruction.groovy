@@ -4,6 +4,16 @@ import faJa.exceptions.InstructionException
 import faJa.helpers.ByteHelper
 import faJa.interpreter.Instruction
 
+/**
+ *              CLOSURE
+ * ++==============================++
+ * ||        closure_size_2        ||
+ * ++------------------------------++
+ * ||      arguments_count_2       ||
+ * ++------------------------------++
+ * ||          xxxxxxx             || <- bytecode
+ * ++==============================++
+ */
 class PrecompiledInstruction {
 	Instruction instruction
 	Integer paramVal

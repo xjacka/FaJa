@@ -76,6 +76,7 @@ class ArrayNatives {
 			}
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
+			stackFrame.methodStack.pop()
 		}
 
 		stackFrame.methodStack.push(thisArrayPtr)
