@@ -36,7 +36,7 @@ class NativesRegister {
 	        'toS(0)Bool' : BoolNatives.toS,
 
 	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,
-	        'readFromFile(2)SystemIO' : SystemIONatives.readFromFile,
+	        'readFromFile(1)SystemIO' : SystemIONatives.readFromFile,
 	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
 
 	        'call(0)Closure' : ClosureNatives.call,

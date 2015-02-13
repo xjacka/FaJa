@@ -12,7 +12,7 @@ class SystemIOInit extends BaseInit{
 				'SystemIO',
 				'Object',
 				'writeToFile(2)',
-				'readFromFile(2)',
+				'readFromFile(1)',
 				'innerOut(1)',
 				'out(1)',
 				'toS(0)'
