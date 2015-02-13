@@ -1,6 +1,6 @@
 package faJa.helpers
 
-import faJa.Heap
+import faJa.memory.Heap
 
 /**
  * todo to be tested

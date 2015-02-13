@@ -1,12 +1,10 @@
 package faJa.compilator.evaluation
 
-import faJa.ClassFile
-import faJa.Instruction
-import faJa.PrecompiledClosure
-import faJa.PrecompiledInstruction
+import faJa.compilator.representation.ClassFile
+import faJa.interpreter.Instruction
+import faJa.compilator.representation.PrecompiledClosure
+import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
-import faJa.compilator.MethodCompiler
-import faJa.compilator.parser.ClosureParser
 import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
 

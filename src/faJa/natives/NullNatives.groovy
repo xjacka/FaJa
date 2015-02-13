@@ -1,12 +1,9 @@
 package faJa.natives
 
-import faJa.ClassLoader
-import faJa.Heap
+import faJa.interpreter.ClassLoader
+import faJa.memory.Heap
 import faJa.compilator.Compiler
-import faJa.exceptions.InterpretException
-import faJa.helpers.ClosureHelper
 import faJa.helpers.NativesHelper
-import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 
 class NullNatives {

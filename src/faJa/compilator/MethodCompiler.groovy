@@ -1,12 +1,11 @@
 package faJa.compilator
 
-import faJa.ClassFile
-import faJa.PrecompiledInstruction
-import faJa.PrecompiledMethod
+import faJa.compilator.representation.ClassFile
+import faJa.compilator.representation.PrecompiledInstruction
+import faJa.compilator.representation.PrecompiledMethod
 import faJa.compilator.evaluation.Expression
 import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
-import faJa.exceptions.CompilerException
 
 /**
  * Created by Kamil on 11. 2. 2015.

@@ -1,7 +1,8 @@
-package faJa
+package faJa.compilator.representation
 
 import faJa.exceptions.InstructionException
 import faJa.helpers.ByteHelper
+import faJa.interpreter.Instruction
 
 class PrecompiledInstruction {
 	Instruction instruction

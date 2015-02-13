@@ -1,9 +1,7 @@
 package faJa.initializators
 
-import faJa.ClassFile
-import faJa.Instruction
-import faJa.PrecompiledInstruction
-import faJa.PrecompiledMethod
+import faJa.compilator.representation.ClassFile
+import faJa.compilator.representation.PrecompiledMethod
 
 class ObjectInit extends BaseInit {
 

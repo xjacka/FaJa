@@ -1,7 +1,6 @@
 package faJa.helpers
 
-import faJa.Heap
-import faJa.exceptions.InterpretException
+import faJa.memory.Heap
 
 class ClosureHelper {
 

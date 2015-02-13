@@ -1,7 +1,7 @@
 package faJa.compilator.evaluation
 
-import faJa.ClassFile
-import faJa.PrecompiledInstruction
+import faJa.compilator.representation.ClassFile
+import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
 /**

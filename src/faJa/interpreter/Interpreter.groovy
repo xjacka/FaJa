@@ -1,8 +1,6 @@
 package faJa.interpreter
 
-import faJa.Heap
-import faJa.Instruction
-import faJa.ClassLoader
+import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper

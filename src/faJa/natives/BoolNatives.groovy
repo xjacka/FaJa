@@ -1,16 +1,13 @@
 package faJa.natives
 
-import faJa.Heap
+import faJa.memory.Heap
 import faJa.compilator.Compiler
-import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
-import faJa.helpers.ClosureHelper
 import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.helpers.ObjectInitHelper
-import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
-import faJa.ClassLoader
+import faJa.interpreter.ClassLoader
 
 class BoolNatives {
 

@@ -1,10 +1,10 @@
 package faJa.natives
 
-import faJa.Heap
+import faJa.memory.Heap
 import faJa.helpers.ClosureHelper
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
-import faJa.ClassLoader
+import faJa.interpreter.ClassLoader
 
 class ClosureNatives {
 

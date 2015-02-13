@@ -1,4 +1,4 @@
-package faJa
+package faJa.compilator.representation
 
 import faJa.helpers.ByteHelper
 

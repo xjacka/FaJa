@@ -1,12 +1,12 @@
 package faJa.natives
 
-import faJa.Heap
+import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InputException
 import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
-import faJa.ClassLoader
+import faJa.interpreter.ClassLoader
 
 class SystemIONatives {
 

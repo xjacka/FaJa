@@ -1,10 +1,10 @@
 package faJa.compilator
 
-import faJa.ClassFile
-import faJa.Instruction
-import faJa.PrecompiledClosure
-import faJa.PrecompiledInstruction
-import faJa.PrecompiledMethod
+import faJa.compilator.representation.ClassFile
+import faJa.interpreter.Instruction
+import faJa.compilator.representation.PrecompiledClosure
+import faJa.compilator.representation.PrecompiledInstruction
+import faJa.compilator.representation.PrecompiledMethod
 import faJa.exceptions.CompilerException
 
 class Compiler {

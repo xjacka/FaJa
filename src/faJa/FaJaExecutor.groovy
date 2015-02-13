@@ -4,8 +4,10 @@ import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.interpreter.ClassLoader
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
+import faJa.memory.Heap
 
 class FaJaExecutor {
 

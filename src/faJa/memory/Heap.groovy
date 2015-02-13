@@ -1,9 +1,7 @@
-package faJa
+package faJa.memory
 
-import faJa.compilator.Compiler
 import faJa.helpers.ByteHelper
 import faJa.helpers.ClassAccessHelper
-import faJa.helpers.ObjectAccessHelper
 
 class Heap {
 

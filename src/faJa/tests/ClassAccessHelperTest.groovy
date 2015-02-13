@@ -1,10 +1,10 @@
 package faJa.tests
 
-import faJa.ClassFile
-import faJa.Heap
-import faJa.Instruction
-import faJa.PrecompiledInstruction
-import faJa.PrecompiledMethod
+import faJa.compilator.representation.ClassFile
+import faJa.memory.Heap
+import faJa.interpreter.Instruction
+import faJa.compilator.representation.PrecompiledInstruction
+import faJa.compilator.representation.PrecompiledMethod
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 

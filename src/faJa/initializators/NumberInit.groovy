@@ -1,7 +1,7 @@
 package faJa.initializators
 
-import faJa.ClassFile
-import faJa.PrecompiledMethod
+import faJa.compilator.representation.ClassFile
+import faJa.compilator.representation.PrecompiledMethod
 
 class NumberInit extends BaseInit {
 

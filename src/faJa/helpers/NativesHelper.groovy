@@ -1,7 +1,7 @@
 package faJa.helpers
 
-import faJa.ClassLoader
-import faJa.Heap
+import faJa.interpreter.ClassLoader
+import faJa.memory.Heap
 import faJa.exceptions.InterpretException
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
@@ -9,7 +9,7 @@ import faJa.natives.NativesRegister
 
 class NativesHelper {
 
-	static callMethodFromNative(Heap heap, StackFrame parentStackFrame, Integer objectPtr, String methodSignature, faJa.ClassLoader classLoader,List reversedArgList = []){
+	static callMethodFromNative(Heap heap, StackFrame parentStackFrame, Integer objectPtr, String methodSignature, ClassLoader classLoader,List reversedArgList = []){
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap,objectPtr)
 		def resultPair = ClassAccessHelper.findMethodWithSuper(heap,classPtr,methodSignature,classLoader)
 

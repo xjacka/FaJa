@@ -1,6 +1,8 @@
-package faJa
+package faJa.interpreter
 
+import faJa.memory.Heap
 import faJa.compilator.Compiler
+import faJa.compilator.representation.ClassFile
 import faJa.helpers.ClassAccessHelper
 import faJa.initializators.ArrayInit
 import faJa.initializators.BoolInit
@@ -82,7 +84,7 @@ class ClassLoader {
 		classPtr
 	}
 
-	// nahraje reprezentaci pomoci faJa.ClassFile na heapu
+	// nahraje reprezentaci pomoci faJa.compilator.representation.ClassFile na heapu
 	def load(Heap heap,ClassFile classFile){
 		def pointer = heap.load(classFile.toByteCode())
 		classRegister.put(classFile.className, pointer)

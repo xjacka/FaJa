@@ -1,6 +1,6 @@
 package faJa.initializators
 
-import faJa.ClassFile
+import faJa.compilator.representation.ClassFile
 
 abstract class BaseInit {
 	ClassFile classFile

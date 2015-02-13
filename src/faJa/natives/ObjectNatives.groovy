@@ -1,11 +1,11 @@
 package faJa.natives
 
-import faJa.Heap
+import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.StackFrame
-import faJa.ClassLoader
+import faJa.interpreter.ClassLoader
 
 class ObjectNatives {
 

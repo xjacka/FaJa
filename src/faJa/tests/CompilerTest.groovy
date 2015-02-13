@@ -1,6 +1,6 @@
 package faJa.tests
 
-import faJa.ClassFile
+import faJa.compilator.representation.ClassFile
 import faJa.compilator.Compiler
 
 class CompilerTest {

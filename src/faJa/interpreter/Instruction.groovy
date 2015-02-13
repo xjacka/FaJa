@@ -1,4 +1,4 @@
-package faJa
+package faJa.interpreter
 
 /**
  *                          BYTECODE INSTRUCTION LIST
