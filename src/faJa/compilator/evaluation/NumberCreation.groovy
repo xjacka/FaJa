@@ -25,9 +25,9 @@ class NumberCreation implements Expression {
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_NUM
 		inst.paramVal = classFile.constantPool.size()
-		classFile.constantPool.add(number)
+		classFile.constantPool.add(number.toString())
 		result.add(inst)
-		
+
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
