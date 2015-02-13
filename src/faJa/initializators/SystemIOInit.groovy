@@ -6,47 +6,39 @@ import faJa.compilator.representation.PrecompiledMethod
 class SystemIOInit extends BaseInit{
 	SystemIOInit(){
 		classFile = new ClassFile()
-		classFile.constantPool = [
-				'SystemIO',
-				'Object',
-				'writeToFile(2)',
-				'readFromFile(1)',
-				'out(1)',
-				'inString(0)',
-				'inNumber(0)',
-				'inBool(0)'
+		classFile.constantPool.add('SystemIO')
+		classFile.constantPool.add('Object')
 
-		]
 		classFile.fields = []
 
 //		Method writeToFile(2) - Native
 		def writeToFile = new PrecompiledMethod()
-		writeToFile.signatureIndex = 2
+		writeToFile.signatureIndex = classFile.constantPool.add('writeToFile(2)')
 		classFile.methods.add(writeToFile)
 
 //		Method readFromFile(2) - Native
 		def readFromFile = new PrecompiledMethod()
-		readFromFile.signatureIndex = 3
+		readFromFile.signatureIndex = classFile.constantPool.add('readFromFile(1)')
 		classFile.methods.add(readFromFile)
 
 //		Method out(1) - Native
 		def out = new PrecompiledMethod()
-		out.signatureIndex = 4
+		out.signatureIndex = classFile.constantPool.add('out(1)')
 		classFile.methods.add(out)
 
 //		Method inString(0) - Native
 		def inputS = new PrecompiledMethod()
-		inputS.signatureIndex = 5
+		inputS.signatureIndex = classFile.constantPool.add('inString(0)')
 		classFile.methods.add(inputS)
 
 //		Method inNumber(0) - Native
 		def inputN = new PrecompiledMethod()
-		inputN.signatureIndex = 6
+		inputN.signatureIndex = classFile.constantPool.add('inNumber(0)')
 		classFile.methods.add(inputN)
 
 //		Method inBoolean(0) - Native
 		def inputB = new PrecompiledMethod()
-		inputB.signatureIndex = 7
+		inputB.signatureIndex = classFile.constantPool.add('inBool(0)')
 		classFile.methods.add(inputB)
 	}
 }

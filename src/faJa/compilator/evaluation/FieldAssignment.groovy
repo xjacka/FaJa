@@ -22,16 +22,13 @@ class FieldAssignment implements Expression{
 		}
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.PUTFIELD
-		inst.paramVal = classFile.constantPool.size()
-		classFile.constantPool.add(field)
+		inst.paramVal = classFile.constantPool.add(field)
+
 		List<PrecompiledInstruction> result = assigned.eval(classFile, locals)
 		result.add(inst)
 	}
 
-	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
+
 	@Override
 	String toString(){
 		String res = ':' + field + ' <- '

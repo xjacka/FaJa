@@ -30,11 +30,6 @@ class Assigment implements Expression{
 	}
 
 	@Override
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
-		[] // comile args
-	}
-
-	@Override
 	String toString(){
 		assignee + ' <- ' + assigned.toString()
 	}

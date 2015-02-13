@@ -10,8 +10,13 @@ class ClassFileTest {
 
 	def testWithoutMethods(){
 		def classFile = new ClassFile()
-		classFile.constantPool = ['StringClass','test', 'ahoj', 'dlouhyString']
-		classFile.fields = [1, 2, 3]
+		classFile.constantPool.add('StringClass')
+
+		classFile.fields = [
+				classFile.constantPool.add('test'),
+				classFile.constantPool.add('ahoj'),
+				classFile.constantPool.add('dlouhyString')
+		]
 		classFile.methods = []
 		byte[] bytecode = classFile.toByteCode()
 
@@ -38,11 +43,12 @@ class ClassFileTest {
 
 	def testMethods(){
 		def classFile = new ClassFile()
-		classFile.constantPool = ['TestClass', 'a', 'test()']
-		classFile.fields = [1]
+		classFile.constantPool.add('TestClass')
+
+		classFile.fields = [classFile.constantPool.add('a')]
 
 		def method = new PrecompiledMethod()
-		method.signatureIndex = 2
+		method.signatureIndex = classFile.constantPool.add('test()')
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.LOAD, paramVal:0]))
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.INVOKE, paramVal:2]))
 		method.instructions.add(new PrecompiledInstruction([instruction: Instruction.LOAD, paramVal:  1]))

@@ -9,5 +9,4 @@ import faJa.compilator.LocalVariables
  */
 public interface Expression {
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals)
-	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals)
 }
