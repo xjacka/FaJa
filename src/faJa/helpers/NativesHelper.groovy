@@ -1,5 +1,6 @@
 package faJa.helpers
 
+import faJa.ClassLoader
 import faJa.Heap
 import faJa.exceptions.InterpretException
 import faJa.interpreter.Interpreter
@@ -40,5 +41,33 @@ class NativesHelper {
 		parentStackFrame.methodStack.push(objectPtr)
 
 		new Interpreter(heap, newStackFrame, classLoader).interpret()
+	}
+
+	static ifClosure(StackFrame stackFrame, Heap heap, ClassLoader classLoader, Closure closure, String methodName) {
+		Integer thisObjectPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
+
+		if(closure.call(thisObjectPtr)) {
+			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
+			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+
+			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+			if(arguments > 0){
+				throw new InterpretException("Too much arguments for closure in method ${methodName}")
+			}
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
+		}
+		stackFrame.methodStack.push(thisObjectPtr)
 	}
 }

@@ -14,7 +14,8 @@ class StringInit extends BaseInit{
 				'+(1)',
 				'ifTrue(1)',
 				'ifFalse(1)',
-				'toS(0)'
+				'toS(0)',
+				'toNumber(0)'
 		]
 		classFile.fields = []
 
@@ -47,5 +48,10 @@ class StringInit extends BaseInit{
 		def toS = new PrecompiledMethod()
 		toS.signatureIndex = 7
 		classFile.methods.add(toS)
+
+//		Method toNumber(0) - Native
+		def toNumber = new PrecompiledMethod()
+		toNumber.signatureIndex = 8
+		classFile.methods.add(toNumber)
 	}
 }

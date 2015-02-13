@@ -22,7 +22,8 @@ class ArrayInit extends BaseInit {
 				'pop(0)',
 				'top(0)',
 				'size(0)',
-				'contains(1)'
+				'contains(1)',
+				'select(1)'
 		]
 
 		classFile.fields = []
@@ -91,5 +92,10 @@ class ArrayInit extends BaseInit {
 		def contains = new PrecompiledMethod()
 		contains.signatureIndex = 14
 		classFile.methods.add(contains)
+
+//		Method select(1) - Native
+		def select = new PrecompiledMethod()
+		select.signatureIndex = 15
+		classFile.methods.add(select)
 	}
 }

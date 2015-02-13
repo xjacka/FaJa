@@ -101,12 +101,13 @@ class Heap {
 		objectPtr
 	}
 
-	Integer createBool(Integer boolClassPtr, Byte newVal) {
+	Integer createBool(Integer boolClassPtr, Boolean newVal) {
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(boolClassPtr)
 		Integer objectPtr = insertIndex
+		Byte newByteVal = (byte) newVal ? 1 : 0
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
-		heap[insertIndex++] = newVal
+		heap[insertIndex++] = newByteVal
 
 		objectPtr
 	}

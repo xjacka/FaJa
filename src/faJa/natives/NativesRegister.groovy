@@ -15,6 +15,10 @@ class NativesRegister {
 	        'init(1)Number' : NumberNatives.init,
 	        'toS(0)Number' : NumberNatives.toS,
 	        'times(1)Number' : NumberNatives.times,
+	        '<(1)Number' : NumberNatives.lessThen,
+	        '>(1)Number' : NumberNatives.greaterThen,
+	        '>=(1)Number' : NumberNatives.greaterOrEqualThen,
+	        '<=(1)Number' : NumberNatives.lessOrEqualThen,
 
 	        'length(0)String' : StringNatives.length,
 	        '==(1)String' : StringNatives.equals,
@@ -22,6 +26,7 @@ class NativesRegister {
 	        'ifTrue(1)String' : StringNatives.ifTrue,
 	        'ifFalse(1)String' : StringNatives.ifFalse,
 	        'toS(0)String' : StringNatives.toS,
+	        'toNumber(0)String' : StringNatives.toNumber,
 
 	        '==(1)Bool' : BoolNatives.equals,
 	        'ifTrue(1)Bool' : BoolNatives.ifTrue,
@@ -31,9 +36,12 @@ class NativesRegister {
 	        'not(0)Bool' : BoolNatives.not,
 	        'toS(0)Bool' : BoolNatives.toS,
 
-	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,
-	        'readFromFile(2)SystemIO' : SystemIONatives.readFromFile,
-	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
+	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,     // firsta srg = fileName, second arg = value
+	        'readFromFile(1)SystemIO' : SystemIONatives.readFromFile,
+	        'out(1)SystemIO' : SystemIONatives.out,
+	        'inString(0)SystemIO' : SystemIONatives.inputString,
+	        'inNumber(0)SystemIO' : SystemIONatives.inputNumber,
+	        'inBool(0)SystemIO' : SystemIONatives.inputBool,
 
 	        'call(0)Closure' : ClosureNatives.call,
 
@@ -53,12 +61,13 @@ class NativesRegister {
 	        'each(1)Array': ArrayNatives.each,
 	        'collect(1)Array': ArrayNatives.collect,
 	        'add(1)Array': ArrayNatives.add1,
-	        'add(2)Array': ArrayNatives.add2,
+	        'add(2)Array': ArrayNatives.add2,               // first arg = position, secodn arg = value
 	        'get(1)Array': ArrayNatives.get,
 	        'push(1)Array': ArrayNatives.push,
 	        'pop(0)Array': ArrayNatives.pop,
 	        'top(0)Array': ArrayNatives.top,
 	        'size(0)Array': ArrayNatives.size,
-	        'contains(1)Array': ArrayNatives.contains
+	        'contains(1)Array': ArrayNatives.contains,
+	        'select(1)Array': ArrayNatives.select
 	]
 }

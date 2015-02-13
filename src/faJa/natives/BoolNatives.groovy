@@ -5,6 +5,7 @@ import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
+import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.helpers.ObjectInitHelper
 import faJa.interpreter.Interpreter
@@ -16,113 +17,24 @@ class BoolNatives {
 	static final Byte TRUE = 1
 	static final Byte FALSE = 0
 
-	// expect: two boolean object on stack
 	static equals = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
-		Integer bool1Ptr = stackFrame.methodStack.pop()
-		Integer bool2Ptr = stackFrame.methodStack.pop()
-
-		Boolean bool1 = heap.boolFromBoolObject(bool1Ptr)
-		Boolean bool2 = heap.boolFromBoolObject(bool2Ptr)
-
-		Integer resultPtr = heap.createBool(boolClassPtr,(byte) ( bool1 == bool2 ? 1 : 0 ))
-		stackFrame.methodStack.push(resultPtr)
-		null
+		binaryOperation(stackFrame,heap,classLoader,{a,b -> a == b})
 	}
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisBoolPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		Boolean boolValue = heap.boolFromBoolObject(thisBoolPtr)
-		if(boolValue) {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}
-		null
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> heap.boolFromBoolObject(a) == true},"ifTrue(1)Bool")
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisBoolPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		Boolean boolValue = heap.boolFromBoolObject(thisBoolPtr)
-		if(!boolValue) {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method times(1)Number')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}
-
-		null
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> heap.boolFromBoolObject(a) == false},"ifFalse(1)Bool")
 	}
 
 	static and = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
-		Integer bool1Ptr = stackFrame.methodStack.pop()
-		Integer bool2Ptr = stackFrame.methodStack.pop()
-
-		Boolean bool1 = heap.boolFromBoolObject(bool1Ptr)
-		Boolean bool2 = heap.boolFromBoolObject(bool2Ptr)
-
-		Byte result = (byte) 0
-
-		if(bool1 == true && bool2 == true){
-			result = (byte) 1
-		}
-
-		Integer resultPtr = heap.createBool(boolClassPtr, result)
-		stackFrame.methodStack.push(resultPtr)
-		null
+		binaryOperation(stackFrame,heap,classLoader,{a,b -> a && b})
 	}
 
 	static or = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
-		Integer bool1Ptr = stackFrame.methodStack.pop()
-		Integer bool2Ptr = stackFrame.methodStack.pop()
-
-		Boolean bool1 = heap.boolFromBoolObject(bool1Ptr)
-		Boolean bool2 = heap.boolFromBoolObject(bool2Ptr)
-
-		Byte result = (byte) 0
-
-		if(bool1 == true || bool2 == true){
-			result = (byte) 1
-		}
-
-		Integer resultPtr = heap.createBool(boolClassPtr, result)
-		stackFrame.methodStack.push(resultPtr)
-		null
+		binaryOperation(stackFrame,heap,classLoader,{a,b -> a || b})
 	}
 
 	static not = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -142,5 +54,27 @@ class BoolNatives {
 		Integer stringPtr = heap.createString(stringClassPtr, bool.toString())
 		stackFrame.methodStack.push(stringPtr)
 		null
+	}
+
+	private static binaryOperation(StackFrame stackFrame, Heap heap, ClassLoader classLoader,Closure closure){
+		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
+		Integer bool1Ptr = stackFrame.methodStack.pop()
+		Integer bool2Ptr = stackFrame.methodStack.pop()
+
+		String class2 = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,bool2Ptr))
+
+		Boolean result = false
+
+		if(class2 == Compiler.BOOL_CLASS) {
+			Boolean bool1 = heap.boolFromBoolObject(bool1Ptr)
+			Boolean bool2 = heap.boolFromBoolObject(bool2Ptr)
+
+			if (closure.call(bool1, bool2)) {
+				result = true
+			}
+		}
+
+		Integer resultPtr = heap.createBool(boolClassPtr, result)
+		stackFrame.methodStack.push(resultPtr)
 	}
 }

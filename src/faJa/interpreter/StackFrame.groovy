@@ -9,7 +9,6 @@ class StackFrame {
 	StackFrame parent
 	byte [] bytecode
 	Integer bytecodePtr
-//	Integer classPtr
 
 	List<Integer> methodStack
 
