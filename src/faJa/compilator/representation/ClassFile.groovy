@@ -159,9 +159,7 @@ class ClassFile {
 	@Override
 	String toString(){
 		StringBuilder sb = new StringBuilder()
-		sb.append('className: ' + constantPool.get(0))
-		sb.append('\nparentName: ' + constantPool.get(1))
-		sb.append(isSingleton ? 'objectName:' : 'className: ')
+		sb.append(isSingleton ? 'objectName: ' : 'className: ')
 		sb.append(constantPool.get(0))
 		sb.append('\nparentName: ' + constantPool.get(1))
 		sb.append('\n')
