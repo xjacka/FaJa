@@ -12,7 +12,6 @@ import faJa.natives.NativesRegister
 
 class Interpreter {
 	Heap heap
-//	List<StackFrame> stack
 	ClassLoader classLoader
 	StackFrame currentStackFrame
 	static final Integer INSTRUCTION_SIZE = 1
@@ -21,21 +20,8 @@ class Interpreter {
 	Interpreter(Heap heap, StackFrame stackFrame, ClassLoader classLoader){
 		this.heap = heap
 		this.currentStackFrame = stackFrame
-//		this.stack = stack
 		this.classLoader = classLoader
 	}
-
-//	Integer interpret(){
-//		def currentStackFrame = stack.last()
-//		processStackFrame(currentStackFrame)
-//		if(!currentStackFrame.methodStack.empty) {
-//			currentStackFrame.methodStack.pop()
-//		}
-//		else{
-//			0
-//		}
-//
-//	}
 
 	def interpret(){
 		while(currentStackFrame.bytecode.length > currentStackFrame.bytecodePtr){

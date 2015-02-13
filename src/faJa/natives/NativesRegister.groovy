@@ -35,7 +35,7 @@ class NativesRegister {
 	        'not(0)Bool' : BoolNatives.not,
 	        'toS(0)Bool' : BoolNatives.toS,
 
-	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,
+	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,     // firsta srg = fileName, second arg = value
 	        'readFromFile(1)SystemIO' : SystemIONatives.readFromFile,
 	        'out(1)SystemIO' : SystemIONatives.out,
 	        'inString(0)SystemIO' : SystemIONatives.inputString,
@@ -60,7 +60,7 @@ class NativesRegister {
 	        'each(1)Array': ArrayNatives.each,
 	        'collect(1)Array': ArrayNatives.collect,
 	        'add(1)Array': ArrayNatives.add1,
-	        'add(2)Array': ArrayNatives.add2,
+	        'add(2)Array': ArrayNatives.add2,               // first arg = position, secodn arg = value
 	        'get(1)Array': ArrayNatives.get,
 	        'push(1)Array': ArrayNatives.push,
 	        'pop(0)Array': ArrayNatives.pop,
