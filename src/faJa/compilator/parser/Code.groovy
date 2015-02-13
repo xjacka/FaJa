@@ -21,6 +21,19 @@ class Code {
 		if(!hasNextLine()){
 			throw CompilerException('code pointer out of bounds')
 		}
-		code[codePtr++]
+		String result = code[codePtr++]
+		result
+	}
+	Integer currentLineIdx(){
+		if(codePtr == 0){
+			throw CompilerException('code line not loaded (codePtr == 0)')
+		}
+		codePtr-1
+	}
+	String currentLine() {
+		if(codePtr == 0){
+			throw CompilerException('code line not loaded (codePtr == 0)')
+		}
+		code[codePtr-1]
 	}
 }

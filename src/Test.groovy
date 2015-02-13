@@ -28,5 +28,7 @@ objectInitHelperTest.testNumber()
 
 
 ParserTest parserTest = new ParserTest()
-parserTest.testActionResolvers()
-parserTest.testParsing()
+//parserTest.testActionResolvers()
+//parserTest.testParsing()
+//parserTest.testMultiLineMethodCall()
+parserTest.testClosure()

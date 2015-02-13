@@ -4,12 +4,12 @@ class Main2
 	methods
 		def foo(a)
 :-)		nepodari se najit parametr a
-			bar(a)
+			self.bar(a)
 		end
 
 		def bar(a)
 			var sOut, c
-			c <- "ahoj"
+			c <- []
 			sOut <- SystemIO.new
 			sOut.out(a)
 		end

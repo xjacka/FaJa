@@ -13,7 +13,9 @@ import faJa.exceptions.CompilerException
  */
 class MethodCompiler {
 	ClassFile classFile
-
+	public  MethodCompiler(ClassFile classFile){
+		this.classFile = classFile
+	}
 	def addSignitureToClassFile(String signature){
 		def signitureIndex = classFile.constantPool.size()
 //		if(methods.contains(signature)) {

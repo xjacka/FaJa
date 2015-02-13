@@ -20,13 +20,20 @@ class FieldAccess implements Expression{
 		inst.instruction = Instruction.GETFIELD
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(fieldName)
-		List<PrecompiledInstruction> result = [inst]
+		List<PrecompiledInstruction> result = []
+		if(nextMemberAccess){
+			result.addAll(nextMemberAccess.argEval(classFile, locals))
+		}
+		result.add(inst)
 		if(nextMemberAccess){
 			result.addAll(nextMemberAccess.eval(classFile, locals))
 		}
 		result
 	}
-
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
 	@Override
 	String toString(){
 		String res = ':' + fieldName

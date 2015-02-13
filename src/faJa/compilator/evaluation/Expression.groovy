@@ -8,5 +8,6 @@ import faJa.compilator.LocalVariables
  * Created by Kamil on 11. 2. 2015.
  */
 public interface Expression {
-	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals);
+	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals)
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals)
 }

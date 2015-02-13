@@ -15,16 +15,19 @@ import faJa.compilator.parser.Parser
  */
 class ClosureCreation implements Expression{
 	List<String> args
-	Code code
-	public ClosureCreation(List<String> args, Code code){
+	List<Expression> body
+
+	public ClosureCreation(List<String> args, List<String> body){
 		this.args = args
-		this.code = code
+		Code code = new Code(body)
+		this.body = new Parser().parseCode(code)
+
 	}
 
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
-		List<String> closureArgList = locals.asList()
 		List<PrecompiledInstruction> result = []
+		List<String> closureArgList
 		// load context on stack
 		closureArgList.each { localName ->
 			PrecompiledInstruction load = new PrecompiledInstruction()
@@ -32,10 +35,16 @@ class ClosureCreation implements Expression{
 			load.paramVal = locals.findIndexByName(localName)
 		}
 		closureArgList.addAll(1, args)
-		List<PrecompiledInstruction> bytecode = new MethodCompiler().compileMethod(closureArgList,new ClosureParser(), code)
+
 		PrecompiledClosure precompiledClosure = new PrecompiledClosure()
 		precompiledClosure.argsCount = args.size()
-		precompiledClosure.instructions = bytecode
+
+		precompiledClosure.instructions = []
+		body.each {
+			precompiledClosure.instructions.add(it.eval(classFile, locals))
+		}
+
+
 		Integer closureIdx = classFile.closures.size()
 		classFile.closures.add(precompiledClosure)
 
@@ -49,8 +58,18 @@ class ClosureCreation implements Expression{
 	}
 
 	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
+
+	@Override
 	String toString(){
-		String res = '{' + args.join(',') + ' | ..closurebody.. }'
+		String res = '{' + args.join(',') + ' | \n'
+		body.each {
+			res+= it.toString() + '\n'
+		}
+
+		res += '}'
 		res
 	}
 }

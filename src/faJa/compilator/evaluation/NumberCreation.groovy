@@ -20,14 +20,21 @@ class NumberCreation implements Expression {
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_NUM
 		inst.paramVal = number
-		List<PrecompiledInstruction> result = [inst]
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.add(inst)
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
 		return result
 	}
 
-
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
 	@Override
 	String toString(){
 		String res = number

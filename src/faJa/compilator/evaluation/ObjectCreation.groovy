@@ -20,7 +20,7 @@ class ObjectCreation implements Expression{
 
 	String className
 
-	MethodCall memberAccess = null
+	Expression memberAccess = null
 
 	ObjectCreation(String className){
 		this.className = className
@@ -33,18 +33,28 @@ class ObjectCreation implements Expression{
 		inst.instruction = Instruction.INIT
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(className)
-		List<PrecompiledInstruction> result = [inst]
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.add(inst)
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
 		result
 	}
+
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
 	@Override
 	String toString(){
-		String res = className '.new'
+		String res = className + '.new'
 		if(memberAccess){
 			res+= memberAccess.toString()
 		}
 		res
 	}
+
 }

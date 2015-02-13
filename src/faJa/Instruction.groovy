@@ -10,7 +10,7 @@ package faJa
  * | 1  | LOAD        |   localPropertyIndex      (1) |                 -> newVal           |
  * | 2  | STORE       |   localPropertyIndex      (1) | val             ->                  |
  * | 3  | GETFIELD    |   constantPoolPointer     (2) | object          -> field            |
- * | 4  | PUTFIELD    |   constantPoolPointer     (2) | field, object   ->                  |
+ * | 4  | PUTFIELD    |   constantPoolPointer     (2) | val, object   ->                  |
  * | 5  | INIT        |   constantPoolPointer     (2) |                 -> newObject        |
  * | 6  | INIT_NUM    |   constantPoolPointer     (2) |                 -> newNumberObject  |
  * | 7  | INIT_STRING |   constantPoolPointer     (2) |                 -> newStringObject  |

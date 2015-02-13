@@ -20,11 +20,19 @@ class BoolCreation implements Expression{
 		inst.instruction = Instruction.INIT_BOOL
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(bool)
-		List<PrecompiledInstruction> result = [inst]
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.add(inst)
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
 		return result
+	}
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
 	}
 
 	@Override

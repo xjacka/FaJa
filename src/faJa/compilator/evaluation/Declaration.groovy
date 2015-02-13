@@ -30,6 +30,11 @@ class Declaration implements Expression{
 	}
 
 	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
+
+	@Override
 	String toString(){
 		'var ' + toStringWithoutVar()
 	}

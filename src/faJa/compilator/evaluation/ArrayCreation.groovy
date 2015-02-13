@@ -1,6 +1,7 @@
 package faJa.compilator.evaluation
 
 import faJa.ClassFile
+import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
@@ -17,9 +18,27 @@ class ArrayCreation  implements Expression{
 
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
-		// todo array creation
-		[]
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.addAll(initArray())
+		if(memberAccess){
+			result.addAll(memberAccess.eval(classFile, locals))
+		}
+		result
 	}
+	List<PrecompiledInstruction> initArray(){
+		// todo load args
+		PrecompiledInstruction inst = new PrecompiledInstruction()
+		inst.instruction = Instruction.INIT_ARRAY
+		[inst]
+	}
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
+
 
 	@Override
 	String toString(){

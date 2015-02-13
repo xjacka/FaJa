@@ -180,7 +180,7 @@ class Compiler {
 					return
 				}
 				if(line.startsWith(METHOD_END)){
-					createMethod(signature,argList,methodBody)
+					new MethodCompiler(classFile).createMethod(signature,argList,methodBody)
 				}
 				methodBody << line
 			}

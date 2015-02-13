@@ -42,10 +42,14 @@ class Parser {
 		}
 		// check array
 		if(startArray(line) != null){
-			String args = betweenParentheses(line, '[', ']')
+			Integer currentLineIdx = code.currentLineIdx()
+			String args = betweenParentheses(line,code, '[', ']')
 			List<String> argList = args.split(',').collect{it.trim()}
 			ArrayCreation arrayCreation = new ArrayCreation(argList)
-			String nextToken = line.substring(line.indexOf(']') + 1 )
+			if(currentLineIdx < code.currentLineIdx()) { // code moved
+				line = code.currentLine()
+			}
+			String nextToken = tokenAfterArray(line)
 			arrayCreation.memberAccess = parse(nextToken, code)
 			return arrayCreation
 		}
@@ -74,18 +78,19 @@ class Parser {
 		// check closure creation
 		if(startClosure(line)){
 			List args = closureArgList(line)
-			return new ClosureCreation(args, code)
+			List body = closureBody(line, code).findAll{ it.trim() != ''}
+			return new ClosureCreation(args, body)
 		}
 		// check declaration
 		if(startDeclaration(line) != null){
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
 			if(hasDefinition(line)){
-				String rest = skipToSameLevelComma(line)
+				String rest = skipToSameLevelComma(line, code) // todo nextToken
 				String nextToken = line.substring(line.indexOf('var') + 'var'.length(), line.length() - rest.length())
 				declaration.definition = parse(nextToken, code)
 			}
-			if(nextDeclaration(line).trim() != '' ){
-				declaration.nextDeclaration = parse('var ' + nextDeclaration(line), code)
+			if(nextDeclaration(line, code).trim() != '' ){
+				declaration.nextDeclaration = parse('var ' + nextDeclaration(line, code), code)
 			}
 			return declaration
 
@@ -132,11 +137,16 @@ class Parser {
 		// check method call
 		if(startMethodCall(line)){
 			MethodCall methodCall = new MethodCall(cleanMethodName(line))
-			List<String> args = methodArgs(line)
-			args.each {
+			Integer currentLineIdx = code.currentLineIdx()
+			String args = betweenParentheses(line, code)
+			List<String> argList = methodArgs(args)
+			argList.each {
 				methodCall.args.add(parse(it, code))
 			}
-			String nextToken = line.substring(startMethodCall(line).length() + betweenParentheses(line).length() + ')'.length())
+			if(currentLineIdx < code.currentLineIdx()) { // code moved
+				line = code.currentLine()
+			}
+			String nextToken = tokenAfterMethod(line)
 			methodCall.nextMemberAccess = parse(nextToken, code)
 			return methodCall
 		}
@@ -170,6 +180,13 @@ class Parser {
 	// closure array
 	def startArray(String line){
 		line.find(~/^ *\[/)
+	}
+	def tokenAfterArray(String line){
+		if(!startArray(line)){
+			line = '[' + line
+		}
+		String inParenthesses = betweenParentheses(line, null, '[', ']')
+		line.substring(line.indexOf('[') + 1 + inParenthesses.length() + 1)
 	}
 // closure creation
 	def startClosure(String line){
@@ -206,10 +223,17 @@ class Parser {
 	}
 	// method call
 	def startMethodCall(String line){
-		line.find(~/^ *\.[a-z]+[a-zA-Z0-9]*\(/)
+		line.find(~/^ *\.[^\.^:^\(]+\(/)
 	}
 	def cleanMethodName(String line){
 		line.substring(line.indexOf('.') + 1, line.indexOf('('))
+	}
+	def tokenAfterMethod(String line){
+		if(!startMethodCall(line)){
+			line = '(' + line
+		}
+		String inParenthesses = betweenParentheses(line, null)
+		line.substring(line.indexOf('(') + 1 + inParenthesses.length() + 1)
 	}
 	// ObjectCreation
 	def startObjectCreation(String line) {
@@ -247,7 +271,7 @@ class Parser {
 		}
 		return true
 	}
-	def nextDeclaration(String line){
+	def nextDeclaration(String line, Code code){
 		String rest = skipToSameLevelComma( line.substring(startDeclaration(line).length()))
 		if(rest == ''){
 			return ''
@@ -260,16 +284,20 @@ class Parser {
 	}
 
 	/// skip todo test
-	def String skipToSameLevelComma(String line){
+	def String skipToSameLevelComma(String line, Code code = null){
 		int openParentheses = 0
 		int closeParentheses = 0
 		int cntr = 0
 		// hledat v dalsi methode pokud se nenajdou na jednom radku?
-		while(cntr < line.length()){
-			if(line[cntr] == openParentheses){
+		while(cntr < line.length() || (code && code.hasNextLine() && (openParentheses - closeParentheses) > 1)){
+			if(cntr >= line.length()){
+				cntr = 0
+				line = code.nextLine()
+			}
+			if(line[cntr] == '(' || line[cntr] == '{' || line[cntr] == '[' ){
 				openParentheses++
 			}
-			if(line[cntr] == closeParentheses){
+			if(line[cntr] == ')' || line[cntr] == '}' || line[cntr] == ']' ){
 				closeParentheses++
 			}
 			if(openParentheses == closeParentheses && line[cntr] == ','){
@@ -281,11 +309,10 @@ class Parser {
 	}
 
 	// method call
-	def List<String> methodArgs(String line){
-		String args = betweenParentheses(line).trim()
+	def List<String> methodArgs(String args){
 		List<String> result = []
 		while(1){
-			String rest = skipToSameLevelComma(args)
+			String rest = skipToSameLevelComma(args, null)
 			String arg = args.substring(0, args.length() - rest.length())
 			if(args == ''){
 				break
@@ -298,14 +325,27 @@ class Parser {
 		}
 		result
 	}
-	def String betweenParentheses(String line, String open = '(', String close = ')'){
+	List<String> closureBody(String line, Code code ){
+		String open = '{'
+		String close = '}'
+		String endLineSeparator = '\n'
+		String result = betweenParentheses('{', code,  open, close, endLineSeparator)
+		result.split(endLineSeparator).toList()
+	}
+	String betweenParentheses(String line, Code code, String open = '(', String close = ')', String endLineSeparator = ' '){
 		Integer firstParenthesesIdx = line.indexOf(open)
 		line = line.substring(firstParenthesesIdx + 1)
 		int openParentheses = 1
 		int closeParentheses = 0
 		int cntr = 0
+		String result = ""
 		// hledat v dalsi methode pokud se nenajdou na jednom radku?
-		while(cntr < line.length()){
+		while(cntr < line.length() || (code && code.hasNextLine())){
+			if(cntr >= line.length()){
+				cntr = 0
+				result = result + endLineSeparator + line
+				line = code.nextLine()
+			}
 			if(line[cntr] == open){
 				openParentheses++
 			}
@@ -317,6 +357,7 @@ class Parser {
 			}
 			cntr++
 		}
-		line.substring(0, cntr)
+		result = result + line.substring(0, cntr)
+		result
 	}
 }

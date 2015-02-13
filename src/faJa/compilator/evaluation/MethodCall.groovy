@@ -24,9 +24,10 @@ class MethodCall implements Expression{
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(signature)
 
-		args.each {
-			result.addAll(it.eval(classFile, locals))
+		if(nextMemberAccess){
+			result.addAll(nextMemberAccess.argEval(classFile, locals))
 		}
+
 		result.add(inst)
 
 		if(nextMemberAccess){
@@ -34,6 +35,15 @@ class MethodCall implements Expression{
 		}
 
 		return result
+	}
+
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		List<PrecompiledInstruction> result = []
+		args.each {
+			result.addAll(it.eval(classFile, locals))
+		}
+		result
 	}
 
 	String getSignature(){

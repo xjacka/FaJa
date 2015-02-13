@@ -17,14 +17,22 @@ class StringCreation implements Expression {
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		PrecompiledInstruction inst = new PrecompiledInstruction()
-		inst.instruction = Instruction.INIT_NUM
+		inst.instruction = Instruction.INIT_STRING
 		inst.paramVal = classFile.constantPool.size()
 		classFile.constantPool.add(value)
-		List<PrecompiledInstruction> result = [inst]
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.add(inst)
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile, locals))
 		}
 		return result
+	}
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
 	}
 	@Override
 	String toString(){

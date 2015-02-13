@@ -17,7 +17,11 @@ class ObjectAccess implements Expression {
 	}
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
-		List<PrecompiledInstruction> result = loadObject(locals)
+		List<PrecompiledInstruction> result = []
+		if(memberAccess){
+			result.addAll(memberAccess.argEval(classFile, locals))
+		}
+		result.addAll(loadObject(locals))
 		if(memberAccess){
 			result.addAll(memberAccess.eval(classFile,locals))
 		}
@@ -30,7 +34,10 @@ class ObjectAccess implements Expression {
 		inst.paramVal = locals.findIndexByName(varName)
 		[inst]
 	}
-
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
+	}
 	@Override
 	String toString(){
 		String res = varName

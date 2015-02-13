@@ -21,11 +21,11 @@ class ParserTest {
 
 		assert parser.startMethodCall('    .asdasd()') != null
 		assert parser.cleanMethodName('    .asdasd()') == 'asdasd'
-		assert parser.methodArgs('    .asdasd()').empty
+		assert parser.methodArgs('    .asdasd()', new Code([])).empty
 
 		assert parser.startMethodCall('    .asdasd(asda, 5, 4)') != null
 		assert parser.cleanMethodName('    .asdasd(asda, 5, 4)') == 'asdasd'
-		assert parser.methodArgs('    .asdasd(asda, 5, 4)') == ['asda', '5', '4']
+		assert parser.methodArgs('    .asdasd(asda, 5, 4)', new Code([])) == ['asda', '5', '4']
 
 
 		assert parser.startObject("    a5sdfsd5") != null
@@ -56,7 +56,7 @@ class ParserTest {
 		assert parser.startString(' "dadssad"') != null
 		assert parser.cleanString(' "dadssad"') == 'dadssad'
 
-		assert parser.betweenParentheses('.call(sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new)') == 'sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new'
+		assert parser.betweenParentheses('.call(sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new)', new Code([])) == 'sadas, asda.wrwer(asdasd,dasdas,456), a:sadasd, Object.new'
 
 
 		ClosureParser closureParser = new ClosureParser()
@@ -79,5 +79,30 @@ class ParserTest {
 			println(it.toString())
 		}
 
+	}
+	def testMultiLineMethodCall(){
+		List<String> body = []
+		body.add('self:test.call(1,2,true,')
+		body.add('false)')
+
+		Code code = new Code(body)
+		Parser parser = new Parser()
+		List<Expression> expressionList = parser.parseCode(code)
+		expressionList.each{
+			println(it.toString())
+		}
+	}
+	def testClosure(){
+		List<String> body = []
+		body.add('var a <- { a, b |')
+		body.add('a.+(b)')
+		body.add('}')
+
+		Code code = new Code(body)
+		Parser parser = new Parser()
+		List<Expression> expressionList = parser.parseCode(code)
+		expressionList.each{
+			println(it.toString())
+		}
 	}
 }

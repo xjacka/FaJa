@@ -24,9 +24,14 @@ class Assigment implements Expression{
 		inst.instruction = Instruction.STORE
 		inst.paramVal = locals.findIndexByName(assignee)
 
-		List result = assigned.eval(classFile)
+		List result = assigned.eval(classFile, locals)
 		result.add(inst)
 		return result
+	}
+
+	@Override
+	List<PrecompiledInstruction> argEval(ClassFile classFile, LocalVariables locals) {
+		[] // comile args
 	}
 
 	@Override
