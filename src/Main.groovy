@@ -1,14 +1,22 @@
 import faJa.FaJaExecutor
+import faJa.compilator.Compiler
 import faJa.compilator.evaluation.Expression
+import faJa.compilator.representation.ClassFile
 import faJa.exceptions.CompilerException
 import faJa.exceptions.InputException
 import faJa.exceptions.InstructionException
 import faJa.exceptions.InterpretException
+import faJa.interpreter.ClassLoader
 
 final Boolean DEBUG = true
 Exception e = null
 try {
-	new FaJaExecutor().run(args.length != 0 ? args[0] : '../fajaSrc/Main')
+	if (args.length == 2 && args[1] == "-c") {
+		ClassFile classFile = new Compiler().compile(args[0] + ClassLoader.FAJA_EXTENSION)
+		print(classFile.toString())
+	} else{
+		new FaJaExecutor().run(args.length != 0 ? args[0] : '../fajaSrc/Main') // todo (only Main)
+	}
 }
 catch (CompilerException cpE){
 	println "compile ERROR: " + cpE.getMessage()

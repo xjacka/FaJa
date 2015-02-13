@@ -1,6 +1,7 @@
 package faJa.compilator.representation
 
 import faJa.helpers.ByteHelper
+import faJa.interpreter.Instruction
 
 /**
  *                         SERIALIZED CLASS FILE TO BYTES (each space = 2 bytes)
@@ -179,24 +180,36 @@ class ClassFile {
 		}
 		sb.append('Methods:\n')
 		methods.each{ method ->
-			sb.append(constantPool[method.signatureIndex]+'\n')
-			sb.append('\tbytecode:\n')
+			sb.append(constantPool[method.signatureIndex]+':\n')
 			method.instructions.each{ inst ->
-				sb.append('\t\t'+ inst.instruction.toString() + ' ' + (inst.paramVal==null?'':inst.paramVal) +'\n')
+				sb.append('\t'+ inst.instruction.toString().padRight(12) + ' ' + (inst.paramVal==null?'':inst.paramVal).toString().padRight(3))
+				sb.append(getComment(inst) +'\n' )
 			}
 		}
 		if(closures.size() > 0) {
 			sb.append("Closures:\n")
 			closures.eachWithIndex { closure, i ->
 				sb.append('[' + i + '] (arguments: ' + closure.argsCount + '):\n')
-				sb.append('\tbytecode:\n')
-				closure.instructions.each { instruction ->
-					sb.append('\t\t' + instruction.instruction.toString() + ' ' + (instruction.paramVal == null ? '' : instruction.paramVal) + '\n')
+				closure.instructions.each { inst ->
+					sb.append('\t'+ inst.instruction.toString().padRight(12) + ' ' + (inst.paramVal==null?'':inst.paramVal).toString().padRight(3))
+					sb.append(getComment(inst) +'\n' )
 				}
 			}
 		}
 
 		sb.toString()
+	}
+
+	private String getComment(PrecompiledInstruction instruction){
+		String comment = ""
+		List pointingToCP = [Instruction.INVOKE, Instruction.GETFIELD, Instruction.PUTFIELD,
+							Instruction.INIT, Instruction.INIT_STRING, Instruction.INIT_BOOL,
+							Instruction.INIT_NUM]
+		List pointingToLocals = [Instruction.LOAD, Instruction.STORE]
+		if(pointingToCP.collect{it.id}.contains(instruction.instruction.id)){
+			comment += "\t// " + constantPool.get(instruction.paramVal)
+		}
+		comment
 	}
 
 	String getClassName(){

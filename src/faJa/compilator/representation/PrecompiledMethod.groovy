@@ -1,6 +1,5 @@
 package faJa.compilator.representation
 
-import faJa.compilator.representation.PrecompiledInstruction
 import faJa.helpers.ByteHelper
 
 class PrecompiledMethod {
