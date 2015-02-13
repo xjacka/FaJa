@@ -7,7 +7,6 @@ class PrecompiledClosure {
 	Integer argsCount
 	List<PrecompiledInstruction> instructions
 
-
 	byte [] toBytecode(List constPoolIndexes){
 		List<Byte> bytes = []
 		bytes.addAll(ByteHelper.IntegerTo2Bytes(argsCount))

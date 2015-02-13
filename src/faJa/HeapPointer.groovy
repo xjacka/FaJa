@@ -1,5 +1,0 @@
-package faJa
-
-class HeapPointer {
-
-}

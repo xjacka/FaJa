@@ -38,7 +38,6 @@ class ByteHelper {
 		new String(stringBytes)
 	}
 
-	// todo not tested
 	static Integer bytesToNumber(byte[] bytes, int ptr) {
 		int i = 0;
 		i += unsignedValue(bytes[ptr])
