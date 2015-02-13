@@ -4,6 +4,7 @@ import faJa.ClassFile
 import faJa.Instruction
 import faJa.PrecompiledInstruction
 import faJa.compilator.LocalVariables
+import faJa.exceptions.CompilerException
 
 /**
  * Created by Kamil on 13. 2. 2015.
@@ -30,6 +31,9 @@ class ArrayCreation  implements Expression{
 	}
 	List<PrecompiledInstruction> initArray(){
 		// todo load args
+		if(!args.empty){
+			throw CompilerException('current supported only empty array initialization')
+		}
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_ARRAY
 		[inst]
