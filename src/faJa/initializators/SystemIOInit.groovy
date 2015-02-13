@@ -13,9 +13,10 @@ class SystemIOInit extends BaseInit{
 				'Object',
 				'writeToFile(2)',
 				'readFromFile(1)',
-				'innerOut(1)',
 				'out(1)',
-				'toS(0)'
+				'inString(0)',
+				'inNumber(0)',
+				'inBool(0)'
 
 		]
 		classFile.fields = []
@@ -30,35 +31,24 @@ class SystemIOInit extends BaseInit{
 		readFromFile.signatureIndex = 3
 		classFile.methods.add(readFromFile)
 
-//		Method innerOut(1) - Native
-		def innerOut = new PrecompiledMethod()
-		innerOut.signatureIndex = 4
-		classFile.methods.add(innerOut)
-
-//		Method out(1)
+//		Method out(1) - Native
 		def out = new PrecompiledMethod()
-		out.signatureIndex = 5
-
-		def instr = new PrecompiledInstruction()
-		instr.instruction = Instruction.LOAD
-		instr.paramVal = 1
-		out.instructions.add(instr)
-
-		instr = new PrecompiledInstruction()
-		instr.instruction = Instruction.INVOKE
-		instr.paramVal = 6
-		out.instructions.add(instr)
-
-		instr = new PrecompiledInstruction()
-		instr.instruction = Instruction.LOAD
-		instr.paramVal = 0
-		out.instructions.add(instr)
-
-		instr = new PrecompiledInstruction()
-		instr.instruction = Instruction.INVOKE
-		instr.paramVal = 4
-		out.instructions.add(instr)
-
+		out.signatureIndex = 4
 		classFile.methods.add(out)
+
+//		Method inString(0) - Native
+		def inputS = new PrecompiledMethod()
+		inputS.signatureIndex = 5
+		classFile.methods.add(inputS)
+
+//		Method inNumber(0) - Native
+		def inputN = new PrecompiledMethod()
+		inputN.signatureIndex = 6
+		classFile.methods.add(inputN)
+
+//		Method inBoolean(0) - Native
+		def inputB = new PrecompiledMethod()
+		inputB.signatureIndex = 7
+		classFile.methods.add(inputB)
 	}
 }

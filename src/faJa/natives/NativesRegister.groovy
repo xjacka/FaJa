@@ -37,7 +37,10 @@ class NativesRegister {
 
 	        'writeToFile(2)SystemIO' : SystemIONatives.writeToFile,
 	        'readFromFile(1)SystemIO' : SystemIONatives.readFromFile,
-	        'innerOut(1)SystemIO' : SystemIONatives.innerOut,
+	        'out(1)SystemIO' : SystemIONatives.out,
+	        'inString(0)SystemIO' : SystemIONatives.inputString,
+	        'inNumber(0)SystemIO' : SystemIONatives.inputNumber,
+	        'inBool(0)SystemIO' : SystemIONatives.inputBool,
 
 	        'call(0)Closure' : ClosureNatives.call,
 
