@@ -3,6 +3,17 @@ package faJa.initializators
 import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *     NUMBER OBJECT
+ * +--------------------+
+ * |   numberClassPtr   |
+ * +--------------------+
+ * |                    |
+ * +---    value     ---+
+ * |                    |
+ * +--------------------+
+ *
+ */
 class NumberInit extends BaseInit {
 
 	NumberInit(){

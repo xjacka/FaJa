@@ -3,6 +3,15 @@ package faJa.initializators
 import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *      BOOL OBJECT
+ * +--------------------+
+ * |    boolClassPtr    |
+ * +--------------------+
+ * |        val         |  <- only 1 byte
+ * +--------------------+
+ *
+ */
 class BoolInit extends BaseInit{
 
 	BoolInit(){

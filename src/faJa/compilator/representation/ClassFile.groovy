@@ -11,6 +11,9 @@ import faJa.interpreter.Instruction
  * || classSize | ConstantPoolSize || itemSize_1 | xxxxxx | itemSize_2 | xxxxxx | ..... || fieldsSize | field_1 | field_2 | ..... || methodsSize | methodSize_1 | signatureIndex_1 | xxxxxxxxxxx_1 | methodSize_2 | signatureIndex_2 | xxxxxxxxxxxx_2 | ..... || closuresSize | closureSize_1 | argsCount_1 | xxxxxxxxx_1 | closureSize_2 | argsCount_2 | xxxxxxxxx_2 | ..... ||
  * ++------------------------------++---------------------------------------------------++----------------------------------------++--------------------------------------------------------------------------------------------------------------------------++--------------------------------------------------------------------------------------------------------------++
  *
+ */
+
+/**
  *   SERIALIZED CLASS FILE TO BYTES
  *       (each space = 2 bytes)
  * ++------------------------------++........................
@@ -167,7 +170,8 @@ class ClassFile {
 	@Override
 	String toString(){
 		StringBuilder sb = new StringBuilder()
-		sb.append('className: ' + constantPool[0])
+		sb.append(isSingleton ? 'objectName:' : 'className: ')
+		sb.append(constantPool[0])
 		sb.append('\nparentName: ' + constantPool[1])
 		sb.append('\n')
 		sb.append('ConstantPool:\n')
@@ -180,7 +184,7 @@ class ClassFile {
 		}
 		sb.append('Methods:\n')
 		methods.each{ method ->
-			sb.append(constantPool[method.signatureIndex]+':\n')
+			sb.append(" " + constantPool[method.signatureIndex]+':\n')
 			method.instructions.each{ inst ->
 				sb.append('\t'+ inst.instruction.toString().padRight(12) + ' ' + (inst.paramVal==null?'':inst.paramVal).toString().padRight(3))
 				sb.append(getComment(inst) +'\n' )

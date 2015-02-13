@@ -3,6 +3,13 @@ package faJa.initializators
 import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
+/**
+ *       NULL OBJECT
+ * +--------------------+
+ * |    nullClassPtr    |
+ * +--------------------+
+ *
+ */
 class NullInit extends BaseInit {
 	NullInit() {
 		classFile = new ClassFile()
