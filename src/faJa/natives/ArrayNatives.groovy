@@ -4,6 +4,7 @@ import faJa.ClassLoader
 import faJa.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
+import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
 import faJa.helpers.NativesHelper
 import faJa.helpers.ObjectAccessHelper
@@ -172,8 +173,61 @@ class ArrayNatives {
 		stackFrame.methodStack.push(newArrayPtr)
 	}
 
+	// for select return value must be true/false
 	static select = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisArrayPtr = stackFrame.methodStack.pop()
+		Integer closurePtr = stackFrame.methodStack.pop()
 
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,thisArrayPtr,Heap.SLOT_SIZE)
+		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+
+		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
+
+		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
+		Integer newArrayObjectPtr = ObjectAccessHelper.valueOf(heap,newArrayPtr,Heap.SLOT_SIZE)
+
+		Integer index = ObjectAccessHelper.valueOf(heap,thisArrayPtr,0)
+
+		Integer selectedItems = 0
+
+		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
+		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
+		Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
+		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+
+		index.times{
+			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+
+			StackFrame newStackFrame = new StackFrame()
+			newStackFrame.parent = stackFrame
+			newStackFrame.bytecodePtr = 0
+			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
+			newStackFrame.locals = []
+			newStackFrame.methodStack = []
+			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
+			if(arguments == 1){
+				newStackFrame.locals.add(1,resultPtr)
+			}
+			if(arguments > 1){
+				throw new InterpretException('Too much arguments for closure in method collect(1)Array')
+			}
+
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
+
+			Integer closureResult = stackFrame.methodStack.pop()
+			String resultClass = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,closureResult))
+
+			if(resultClass == Compiler.BOOL_CLASS) {
+				if (heap.boolFromBoolObject(closureResult) == true) {
+					ObjectAccessHelper.setNewValue(heap,newArrayObjectPtr,selectedItems * Heap.SLOT_SIZE,resultPtr)
+					selectedItems++
+				}
+			}
+		}
+		ObjectAccessHelper.setNewValue(heap,newArrayPtr,0,selectedItems)
+		stackFrame.methodStack.push(newArrayPtr)
 	}
 
 	static add1 = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
