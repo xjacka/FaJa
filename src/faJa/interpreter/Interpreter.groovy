@@ -248,7 +248,7 @@ class Interpreter {
 		Integer objectPtr = currentStackFrame.thisInst
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap, objectPtr)
 		String newStringValue = ClassAccessHelper.getConstantPoolValue(heap, classPtr,constPoolPtr)
-		Byte newBoolValue = parseByte(newStringValue)
+		Boolean newBoolValue = parseByte(newStringValue)
 
 		// bool object initialization on heap
 		Integer newObjectPtr = heap.createBool(boolClassPtr, newBoolValue)
@@ -259,10 +259,10 @@ class Interpreter {
 
 	private parseByte(String toParse){
 		if(toParse == Compiler.TRUE_STRING_VALUE){
-			return 1
+			return true
 		}
 		if(toParse == Compiler.FALSE_STRING_VALUE){
-			return 0
+			return false
 		}
 		throw new InterpretException('parse bool from constant pool failed')
 	}

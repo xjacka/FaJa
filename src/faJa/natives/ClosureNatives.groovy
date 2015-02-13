@@ -30,5 +30,7 @@ class ClosureNatives {
 		newStackFrame.locals.addAll(1, reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
 
 		new Interpreter(heap, newStackFrame, classLoader).interpret()
+
+		stackFrame.methodStack.push(thisPtr) // always push
 	}
 }

@@ -8,19 +8,17 @@ class SystemIONatives {
 
 	static writeToFile = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-		null
 	}
 
 	static readFromFile = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
-		null
 	}
 
-	static innerOut = { StackFrame currentStackFrame, Heap heap, ClassLoader classLoader ->
-		currentStackFrame.methodStack.pop()
-		Integer stringPtr = currentStackFrame.methodStack.last() // pop and push
+	static innerOut = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		stackFrame.methodStack.pop()
+		Integer stringPtr = stackFrame.methodStack.last() // pop and push
 		println(heap.stringFromStringObject(stringPtr))
 
-		null
+		stackFrame.methodStack.push(stringPtr) // always push
 	}
 }

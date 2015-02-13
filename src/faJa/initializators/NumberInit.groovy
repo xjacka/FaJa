@@ -20,7 +20,11 @@ class NumberInit extends BaseInit {
 				'ifFalse(1)',
 				'init(1)',
 				'toS(0)',
-				'times(1)'
+				'times(1)',
+				'<(1)',
+				'>(1)',
+				'>=(1)',
+				'<=(1)'
 		]
 		classFile.fields = []
 
@@ -78,5 +82,25 @@ class NumberInit extends BaseInit {
 		def times = new PrecompiledMethod()
 		times.signatureIndex = 12
 		classFile.methods.add(times)
+
+//		Method <(1) - Native
+		def lessThen = new PrecompiledMethod()
+		lessThen.signatureIndex = 13
+		classFile.methods.add(lessThen)
+
+//		Method >(1) - Native
+		def greaterThen = new PrecompiledMethod()
+		greaterThen.signatureIndex = 14
+		classFile.methods.add(greaterThen)
+
+//		Method >=(1) - Native
+		def greaterOrEqualThen = new PrecompiledMethod()
+		greaterOrEqualThen.signatureIndex = 15
+		classFile.methods.add(greaterOrEqualThen)
+
+//		Method <=(1) - Native
+		def lessOrEqualThen = new PrecompiledMethod()
+		lessOrEqualThen.signatureIndex = 16
+		classFile.methods.add(lessOrEqualThen)
 	}
 }

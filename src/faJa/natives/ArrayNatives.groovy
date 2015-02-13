@@ -14,59 +14,11 @@ import faJa.interpreter.StackFrame
 class ArrayNatives {
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisArrayPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		Integer arraySize = ObjectAccessHelper.valueOf(heap,thisArrayPtr,0)
-		if(arraySize != 0) {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method ifTrue(1)Array')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}
-		stackFrame.methodStack.push(thisArrayPtr)
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ObjectAccessHelper.valueOf(heap,a,0) != 0 },"ifTrue(1)Array")
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisArrayPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		Integer arraySize = ObjectAccessHelper.valueOf(heap,thisArrayPtr,0)
-		if(arraySize == 0) {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method ifTrue(1)Array')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}
-		stackFrame.methodStack.push(thisArrayPtr)
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ObjectAccessHelper.valueOf(heap,a,0) == 0 },"ifFalse(1)Array")
 	}
 
 	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -86,6 +38,7 @@ class ArrayNatives {
 		}
 
 		Integer stringPtr = heap.createString(stringClassPtr, "[" + arrayStr.join(", ") + "]")
+
 		stackFrame.methodStack.push(stringPtr)
 	}
 
@@ -121,6 +74,7 @@ class ArrayNatives {
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
+
 		stackFrame.methodStack.push(thisArrayPtr)
 	}
 
@@ -170,6 +124,7 @@ class ArrayNatives {
 
 			ObjectAccessHelper.setNewValue(heap,newArrayObjectPtr,it * Heap.SLOT_SIZE,closureResult)
 		}
+
 		stackFrame.methodStack.push(newArrayPtr)
 	}
 
@@ -227,6 +182,7 @@ class ArrayNatives {
 			}
 		}
 		ObjectAccessHelper.setNewValue(heap,newArrayPtr,0,selectedItems)
+
 		stackFrame.methodStack.push(newArrayPtr)
 	}
 
@@ -343,6 +299,7 @@ class ArrayNatives {
 		}
 		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
 		Integer resultPtr = heap.createNumber(numberClassPtr, items)
+
 		stackFrame.methodStack.push(resultPtr)
 	}
 
@@ -350,7 +307,7 @@ class ArrayNatives {
 		Integer arrayPtr = stackFrame.methodStack.pop()
 		Integer objectPtr = stackFrame.methodStack.pop()
 
-		Byte result = 0
+		Boolean result = false
 		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,0)
 		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
 		index.times{
@@ -360,13 +317,14 @@ class ArrayNatives {
 			Integer compareResult = stackFrame.methodStack.pop()
 
 			if(heap.boolFromBoolObject(compareResult) == true){
-				result = 1
+				result = true
 				return
 			}
 		}
 
 		Integer boolClassPtr = classLoader.findClass(heap, Compiler.BOOL_CLASS)
 		Integer resultPtr = heap.createBool(boolClassPtr, result)
+
 		stackFrame.methodStack.push(resultPtr)
 	}
 }

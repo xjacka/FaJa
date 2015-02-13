@@ -23,14 +23,12 @@ class StringNatives {
 		if(stringClassPtr != otherClassPtr){
 			NativesHelper.callMethodFromNative(heap,stackFrame,otherPtr,'toS(0)',classLoader)
 			otherStringPtr = stackFrame.methodStack.pop()
-//			throw new InterpretException('argument of String::plus must be string')
 		}
 
 		String result  = heap.stringFromStringObject(thisPtr) + heap.stringFromStringObject(otherStringPtr)
 		Integer newStringPtr = heap.createString(stringClassPtr, result)
-		stackFrame.methodStack.push(newStringPtr)
 
-		null
+		stackFrame.methodStack.push(newStringPtr)
 	}
 
 	static equals = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -40,74 +38,23 @@ class StringNatives {
 		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
 		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, otherPtr)
 
-		Byte result = BoolNatives.FALSE
+		Boolean result = false
 		if(stringClassPtr == otherClassPtr){
 			if(heap.stringFromStringObject(thisPtr) == heap.stringFromStringObject(otherPtr)){
-				result = BoolNatives.TRUE
+				result = true
 			}
 		}
 		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), result)
-		stackFrame.methodStack.push(boolPtr)
 
-		null
+		stackFrame.methodStack.push(boolPtr)
 	}
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisStringPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		String stringValue = heap.stringFromStringObject(thisStringPtr)
-		if(stringValue.trim() != '') {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method iftrue(1)String')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}else{
-			return null
-		}
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> heap.stringFromStringObject(a).trim() != ''},"ifTrue(1)String")
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer thisStringPtr = stackFrame.methodStack.pop()
-		Integer closurePtr = stackFrame.methodStack.pop()
-
-		String stringValue = heap.stringFromStringObject(thisStringPtr)
-		if(stringValue.trim() == '') {
-			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
-			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
-			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
-			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-
-			if(arguments > 0){
-				throw new InterpretException('Too much arguments for closure in method ifFalse(1)String')
-			}
-			StackFrame newStackFrame = new StackFrame()
-			newStackFrame.parent = stackFrame
-			newStackFrame.bytecodePtr = 0
-			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
-			newStackFrame.locals = []
-			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-		}else{
-			return null
-		}
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> heap.stringFromStringObject(a).trim() == ''},"ifFalse(1)String")
 	}
 
 	static length = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -115,13 +62,11 @@ class StringNatives {
 		Integer size = heap.getPointer(thisPtr + Heap.SLOT_SIZE)
 
 		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compiler.NUMBER_CLASS), size)
-		stackFrame.methodStack.push(resultPtr)
 
-		null
+		stackFrame.methodStack.push(resultPtr)
 	}
 
 	static toS ={ StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		// empty, leaves string arg on stack
-		null
 	}
 }

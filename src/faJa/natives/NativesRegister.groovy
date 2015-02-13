@@ -15,6 +15,10 @@ class NativesRegister {
 	        'init(1)Number' : NumberNatives.init,
 	        'toS(0)Number' : NumberNatives.toS,
 	        'times(1)Number' : NumberNatives.times,
+	        '<(1)Number' : NumberNatives.lessThen,
+	        '>(1)Number' : NumberNatives.greaterThen,
+	        '>=(1)Number' : NumberNatives.greaterOrEqualThen,
+	        '<=(1)Number' : NumberNatives.lessOrEqualThen,
 
 	        'length(0)String' : StringNatives.length,
 	        '==(1)String' : StringNatives.equals,

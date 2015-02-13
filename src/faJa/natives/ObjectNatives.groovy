@@ -13,31 +13,28 @@ class ObjectNatives {
 		Integer thisPtr = stackFrame.methodStack.pop()
 		String objectClassName = ClassAccessHelper.getName(heap, ObjectAccessHelper.getClassPointer(heap, thisPtr))
 		Integer strPtr = heap.createString(classLoader.findClass(heap, Compiler.STRING_CLASS), objectClassName + '@' + thisPtr)
-		stackFrame.methodStack.push(strPtr)
 
-		null
+		stackFrame.methodStack.push(strPtr)
 	}
 
 	static equals = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer thisPtr = stackFrame.methodStack.pop()
 		Integer argPtr = stackFrame.methodStack.pop()
-		Byte result
+		Boolean result
 		if(thisPtr == argPtr){
-			result = BoolNatives.TRUE
+			result = true
 		}else{
-			result = BoolNatives.FALSE
+			result = false
 		}
 		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), result)
-		stackFrame.methodStack.push(boolPtr)
 
-		null
+		stackFrame.methodStack.push(boolPtr)
 	}
 
 	static isNull = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		stackFrame.methodStack.pop()
-		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), BoolNatives.FALSE)
-		stackFrame.methodStack.push(boolPtr)
+		Integer boolPtr = heap.createBool(classLoader.findClass(heap, Compiler.BOOL_CLASS), false)
 
-		null
+		stackFrame.methodStack.push(boolPtr)
 	}
 }
