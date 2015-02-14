@@ -4,9 +4,6 @@ import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class Declaration implements Expression{
 	String varName
 	Assigment definition = null
@@ -28,8 +25,6 @@ class Declaration implements Expression{
 		}
 		result
 	}
-
-
 
 	@Override
 	String toString(){

@@ -18,11 +18,7 @@ import faJa.compilator.evaluation.ObjectCreation
 import faJa.compilator.evaluation.StringCreation
 import faJa.exceptions.CompilerException
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class Parser {
-
 
 	List<Expression> parseCode(Code code){
 		List<Expression> expressionList = []
@@ -153,7 +149,6 @@ class Parser {
 		throw new CompilerException('unexpected token on line: ' + line)
 	}
 
-
 	boolean startNull(String line) {
 		line.trim().startsWith(Compiler.NULL_KEYWORD)
 	}
@@ -188,10 +183,12 @@ class Parser {
 		String inParenthesses = betweenParentheses(line, null, '[', ']')
 		line.substring(line.indexOf('[') + 1 + inParenthesses.length() + 1)
 	}
-// closure creation
+
+	// closure creation
 	def startClosure(String line){
 		line.find(~/^ *\{/)
 	}
+
 	def closureArgList(String line){
 		if(line.indexOf('|') == -1){
 			return []
@@ -199,10 +196,12 @@ class Parser {
 		String args = line.substring(line.indexOf('{') + 1, line.indexOf('|'))
 		args.split(',').collect { it.trim() }
 	}
+
 	// number creation
 	def startNumber(String line){
 		line.find(~/^ *[0-9]+/)
 	}
+
 	def Integer cleanNumber(String line){
 		startNumber(line).trim().toInteger()
 	}
@@ -211,23 +210,29 @@ class Parser {
 	def startFieldAssigment(String line){
 		line.find(~/^ *(:[a-zA-Z0-9]*)? +<\-/)
 	}
+
 	def cleanFieldAssignee(String line){
 		cleanAssignee(startFieldAssigment(line)).substring(1)
 	}
+
 	// field access
 	def startAccessField(String line){
 		line.find(~/^ *:[a-z]+[a-zA-Z0-9]*/)
 	}
+
 	def cleanFieldName(String line){
 		startAccessField(line).trim().substring(1)
 	}
+
 	// method call
 	def startMethodCall(String line){
 		line.find(~/^ *\.[^\.^:^\(]+\(/)
 	}
+
 	def cleanMethodName(String line){
 		line.substring(line.indexOf('.') + 1, line.indexOf('('))
 	}
+
 	def tokenAfterMethod(String line){
 		if(!startMethodCall(line)){
 			line = '(' + line
@@ -235,35 +240,40 @@ class Parser {
 		String inParenthesses = betweenParentheses(line, null)
 		line.substring(line.indexOf('(') + 1 + inParenthesses.length() + 1)
 	}
+
 	// ObjectCreation
 	def startObjectCreation(String line) {
 		line.find(~/^ *[A-Z]+[a-zA-Z0-9]*\.new/)
 	}
+
 	def cleanClassName(String line){
 		String tmp = startObjectCreation(line)
 		tmp.substring(0,tmp.length() - '.new'.length()).trim()
 	}
-// ObjectAccess
+
+	// ObjectAccess
 	def startObject(String line){
 		line.find(~/^ *[a-z]+[a-zA-Z0-9]*/)
 	}
+
 	def cleanVarName(String line){
 		line.find(~/^ *[a-z]+[a-zA-Z0-9]*/).trim()
 	}
 
-	/// Assignment
+	// Assignment
 	def cleanAssignee(String line){
 		line.substring(0, line.indexOf(Compiler.ASSIGNMENT_OP)).trim()
 	}
+
 	def startAssignment(String line){
 		line.find(~/^ *[a-z]+[a-zA-Z0-9]* +<\-/)
 	}
 
-
-	/// Declaration
+	// Declaration
 	def cleanDeclaration(String declaration){
 		declaration.substring(declaration.indexOf("var") + "var".length()).trim()
 	}
+
 	def hasDefinition(String line){
 		String followingString = line.substring(startDeclaration(line).length()).trim()
 		if(followingString == "" || followingString.startsWith(',')){
@@ -271,6 +281,7 @@ class Parser {
 		}
 		return true
 	}
+
 	def nextDeclaration(String line, Code code){
 		String rest = skipToSameLevelComma( line.substring(startDeclaration(line).length()))
 		if(rest == ''){
@@ -278,6 +289,7 @@ class Parser {
 		}
 		rest.substring(1)
 	}
+
 	def startDeclaration(String line){
 		String tmp = line.find(~/^ *var +[a-z]+[a-zA-Z0-9]*/)
 		tmp
@@ -325,6 +337,7 @@ class Parser {
 		}
 		result
 	}
+
 	List<String> closureBody(String line, Code code ){
 		String open = '{'
 		String close = '}'
@@ -332,6 +345,7 @@ class Parser {
 		String result = betweenParentheses('{', code,  open, close, endLineSeparator)
 		result.split(endLineSeparator).toList()
 	}
+
 	String betweenParentheses(String line, Code code, String open = '(', String close = ')', String endLineSeparator = ' '){
 		Integer firstParenthesesIdx = line.indexOf(open)
 		line = line.substring(firstParenthesesIdx + 1)

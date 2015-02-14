@@ -62,7 +62,7 @@ class Compiler {
 		}
 
 		// hack for more methods call on one line
-		List<String> convertedLines = []
+//		List<String> convertedLines = []
 //		lines.each { line ->
 //			if(line.split("\\" + METHOD_CALL_SEPARATOR).size() > 2){
 //				if(line.contains(ASSIGNMENT_OP)){
@@ -91,7 +91,7 @@ class Compiler {
 		createFields(lines)
 		createMethods(lines)
 		if(!lines.last().startsWith(END_CLASS)){
-			throw new CompilerException('class shold end with ' + END_CLASS)
+			throw new CompilerException('class should end with ' + END_CLASS)
 		}
 
 		classFile
@@ -184,6 +184,20 @@ class Compiler {
 				methodBody << line
 			}
 		}
+	}
+
+	def createSignature(String line){
+		String head = line.replace(METHOD_START + ' ', '')
+		String args = head.find(~/\(.*\)/)
+		String name = head.substring(0,head.indexOf(METHOD_ARGUMENT_START_KEYWORD))
+		Integer argsCount = args == '()' ? 0 : args.split(ARGUMENT_SEPARATOR).size()
+		head.replace(args,name == 'call' ? "(0)" :"(${argsCount})")
+	}
+
+	def createArgList(String line){
+		def wrappedArgs = line.find(~/\(.*\)/)
+		def args = wrappedArgs.substring(1, wrappedArgs.length()-1);
+		return args == '' ? [] : args.split(ARGUMENT_SEPARATOR).toList()
 	}
 
 	// parse method body without start and end keyword
@@ -539,19 +553,6 @@ class Compiler {
 //		result
 //	}
 //
-	def createSignature(String line){
-		String head = line.replace(METHOD_START + ' ', '')
-		String args = head.find(~/\(.*\)/)
-		String name = head.substring(0,head.indexOf(METHOD_ARGUMENT_START_KEYWORD))
-		Integer argsCount = args == '()' ? 0 : args.split(ARGUMENT_SEPARATOR).size()
-		head.replace(args,name == 'call' ? "(0)" :"(${argsCount})")
-	}
-
-	def createArgList(String line){
-		def wrappedArgs = line.find(~/\(.*\)/)
-		def args = wrappedArgs.substring(1, wrappedArgs.length()-1);
-		return args == '' ? [] : args.split(ARGUMENT_SEPARATOR).toList()
-	}
 //
 //
 //	/// ------------------- Closure compiler methods ----------------------------

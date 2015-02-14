@@ -5,15 +5,14 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
 class StringCreation implements Expression {
 	String value
 	Expression memberAccess = null
+
 	public StringCreation(String value){
 		this.value = value
 	}
+
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		PrecompiledInstruction inst = new PrecompiledInstruction()

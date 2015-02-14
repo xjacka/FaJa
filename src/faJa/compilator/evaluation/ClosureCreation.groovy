@@ -8,9 +8,6 @@ import faJa.compilator.LocalVariables
 import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
 class ClosureCreation implements Expression{
 	List<String> args
 	List<Expression> body

@@ -5,9 +5,6 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
 class NumberCreation implements Expression {
 	Integer number
 	Expression memberAccess = null
@@ -15,6 +12,7 @@ class NumberCreation implements Expression {
 	public NumberCreation(Integer number){
 		this.number = number
 	}
+
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<PrecompiledInstruction> result = []
@@ -30,7 +28,6 @@ class NumberCreation implements Expression {
 		}
 		return result
 	}
-
 
 	@Override
 	String toString(){

@@ -6,14 +6,9 @@ import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 import faJa.exceptions.CompilerException
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
 class FieldAssignment implements Expression{
 	String field
 	Expression assigned = null
-
-
 
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
@@ -28,7 +23,6 @@ class FieldAssignment implements Expression{
 		result.add(inst)
 		result
 	}
-
 
 	@Override
 	String toString(){

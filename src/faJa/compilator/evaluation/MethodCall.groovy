@@ -5,9 +5,6 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class MethodCall implements Expression{
 	List<Expression> args = []
 	String methodName
@@ -16,6 +13,7 @@ class MethodCall implements Expression{
 	public MethodCall(String methodName){
 		this.methodName = methodName
 	}
+
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<PrecompiledInstruction> result = []
@@ -39,7 +37,6 @@ class MethodCall implements Expression{
 	String getSignature(){
 		methodName + '(' + args.size() + ')'
 	}
-
 
 	@Override
 	String toString(){

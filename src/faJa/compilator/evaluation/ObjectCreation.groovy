@@ -5,10 +5,8 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
-class ObjectCreation implements Expression{
+class ObjectCreation implements Expression {
+
 //	static Map<String , Instruction> buildingClassInit
 //	static {
 //		buildingClassInit = [:]
@@ -19,12 +17,12 @@ class ObjectCreation implements Expression{
 //	}
 
 	String className
-
 	Expression memberAccess = null
 
 	ObjectCreation(String className){
 		this.className = className
 	}
+
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 //		Instruction buildinClassInitInst = buildingClassInit.get(className)
@@ -41,7 +39,6 @@ class ObjectCreation implements Expression{
 		result
 	}
 
-
 	@Override
 	String toString(){
 		String res = className + '.new'
@@ -50,5 +47,4 @@ class ObjectCreation implements Expression{
 		}
 		res
 	}
-
 }

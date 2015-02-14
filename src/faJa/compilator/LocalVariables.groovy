@@ -2,9 +2,6 @@ package faJa.compilator
 
 import faJa.exceptions.CompilerException
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class LocalVariables {
 
 	List<String> localVariables = []
@@ -18,6 +15,7 @@ class LocalVariables {
 		}
 		localVariables.push(name)
 	}
+
 	def addLocalVariables(List<String> names){
 		names.each{
 			addLocalVariable(it)
@@ -37,6 +35,7 @@ class LocalVariables {
 		}
 		throw new CompilerException('local variable: ' + name + ' not found')
 	}
+
 	private Integer innerFindIndexByName(String name){
 		Integer result = null
 		localVariables.eachWithIndex { String varName, int idx ->
