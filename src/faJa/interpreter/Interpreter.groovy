@@ -6,6 +6,7 @@ import faJa.exceptions.InterpretException
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.MethodHelper
 import faJa.helpers.ObjectAccessHelper
+import faJa.natives.ClosureRegister
 import faJa.natives.NativesRegister
 
 class Interpreter {
@@ -102,32 +103,38 @@ class Interpreter {
 		Integer constPoolPtr = currentStackFrame.currentPointer
 		String fieldName = ClassAccessHelper.getConstantPoolValue(heap, classPtr, constPoolPtr)
 
+		// get new value from stack
+		Integer newValue = currentStackFrame.methodStack.pop()
+
 		// get field index
 		Integer targetObjectPtr = currentStackFrame.methodStack.pop()
 		Integer targetClassPtr = ObjectAccessHelper.getClassPointer(heap, targetObjectPtr)
 		Integer fieldIdx = ClassAccessHelper.findFieldIndex(heap, targetClassPtr, fieldName)
 
-		// get new value from stack
-		Integer newValue = currentStackFrame.methodStack.pop()
 
 		// set new field value
 		ObjectAccessHelper.setNewValue(heap,targetObjectPtr, fieldIdx, newValue)
 		currentStackFrame.incrementBP(Instruction.PUTFIELD.params)
 
+		currentStackFrame.methodStack.push(newValue)
 	}
 
 	def processLoad() {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 		Integer localIdx = currentStackFrame.currentByte
-		currentStackFrame.methodStack.add(currentStackFrame.locals[localIdx])
+		currentStackFrame.methodStack.add(currentStackFrame.loadLocal(localIdx))
 		currentStackFrame.incrementBP(Instruction.LOAD.params)
 	}
 
 	def processStore() {
 		currentStackFrame.incrementBP(INSTRUCTION_SIZE)
 		Integer localIdx = currentStackFrame.currentByte
-		currentStackFrame.locals[localIdx] = currentStackFrame.methodStack.pop()
+		Integer value = currentStackFrame.methodStack.pop()
+		currentStackFrame.storeLocal(localIdx, value)
 		currentStackFrame.incrementBP(Instruction.STORE.params)
+
+		currentStackFrame.methodStack.push(value)
+
 	}
 
 	def processPushNull() {
@@ -144,7 +151,7 @@ class Interpreter {
 		Integer closureIdx = currentStackFrame.currentByte
 		currentStackFrame.incrementBP(Instruction.INIT_CLOSURE.params)
 		Integer newClosurePtr = heap.createClosure(closureClassPtr, initClassPtr, closureIdx)
-
+		ClosureRegister.register(newClosurePtr, currentStackFrame)
 		currentStackFrame.methodStack.push(newClosurePtr)
 
 	}

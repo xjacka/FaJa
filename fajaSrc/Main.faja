@@ -3,8 +3,15 @@ object Main
 		def main()
 			var sOut, array, a, closure, b, tr, fa, result
 
+			a <- Main2.new
+			a.closureTest()
 			sOut <- SystemIO.new
-:-)			array <- Array.new
+:-)			test closures
+			sOut.out(a:accessor.call())
+			a:setter.call(20)
+			sOut.out(a:accessor.call())
+
+			array <- Array.new
 			a <- "10"
 			b <- 5
 

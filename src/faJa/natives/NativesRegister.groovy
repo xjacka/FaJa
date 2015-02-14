@@ -44,6 +44,7 @@ class NativesRegister {
 	        'inBool(0)SystemIO' : SystemIONatives.inputBool,
 
 	        'call(0)Closure' : ClosureNatives.call,
+	        'call(1)Closure' : ClosureNatives.call, // todo provizorni lepsi matchovani
 
 	        '==(1)Object' : ObjectNatives.equals,
 	        'toS(0)Object' : ObjectNatives.toS,

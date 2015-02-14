@@ -1,10 +1,12 @@
 package faJa.helpers
 
+import faJa.compilator.evaluation.ClosureCreation
 import faJa.interpreter.ClassLoader
 import faJa.memory.Heap
 import faJa.exceptions.InterpretException
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
+import faJa.natives.ClosureRegister
 import faJa.natives.NativesRegister
 
 class NativesHelper {
@@ -64,7 +66,8 @@ class NativesHelper {
 			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 			newStackFrame.locals = []
 			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+			newStackFrame.environment = ClosureRegister.get(closurePtr)
+			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}

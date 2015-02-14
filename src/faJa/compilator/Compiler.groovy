@@ -63,28 +63,28 @@ class Compiler {
 
 		// hack for more methods call on one line
 		List<String> convertedLines = []
-		lines.each { line ->
-			if(line.split("\\" + METHOD_CALL_SEPARATOR).size() > 2){
-				if(line.contains(ASSIGNMENT_OP)){
-					List<String> splitLine = line.split(ASSIGNMENT_OP)
-					String var = splitLine[0].trim()
-					if(splitLine[1].contains(var)){
-						throw new CompilerException("Could not invoke method chain with assigment to property which is also an argument")
-					}
-					List<String> methodCalls = splitLine[1].split("\\" + METHOD_CALL_SEPARATOR)
-					String targetObject = methodCalls.remove(0).trim()
-					methodCalls.each { methodCall ->
-						convertedLines << var + ASSIGNMENT_OP + targetObject + METHOD_CALL_SEPARATOR + methodCall.trim()
-						targetObject = var
-					}
-				}else{
-					throw new CompilerException("Can not call methods in chain")
-				}
-			}else {
-				convertedLines << line
-			}
-		}
-		lines = convertedLines
+//		lines.each { line ->
+//			if(line.split("\\" + METHOD_CALL_SEPARATOR).size() > 2){
+//				if(line.contains(ASSIGNMENT_OP)){
+//					List<String> splitLine = line.split(ASSIGNMENT_OP)
+//					String var = splitLine[0].trim()
+//					if(splitLine[1].contains(var)){
+//						throw new CompilerException("Could not invoke method chain with assigment to property which is also an argument")
+//					}
+//					List<String> methodCalls = splitLine[1].split("\\" + METHOD_CALL_SEPARATOR)
+//					String targetObject = methodCalls.remove(0).trim()
+//					methodCalls.each { methodCall ->
+//						convertedLines << var + ASSIGNMENT_OP + targetObject + METHOD_CALL_SEPARATOR + methodCall.trim()
+//						targetObject = var
+//					}
+//				}else{
+//					throw new CompilerException("Can not call methods in chain")
+//				}
+//			}else {
+//				convertedLines << line
+//			}
+//		}
+//		lines = convertedLines
 		// end hack (replace with methodBody << line)
 
 		createClass(lines[0])

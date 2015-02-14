@@ -26,11 +26,12 @@ class ClosureNatives {
 		newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 		newStackFrame.locals = []
 		newStackFrame.methodStack = []
-		newStackFrame.locals.addAll(stackFrame.locals) // insert current context
-		newStackFrame.locals.addAll(1, reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
+		newStackFrame.locals.addAll(reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
+		newStackFrame.environment = ClosureRegister.get(thisPtr)
+		newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 		new Interpreter(heap, newStackFrame, classLoader).interpret()
 
-		stackFrame.methodStack.push(thisPtr) // always push
+//		stackFrame.methodStack.push(thisPtr) // always push
 	}
 }
