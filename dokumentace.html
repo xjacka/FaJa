@@ -1,4 +1,4 @@
-<htlm>
+<html>
   <head>
     <title>FaJa dokumentace</title>
     <style>
@@ -18,83 +18,134 @@
         margin: 15px;
         border-collapse: collapse;
       }
+      h2{
+	      display: inline-block;
+	      margin: 10px;
+	      font-size: 26px;
+      }
+	    body{
+		    margin: 15px;
+	    }
+	    img {
+		    float: right;
+		    margin-top: 55px;
+	    }
     </style>
   </head>
   <body>
-    <table>
-      <tr><th>Method</th><th>Return value</th><th>Description</th></tr>
-      <tr><th colspan='3'>Object</th></tr>  
-      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if this reference is equal to <i>a</i> reference.</td></tr>  
-      <tr><td>toS()</td><td>String</td><td>Return String representation of object.</td></tr>  
-      <tr><td>isNull()</td><td>Bool</td><td>Return true.</td></tr> 
-      
-      <tr><th colspan='3'>String</th></tr>   
-      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if all characters of <i>this</i> and <i>a</i> are equal.</td></tr>  
-      <tr><td>length()</td><td>Number</td><td>Length of String.</td></tr>  
-      <tr><td>+(Object a)</td><td>String</td><td>Concatenate String with String representation of object <i>a</i>.</td></tr>  
-      <tr><td>ifTrue(Closure a)</td><td>String</td><td>Call closure <i>a</i> if string is not empty. Return String.</td></tr>  
-      <tr><td>ifFalse(Closure a)</td><td>String</td><td>Call closure <i>a</i> if string is empty. Return String.</td></tr>  
-      <tr><td>toS()</td><td>String</td><td>Return self.</td></tr>  
-      <tr><td>toNumber()</td><td>Number</td><td>Try parse String to Number. If string is not number, throw exception.</td></tr>  
-      
-      <tr><th colspan='3'>SystemIO</th></tr>   
-      <tr><td>writeToFile(String a, Object b)</td><td>String</td><td>Append string representation of <i>b</i> to file with path <i>a</i> </td></tr>  
-      <tr><td>readFromFile(String a)</td><td>Array<String></td><td>Return array of Strings. Each String represents line of file with name <i>a</i></td></tr>  
-      <tr><td>out(Object a)</td><td>String</td><td>Print String <i>a</i> to stdOut and return them.</td></tr>  
-      <tr><td>inString()</td><td>String</td><td>Read String from stdIn and return them.</td></tr>  
-      <tr><td>inNumber()</td><td>Number</td><td>Read Number from stdIn and return them.</td></tr>  
-      <tr><td>inBool()</td><td>Bool</td><td>Read Bool from stdIn and return them.</td></tr>  
-      
-      <tr><th colspan='3'>Number</th></tr>   
-      <tr><td>==(Number a)</td><td>Bool</td><td>Return true if this is equal to <i>a</i>.</td></tr>  
-      <tr><td>+(Number a)</td><td>Number</td></td><td>Return this + <i>a</i>.</td></tr>  
-      <tr><td>-(Number a)</td><td>Number</td><td>Return this + <i>a</i>.</td></tr>  
-      <tr><td>*(Number a)</td><td>Number</td><td>Return this * <i>a</i>.</td></tr>  
-      <tr><td>/(Number a)</td><td>Number</td><td>Return this / <i>a</i>.</td></tr>  
-      <tr><td>%(Number a)</td><td>Number</td><td>Return this % <i>a</i>.</td></tr> 
-      <tr><td>ifTrue(Closure a)</td><td>Number</td><td>Call closure <i>a</i> if number is not 0. Return Number.</td></tr> 
-      <tr><td>ifFalse(Closure a)</td><td>Number</td><td>Call closure <i>a</i> if number is 0. Return Number.</td></tr> 
-      <tr><td>toS()</td><td>String</td><td>Return String representation of Number.</td></tr> 
-      <tr><td>times(Closure a)</td><td>Number</td><td>Call closure <i>a</i> number times. Return Number.</td></tr> 
-      <tr><td><(Number a)</td><td>Bool</td><td>Return true if this is less then <i>a</i>.</td></tr> 
-      <tr><td>>(Number a)</td><td>Bool</td><td>Return true if this is greater then <i>a</i>.</td></tr> 
-      <tr><td><=(Number a)</td><td>Bool</td><td>Return true if this is less or equal then <i>a</i>.</td></tr> 
-      <tr><td>>=(Number a)</td><td>Bool</td><td>Return true if this is greater or equal then <i>a</i>.</td></tr> 
-      
-      <tr><th colspan='3'>Null</th></tr>   
-      <tr><td>isNull()</td><td>Bool</td><td>Return true.</td></tr>  
-      <tr><td>ifTrue(Closure a)</td><td>Bool<String></td><td>Never call Closure <i>a</i>. Return Null.</td></tr>  
-      <tr><td>ifFalse(Closure a)</td><td>Bool</td><td>Call Closure <i>a</i>. Return Null.</td></tr>  
-      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if <i>a</i> is Null.</td></tr>  
-      <tr><td>toS()</td><td>String</td><td>Return string representation of Null.</td></tr>  
+  <center><h1>FaJa documentation</h1></center>
+    <h1>Language syntax</h1>
+    <p>
+	    FaJa id fully object oriented and dynamically typed programming language.
+    </p>
+    <h3>Class & Object</h3>
+    <p>
+		Every class start with keyword <strong>class</strong> and ends with <strong>endClass</strong>. Object is singleton
+	    class => there is only one instance. Class or Object can extend another class using <strong>extends</strong> keyword. Class
+	    can contains fields and methods. Fields definition starts with <strong>fields</strong> keyword. Fields can be separated by comma
+	    or new line. Fields section ends with <strong>endFields</strong> keyword. Methods starts with <strong>methods</strong> and ends with
+	    <strong>endMethods</strong> keyword.
+	    One line comments starts with <strong>:-)</strong>
+    </p>
+  <h3>Methods</h3>
+  <p>
+	  Each method starts with <strong>def</strong> keyword and ends with <strong>end</strong> keyword. After
+	  def follow method name and in branches there are arguments separated by comma. Local variables are defined using keyword <strong>var</strong>.
+	  This class fields or methods can be access using keyword <strong>self:</strong>. Method call is performed by comma. You can also assign
+	  come method result or literal or another variable to some variable using <strong>&lt;-</strong> operator.
+  </p>
+  <h3>Closures</h3>
+  <p>
+	  Closure body start with <strong>{</strong> and ends with <strong>}</strong>. After start bracket can be comma separated arguments list.
+	  Arguments block ends with <strong>|</strong>. Closure body can be same as method body.
+  </p>
+  <h3>Literals</h3>
+  <p>
+	  String literal is everything between <strong>"</strong> and <strong>"</strong>. <br>
+	  Number literal is only number.<br>
+	  Null literal is <strong>null</strong>.<br>
+	  Bool literals are <strong>true</strong> and <strong>false</strong>.<br>
+	  Array literal is <strong>[]</strong>.
+  </p>
 
-      <tr><th colspan='3'>Closure</th></tr>   
-      <tr><td>call()</td><td>Closure</td><td>Call closure code.</td></tr> 
-      
-      <tr><th colspan='3'>Bool</th></tr>   
-      <tr><td>==(Bool a)</td><td>Bool</td><td>Return true if this object is equal to <i>a</i>.</td></tr>  
-      <tr><td>ifTrue(Closure a)</td><td>Bool<String></td><td>Call Closure <i>a</i> if this is true. Return Bool.</td></tr>  
-      <tr><td>ifFalse(Closure a)</td><td>Bool</td><td>Call Closure <i>a</i> if this is false. Return Bool.</td></tr>  
-      <tr><td>and(Bool a)</td><td>Bool</td><td>Return true if this and <i>a</i> are true.</td></tr>  
-      <tr><td>or(Bool a)</td><td>Bool</td><td>Return true if this or <i>a</i> are true.</td></tr> 
-      <tr><td>not()</td><td>Bool</td><td>Return negation of Bool.</td></tr> 
-      <tr><td>toS()</td><td>String</td><td>Return string representation of Bool.</td></tr>  
+    <img src="faja.png">
+    <center>
+	    <h1>Embeded object reference</h1>
+	    <table>
+	      <tr><th>Method</th><th>Return value</th><th>Description</th></tr>
+	      <tr><th colspan='3'><h2>Object</h2></th></tr>
+	      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if this reference is equal to <i>a</i> reference.</td></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return String representation of object.</td></tr>
+	      <tr><td>isNull()</td><td>Bool</td><td>Return true.</td></tr>
 
-      <tr><th colspan='3'>Array</th></tr>   
-      <tr><td>toS()</td><td>String</td><td>Return string representation of Array.</td></tr>  
-      <tr><td>ifTrue(Closure a)</td><td>Array<String></td><td>Call Closure <i>a</i> if array is not empty. Return Array.</td></tr>  
-      <tr><td>ifFalse(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> if array is empty. Return Array.</td></tr>  
-      <tr><td>each(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> for each item in array and return array.</td></tr>  
-      <tr><td>collect(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> for each item in array and return new array with item returned from closure <i>a</i></td></tr> 
-      <tr><td>add(Object a)</td><td>Array</td><td>Add Object <i>a</i> to next empty position.</td></tr> 
-      <tr><td>add(Number a, Object b)</td><td>Array</td><td>Add Object <i>b</i> to position <i>a</i>.</td></tr>
-      <tr><td>get(Number a)</td><td>Object</td><td>Get Object  from position <i>a</i>.</td></tr>
-      <tr><td>push(Object a)</td><td>Array</td><td>Add Object <i>a</i> to next empty position.</td></tr>
-      <tr><td>pop()</td><td>Object</td><td>Return and remove Object from last position.</td></tr>
-      <tr><td>top()</td><td>Object</td><td>Return Object from last position.</td></tr>
-      <tr><td>size()</td><td>Number</td><td>Return size of not null items in array.</td></tr>  
-      <tr><td>contains(Object a)</td><td>Bool</td><td>Return true if array contains Object <i>a</i>.</td></tr>
-      <tr><td>select(Closure a)</td><td>Array</td><td>Return array with items for which Closure <i>a</i> returns true.</td></tr>
-    </table>
+	      <tr><th colspan='3'><h2>String</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if all characters of <i>this</i> and <i>a</i> are equal.</td></tr>
+	      <tr><td>length()</td><td>Number</td><td>Length of String.</td></tr>
+	      <tr><td>+(Object a)</td><td>String</td><td>Concatenate String with String representation of object <i>a</i>.</td></tr>
+	      <tr><td>ifTrue(Closure a)</td><td>String</td><td>Call closure <i>a</i> if string is not empty. Return String.</td></tr>
+	      <tr><td>ifFalse(Closure a)</td><td>String</td><td>Call closure <i>a</i> if string is empty. Return String.</td></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return self.</td></tr>
+	      <tr><td>toNumber()</td><td>Number</td><td>Try parse String to Number. If string is not number, throw exception.</td></tr>
+
+	      <tr><th colspan='3'><h2>SystemIO</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>writeToFile(String a, Object b)</td><td>String</td><td>Append string representation of <i>b</i> to file with path <i>a</i> </td></tr>
+	      <tr><td>readFromFile(String a)</td><td>Array&lt;String&gt;</td><td>Return array of Strings. Each String represents line of file with name <i>a</i></td></tr>
+	      <tr><td>out(Object a)</td><td>String</td><td>Print String <i>a</i> to stdOut and return them.</td></tr>
+	      <tr><td>inString()</td><td>String</td><td>Read String from stdIn and return them.</td></tr>
+	      <tr><td>inNumber()</td><td>Number</td><td>Read Number from stdIn and return them.</td></tr>
+	      <tr><td>inBool()</td><td>Bool</td><td>Read Bool from stdIn and return them.</td></tr>
+
+	      <tr><th colspan='3'><h2>Number</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>==(Number a)</td><td>Bool</td><td>Return true if this is equal to <i>a</i>.</td></tr>
+	      <tr><td>+(Number a)</td><td>Number</td></td><td>Return this + <i>a</i>.</td></tr>
+	      <tr><td>-(Number a)</td><td>Number</td><td>Return this + <i>a</i>.</td></tr>
+	      <tr><td>*(Number a)</td><td>Number</td><td>Return this * <i>a</i>.</td></tr>
+	      <tr><td>/(Number a)</td><td>Number</td><td>Return this / <i>a</i>.</td></tr>
+	      <tr><td>%(Number a)</td><td>Number</td><td>Return this % <i>a</i>.</td></tr>
+	      <tr><td>ifTrue(Closure a)</td><td>Number</td><td>Call closure <i>a</i> if number is not 0. Return Number.</td></tr>
+	      <tr><td>ifFalse(Closure a)</td><td>Number</td><td>Call closure <i>a</i> if number is 0. Return Number.</td></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return String representation of Number.</td></tr>
+	      <tr><td>times(Closure a)</td><td>Number</td><td>Call closure <i>a</i> number times. Return Number.</td></tr>
+	      <tr><td><(Number a)</td><td>Bool</td><td>Return true if this is less then <i>a</i>.</td></tr>
+	      <tr><td>>(Number a)</td><td>Bool</td><td>Return true if this is greater then <i>a</i>.</td></tr>
+	      <tr><td><=(Number a)</td><td>Bool</td><td>Return true if this is less or equal then <i>a</i>.</td></tr>
+	      <tr><td>>=(Number a)</td><td>Bool</td><td>Return true if this is greater or equal then <i>a</i>.</td></tr>
+
+	      <tr><th colspan='3'><h2>Null</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>isNull()</td><td>Bool</td><td>Return true.</td></tr>
+	      <tr><td>ifTrue(Closure a)</td><td>Null</td><td>Never call Closure <i>a</i>. Return Null.</td></tr>
+	      <tr><td>ifFalse(Closure a)</td><td>Null</td><td>Call Closure <i>a</i>. Return Null.</td></tr>
+	      <tr><td>==(Object a)</td><td>Bool</td><td>Return true if <i>a</i> is Null.</td></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return string representation of Null.</td></tr>
+
+	      <tr><th colspan='3'><h2>Closure</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>call()</td><td>Closure</td><td>Call closure code.</td></tr>
+
+	      <tr><th colspan='3'><h2>Bool</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>==(Bool a)</td><td>Bool</td><td>Return true if this object is equal to <i>a</i>.</td></tr>
+	      <tr><td>ifTrue(Closure a)</td><td>Bool</td><td>Call Closure <i>a</i> if this is true. Return Bool.</td></tr>
+	      <tr><td>ifFalse(Closure a)</td><td>Bool</td><td>Call Closure <i>a</i> if this is false. Return Bool.</td></tr>
+	      <tr><td>and(Bool a)</td><td>Bool</td><td>Return true if this and <i>a</i> are true.</td></tr>
+	      <tr><td>or(Bool a)</td><td>Bool</td><td>Return true if this or <i>a</i> are true.</td></tr>
+	      <tr><td>not()</td><td>Bool</td><td>Return negation of Bool.</td></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return string representation of Bool.</td></tr>
+
+	      <tr><th colspan='3'><h2>Array</h2> <i>extends</i> Object</th></tr>
+	      <tr><td>toS()</td><td>String</td><td>Return string representation of Array.</td></tr>
+	      <tr><td>ifTrue(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> if array is not empty. Return Array.</td></tr>
+	      <tr><td>ifFalse(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> if array is empty. Return Array.</td></tr>
+	      <tr><td>each(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> for each item in array and return array.</td></tr>
+	      <tr><td>collect(Closure a)</td><td>Array</td><td>Call Closure <i>a</i> for each item in array and return new array with item returned from closure <i>a</i></td></tr>
+	      <tr><td>add(Object a)</td><td>Array</td><td>Add Object <i>a</i> to next empty position.</td></tr>
+	      <tr><td>add(Number a, Object b)</td><td>Array</td><td>Add Object <i>b</i> to position <i>a</i>.</td></tr>
+	      <tr><td>get(Number a)</td><td>Object</td><td>Get Object  from position <i>a</i>.</td></tr>
+	      <tr><td>push(Object a)</td><td>Array</td><td>Add Object <i>a</i> to next empty position.</td></tr>
+	      <tr><td>pop()</td><td>Object</td><td>Return and remove Object from last position.</td></tr>
+	      <tr><td>top()</td><td>Object</td><td>Return Object from last position.</td></tr>
+	      <tr><td>size()</td><td>Number</td><td>Return size of not null items in array.</td></tr>
+	      <tr><td>contains(Object a)</td><td>Bool</td><td>Return true if array contains Object <i>a</i>.</td></tr>
+	      <tr><td>select(Closure a)</td><td>Array</td><td>Return array with items for which Closure <i>a</i> returns true.</td></tr>
+	    </table>
+    </center>
   </body>
 </html>
