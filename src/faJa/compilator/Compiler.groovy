@@ -47,7 +47,7 @@ class Compiler {
 
 	ClassFile classFile
 
-	def methods = [] // for better code checking
+	def classMethods = [] // for better code checking
 	def fields = [] // for better code checking
 
 	ClassFile compile(String path) {
@@ -155,11 +155,10 @@ class Compiler {
 
 	// parse block with method definitions
 	def createMethods(List<String> lines){
-		def methods = false
-		def method = false
-		def methodBody = []
-		def signature
-		def argList
+		Boolean methods = false
+		List<String> methodBody = []
+		String signature
+		List<String> argList
 
 		lines.each{ line ->
 			line = line.trim()
@@ -172,8 +171,11 @@ class Compiler {
 			}
 			if(methods){
 				if(line.startsWith(METHOD_START)){
-					method = true
 					signature = createSignature(line)
+					if(classMethods.contains(signature)) {
+						throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool.get(0))
+					}
+					classMethods.add(signature)
 					argList = createArgList(line)
 					methodBody = []
 					return
