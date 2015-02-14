@@ -24,25 +24,26 @@ class ClosureCreation implements Expression{
 
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
-		List<PrecompiledInstruction> result = []
-		List<String> closureArgList
-		// load context on stack
-		closureArgList.each { localName ->
-			PrecompiledInstruction load = new PrecompiledInstruction()
-			load.instruction = Instruction.LOAD
-			load.paramVal = locals.findIndexByName(localName)
+		LocalVariables closureArgList = new LocalVariables()
+		// load closure arguments to locals
+		args.each {
+			closureArgList.addLocalVariable(it)
 		}
-		closureArgList.addAll(1, args)
+		// load locals from environment to closure locals
+		locals.asList().each {
+			closureArgList.addLocalVariable(it)
+		}
 
 		PrecompiledClosure precompiledClosure = new PrecompiledClosure()
 		precompiledClosure.argsCount = args.size()
-
+		Integer beforeEvalLocalsCnt = closureArgList.count()
 		precompiledClosure.instructions = []
 		body.each {
-			precompiledClosure.instructions.add(it.eval(classFile, locals))
+			precompiledClosure.instructions.addAll(it.eval(classFile, closureArgList))
 		}
+		Integer afterEvalLocalsCnt = closureArgList.count()
 
-
+		precompiledClosure.localsSize = afterEvalLocalsCnt - beforeEvalLocalsCnt + args.size()
 		Integer closureIdx = classFile.closures.size()
 		classFile.closures.add(precompiledClosure)
 
@@ -50,9 +51,7 @@ class ClosureCreation implements Expression{
 		initClosureInst.instruction = Instruction.INIT_CLOSURE
 		initClosureInst.paramVal = closureIdx
 
-		result.add(initClosureInst)
-
-		result
+		[initClosureInst]
 	}
 
 	@Override

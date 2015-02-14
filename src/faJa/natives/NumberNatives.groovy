@@ -94,14 +94,17 @@ class NumberNatives {
 				newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 				newStackFrame.locals = []
 				newStackFrame.methodStack = []
-				newStackFrame.locals.addAll(stackFrame.locals) // insert current context
+
 				if(arguments == 1){
 					Integer iterationCounter = heap.createNumber(classLoader.findClass(heap,Compiler.NUMBER_CLASS),it)
-					newStackFrame.locals.add(1,iterationCounter)
+					newStackFrame.locals.add(iterationCounter)
 				}
 				if(arguments > 1){
 					throw new InterpretException('Too much arguments for closure in method times(1)Number')
 				}
+				newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
+				newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+
 				returnFrames.add(newStackFrame)
 			}
 			returnFrames.each { StackFrame sf ->

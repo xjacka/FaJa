@@ -66,14 +66,15 @@ class ArrayNatives {
 			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 			newStackFrame.locals = []
 			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
 			if(arguments == 1){
-				newStackFrame.locals.add(1,resultPtr)
+				newStackFrame.locals.add(resultPtr)
 			}
 			if(arguments > 1){
 				throw new InterpretException('Too much arguments for closure in method each(1)Array')
 			}
+			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
+			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 			stackFrame.methodStack.pop()
@@ -113,14 +114,15 @@ class ArrayNatives {
 			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 			newStackFrame.locals = []
 			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
 			if(arguments == 1){
-				newStackFrame.locals.add(1,resultPtr)
+				newStackFrame.locals.add(resultPtr)
 			}
 			if(arguments > 1){
 				throw new InterpretException('Too much arguments for closure in method collect(1)Array')
 			}
+			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
+			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 
@@ -164,14 +166,15 @@ class ArrayNatives {
 			newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 			newStackFrame.locals = []
 			newStackFrame.methodStack = []
-			newStackFrame.locals.addAll(stackFrame.locals) // insert current context
 
 			if(arguments == 1){
-				newStackFrame.locals.add(1,resultPtr)
+				newStackFrame.locals.add(resultPtr)
 			}
 			if(arguments > 1){
 				throw new InterpretException('Too much arguments for closure in method collect(1)Array')
 			}
+			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
+			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 

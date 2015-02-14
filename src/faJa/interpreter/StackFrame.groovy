@@ -6,7 +6,9 @@ import faJa.helpers.ByteHelper
 class StackFrame {
 
 	List locals
+	Integer localCnt = null
 	StackFrame parent
+	StackFrame environment = null
 	byte [] bytecode
 	Integer bytecodePtr
 
@@ -18,6 +20,28 @@ class StackFrame {
 
 	def getThisInst(){
 		locals[0]
+	}
+	Integer loadLocal(Integer idx){
+		// for test purpose only
+		if(environment && localCnt == null){
+			throw new InterpretException('stackFrame with parent environment doesn\'t have localCnt set')
+		}
+		if(environment && idx >= localCnt){
+			return environment.loadLocal(idx - localCnt)
+		}
+
+		locals[idx]
+	}
+
+	Integer storeLocal(Integer idx, Integer value){
+		// for test purpose only
+		if(environment && localCnt == null){
+			throw new InterpretException('stackFrame with parent environment doesn\'t have localCnt set')
+		}
+		if(environment && idx >= localCnt){
+				return environment.storeLocal(idx - localCnt, value)
+		}
+		locals[idx] = value
 	}
 
 	Integer getCurrentByte(){

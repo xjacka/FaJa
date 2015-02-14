@@ -26,6 +26,7 @@ class FieldAssignment implements Expression{
 
 		List<PrecompiledInstruction> result = assigned.eval(classFile, locals)
 		result.add(inst)
+		result
 	}
 
 

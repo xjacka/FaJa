@@ -25,8 +25,9 @@ class MethodCompiler {
 //		signitureIndex
 //	}
 
-	def compileMethod(List<String> argList,Parser parser,  Code code){
-		LocalVariables locals = new LocalVariables()
+	def compileMethod(List<String> argList,LocalVariables locals,  Code code){
+		Parser parser = new Parser()
+		locals.addLocalVariable(Compiler.SELF_POINTER)
 		locals.addLocalVariables(argList)
 		List<Expression> expressionList = parser.parseCode(code)
 		List<PrecompiledInstruction> bytecode = []
@@ -42,7 +43,8 @@ class MethodCompiler {
 		method.signatureIndex = classFile.constantPool.add(signature)
 
 		Code code = new Code(methodBody)
-		method.instructions = compileMethod(argList, new Parser(), code)
+		LocalVariables localVariables = new LocalVariables()
+		method.instructions = compileMethod(argList, localVariables, code)
 
 		classFile.methods.add(method)
 	}

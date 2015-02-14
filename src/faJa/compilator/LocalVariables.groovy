@@ -10,7 +10,6 @@ class LocalVariables {
 	List<String> localVariables = []
 
 	LocalVariables(){
-		localVariables.push(Compiler.SELF_POINTER)
 	}
 
 	def addLocalVariable(String name){
@@ -46,5 +45,9 @@ class LocalVariables {
 			}
 		}
 		return result
+	}
+
+	Integer count() {
+		localVariables.size()
 	}
 }

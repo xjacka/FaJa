@@ -14,7 +14,7 @@ class ArrayCreation  implements Expression{
 	Expression memberAccess = null
 
 	public ArrayCreation(List<String> args){
-		this.args = args
+		this.args = args.findAll{ it.trim() != ''}
 	}
 
 	@Override
@@ -29,7 +29,7 @@ class ArrayCreation  implements Expression{
 	List<PrecompiledInstruction> initArray(){
 		// todo load args
 		if(!args.empty){
-			throw CompilerException('current supported only empty array initialization')
+			throw new CompilerException('current supported only empty array initialization')
 		}
 		PrecompiledInstruction inst = new PrecompiledInstruction()
 		inst.instruction = Instruction.INIT_ARRAY
