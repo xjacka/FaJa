@@ -43,6 +43,7 @@ class Compiler {
 	public static final String CLOSURE_CLOSE_KEYWORD = '}'
 	public static final String ARGUMENT_SEPARATOR = ','
 	public static final String CLOSURE_PARAMS_END_KEYWORD = '|'
+	public static final String THREAD_CLASS = "Thread"
 
 
 	ClassFile classFile

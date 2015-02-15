@@ -62,13 +62,16 @@ class NativesRegister {
 	        'each(1)Array': ArrayNatives.each,
 	        'collect(1)Array': ArrayNatives.collect,
 	        'add(1)Array': ArrayNatives.add1,
-	        'add(2)Array': ArrayNatives.add2,               // first arg = position, secodn arg = value
+	        'add(2)Array': ArrayNatives.add2,               // first arg = position, second arg = value
 	        'get(1)Array': ArrayNatives.get,
 	        'push(1)Array': ArrayNatives.push,
 	        'pop(0)Array': ArrayNatives.pop,
 	        'top(0)Array': ArrayNatives.top,
 	        'size(0)Array': ArrayNatives.size,
 	        'contains(1)Array': ArrayNatives.contains,
-	        'select(1)Array': ArrayNatives.select
+	        'select(1)Array': ArrayNatives.select,
+
+			'run(1)Thread': ThreadNatives.run,
+			'wait(0)Thread': ThreadNatives.wait
 	]
 }

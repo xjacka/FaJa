@@ -1,64 +1,33 @@
 object Main
 	methods
 		def main()
-			var sOut, array, a, closure, b, tr, fa, result
+			var t1, t2, closureA, closureB, sOut
+            sOut <- SystemIO.new
 
-			a <- Main2.new
-			a.closureTest()
-			sOut <- SystemIO.new
-:-)			test closures
-			sOut.out(a:accessor.call())
-			a:setter.call(20)
-			sOut.out(a:accessor.call())
+			closureA <- {
+				var a
+				a <- "A"
+				sOut.out(a)
+			}
 
-			array <- Array.new
-			a <- "10"
-			b <- 5
+			t1 <- null
+			t1.ifFalse(closureA)
+:-)			t1 <- Thread.new
+:-)			t2 <- Thread.new
 
-			result <- a.+(b)
-			sOut.out(result)
-
-			a <- a.toNumber()
-			result <- a.+(b)
-			sOut.out(result)
-
-:-)			a <- 5
-:-)			array.push(a)
-:-)			a <- 6
-:-)	        array.push(a)
-:-)            a <- 3
-:-)            array.push(a)
-:-)
-:-)			tr <- {
-:-)				var r
-:-)                r <- true
-:-)                r
-:-)			}
-:-)
-:-)			fa <- { a |
-:-)				var r
-:-)                r <- false
-:-)                r
-:-)			}
-:-)
-:-)            closure <- { item |
-:-)                var c, b
-:-)                b <- 7
-:-)                c <- 2
-:-)                item <- item.+(c)
-:-)                c <- item.<=(b)
-:-)                c.ifTrue(tr)
-:-)                c.ifFalse(fa)
+:-)			closureB <- {
+:-)				var b
+:-)				b <- "B"
+:-)                sOut.out(b)
 :-)            }
 :-)
-:-)            a <- array.select(closure)
+:-)            t1.run(closureA)
+:-)            t2.run(closureB)
 :-)
-:-)            sOut.out(array)
-:-)            sOut.out(a)
-
-:-)			b <- "ahoj"
-:-)            a <- array.collect(b)
-:-)            sOut.out(a)
+:-)			t1.wait()
+:-)			t2.wait()
+:-)
+:-)			sOut.out("end")
 		end
 	endMethods
 endClass

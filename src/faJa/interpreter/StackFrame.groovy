@@ -11,6 +11,7 @@ class StackFrame {
 	StackFrame environment = null
 	byte [] bytecode
 	Integer bytecodePtr
+	ArrayList<Thread> threads = [].asSynchronized()
 
 	List<Integer> methodStack
 

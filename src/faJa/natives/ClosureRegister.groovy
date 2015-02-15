@@ -2,9 +2,6 @@ package faJa.natives
 
 import faJa.interpreter.StackFrame
 
-/**
- * Created by Kamil on 13. 2. 2015.
- */
 class ClosureRegister {
 	static Map<Integer, StackFrame> closureEnvironments = [:]
 

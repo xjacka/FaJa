@@ -1,5 +1,6 @@
 package faJa.interpreter
 
+import faJa.initializators.ThreadInit
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.compilator.representation.ClassFile
@@ -49,13 +50,16 @@ class ClassLoader {
 		pointer = heap.load(new ArrayInit().toBytecode())
 		classRegister.put(Compiler.ARRAY_CLASS,pointer)
 
+		pointer = heap.load(new ThreadInit().toBytecode())
+		classRegister.put(Compiler.THREAD_CLASS,pointer)
+
 		pointer = heap.load(new NullInit().toBytecode())
 		classRegister.put(Compiler.NULL_CLASS,pointer)
 		Integer objPtr = heap.createObject(pointer)
 		singletonRegister.put(Compiler.NULL_CLASS, objPtr)
 	}
 
-	Integer findClass(Heap heap, String className){
+	synchronized Integer findClass(Heap heap, String className){
 		Integer classPtr = classRegister.get(className)
 		if(classPtr != null){
 			return classPtr
@@ -84,8 +88,8 @@ class ClassLoader {
 	}
 
 	// nahraje reprezentaci pomoci faJa.compilator.representation.ClassFile na heapu
-	def load(Heap heap,ClassFile classFile){
-		def pointer = heap.load(classFile.toByteCode())
+	synchronized Integer load(Heap heap,ClassFile classFile){
+		Integer pointer = heap.load(classFile.toByteCode())
 		classRegister.put(classFile.className, pointer)
 		pointer
 	}
