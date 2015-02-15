@@ -5,13 +5,13 @@ import faJa.helpers.ByteHelper
 class PrecompiledClosure {
 
 	Integer argsCount
-	Integer localsSize
+	Integer parentLocalsSize
 	List<PrecompiledInstruction> instructions
 
 	byte [] toBytecode(List constPoolIndexes){
 		List<Byte> bytes = []
 		bytes.addAll(ByteHelper.IntegerTo2Bytes(argsCount))
-		bytes.addAll(ByteHelper.IntegerTo2Bytes(localsSize))
+		bytes.addAll(ByteHelper.IntegerTo2Bytes(parentLocalsSize))
 		instructions.each{ pi ->
 			bytes << pi.instruction.id
 			bytes.addAll(pi.constructParams(constPoolIndexes))

@@ -24,7 +24,8 @@ class Interpreter {
 
 	def interpret(){
 		while(currentStackFrame.bytecode.length > currentStackFrame.bytecodePtr){
-			switch(currentStackFrame.currentByte){
+			Integer instrId = currentStackFrame.currentByte
+			switch(instrId){
 				case Instruction.INIT_BOOL.id:
 					processInitBool()
 					break
@@ -61,7 +62,7 @@ class Interpreter {
 				case Instruction.INIT_ARRAY.id:
 					processInitArray()
 					break
-				default: throw new InterpretException("Unexpected instruction found")
+				default: throw new InterpretException("Unexpected instruction"+instrId+" found")
 			}
 		}
 		if(currentStackFrame.parent){

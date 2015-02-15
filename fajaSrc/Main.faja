@@ -2,16 +2,21 @@ object Main
 	methods
 		def main()
 			var sOut, array, a, closure, b, tr, fa, result
-
+			result <- true
 			a <- Main2.new
 			a.closureTest()
 			sOut <- SystemIO.new
+			closure <- {
+				var t <- "A"
+				sOut.out(t)
+			}
+			result.ifTrue(closure)
 :-)			test closures
 			sOut.out(a:accessor.call())
 			a:setter.call(20)
 			sOut.out(a:accessor.call())
-
-			array <- Array.new
+:-)
+:-)			array <- Array.new
 			a <- "10"
 			b <- 5
 
