@@ -5,9 +5,6 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class ObjectAccess implements Expression {
 	String varName
 	Expression memberAccess = null
@@ -15,6 +12,7 @@ class ObjectAccess implements Expression {
 	public ObjectAccess(String varName){
 		this.varName = varName
 	}
+
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		List<PrecompiledInstruction> result = []

@@ -6,9 +6,6 @@ import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 import faJa.exceptions.CompilerException
 
-/**
- * Created by Kamil on 13. 2. 2015.
- */
 class ArrayCreation  implements Expression{
 	List<String> args
 	Expression memberAccess = null
@@ -26,6 +23,7 @@ class ArrayCreation  implements Expression{
 		}
 		result
 	}
+
 	List<PrecompiledInstruction> initArray(){
 		// todo load args
 		if(!args.empty){
@@ -35,7 +33,6 @@ class ArrayCreation  implements Expression{
 		inst.instruction = Instruction.INIT_ARRAY
 		[inst]
 	}
-
 
 	@Override
 	String toString(){

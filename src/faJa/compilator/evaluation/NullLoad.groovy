@@ -5,9 +5,6 @@ import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
 
-/**
- * Created by Kamil on 12. 2. 2015.
- */
 class NullLoad implements Expression{
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {

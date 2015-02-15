@@ -7,14 +7,13 @@ import faJa.compilator.evaluation.Expression
 import faJa.compilator.parser.Code
 import faJa.compilator.parser.Parser
 
-/**
- * Created by Kamil on 11. 2. 2015.
- */
 class MethodCompiler {
 	ClassFile classFile
+
 	public  MethodCompiler(ClassFile classFile){
 		this.classFile = classFile
 	}
+
 //	def addSignitureToClassFile(String signature){
 //		def signitureIndex = classFile.constantPool.size()
 ////		if(methods.contains(signature)) {
@@ -36,6 +35,7 @@ class MethodCompiler {
 		}
 		return bytecode
 	}
+
 	// parse method body without start and end keyword
 	def createMethod(String signature, List<String> argList, List<String> methodBody){
 		def method = new PrecompiledMethod()
@@ -48,5 +48,4 @@ class MethodCompiler {
 
 		classFile.methods.add(method)
 	}
-
 }
