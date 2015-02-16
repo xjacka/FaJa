@@ -29,7 +29,8 @@ class Parser {
 	}
 
 	Expression parse(String line, Code code){
-		if(line.trim() == ''){
+		line = line.trim()
+		if(line == ''){
 			return new EmptyExpression()
 		}
 		// check null

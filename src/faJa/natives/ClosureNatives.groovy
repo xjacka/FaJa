@@ -28,7 +28,7 @@ class ClosureNatives {
 		newStackFrame.methodStack = []
 		newStackFrame.locals.addAll(reversedArgs.reverse()) // insert args behind this pointer (which is at position 0)
 		newStackFrame.environment = ClosureRegister.get(thisPtr)
-		newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+		newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 		new Interpreter(heap, newStackFrame, classLoader).interpret()
 

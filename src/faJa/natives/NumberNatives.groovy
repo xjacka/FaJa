@@ -103,7 +103,7 @@ class NumberNatives {
 					throw new InterpretException('Too much arguments for closure in method times(1)Number')
 				}
 				newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
-				newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+				newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 				returnFrames.add(newStackFrame)
 			}

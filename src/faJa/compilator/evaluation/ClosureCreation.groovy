@@ -22,25 +22,26 @@ class ClosureCreation implements Expression{
 	@Override
 	List<PrecompiledInstruction> eval(ClassFile classFile, LocalVariables locals) {
 		LocalVariables closureArgList = new LocalVariables()
-		// load closure arguments to locals
-		args.each {
-			closureArgList.addLocalVariable(it)
-		}
+
 		// load locals from environment to closure locals
 		locals.asList().each {
 			closureArgList.addLocalVariable(it)
 		}
+		// load closure arguments to locals
+		args.each {
+			closureArgList.addLocalVariable(it)
+		}
+
 
 		PrecompiledClosure precompiledClosure = new PrecompiledClosure()
 		precompiledClosure.argsCount = args.size()
-		Integer beforeEvalLocalsCnt = closureArgList.count()
+		precompiledClosure.parentLocalsSize = locals.count()
 		precompiledClosure.instructions = []
 		body.each {
 			precompiledClosure.instructions.addAll(it.eval(classFile, closureArgList))
 		}
-		Integer afterEvalLocalsCnt = closureArgList.count()
 
-		precompiledClosure.localsSize = afterEvalLocalsCnt - beforeEvalLocalsCnt + args.size()
+
 		Integer closureIdx = classFile.closures.size()
 		classFile.closures.add(precompiledClosure)
 

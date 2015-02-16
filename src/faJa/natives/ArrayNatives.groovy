@@ -74,7 +74,7 @@ class ArrayNatives {
 				throw new InterpretException('Too much arguments for closure in method each(1)Array')
 			}
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
-			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 			stackFrame.methodStack.pop()
@@ -122,7 +122,7 @@ class ArrayNatives {
 				throw new InterpretException('Too much arguments for closure in method collect(1)Array')
 			}
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
-			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 
@@ -174,7 +174,7 @@ class ArrayNatives {
 				throw new InterpretException('Too much arguments for closure in method collect(1)Array')
 			}
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
-			newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 
