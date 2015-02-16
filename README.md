@@ -1,21 +1,80 @@
-FaJa compiler and virtual machine
 
-This application contains FaJa compiler and bytecode interpreter. Application is written in Groovy language and is
-compiled into Java jar file. This archive contains three folders:
-  /src - contains Groovy source codes of the program.
-  /fajaSrc - contains source codes of program (SAT solver) in FaJa language
-  /out - compiled groovy/java class files
+				//////////////////////////////////////////////////////////////
+				//  	    FaJa compiler and virtual machine               //
+				//////////////////////////////////////////////////////////////
 
-In root folder, there is also runnable jar file FaJa.jar and documentation.html with description od FaJa language and native Classes.
+Name:-      FaJa VM
+Authors:-   Kamil Falta (faltakam)
+			Lukáš Janeček (janeclu1)
+Date:-      20.2.2015
 
-RUN
 
-to run compiler and virtual machine type:
-  java -jar FaJa.jar fajaSrc/Main command_line_arguments
-  -> this will compile file Main.faja in folder fajaSrc and interpret them.
-to only compile file fajaSrc/Main into bytecode and print then to stdOut type:
-  java -jar FaJa.jar fajaSrc/Main -c
+(1) INTRODUCTION
+----------------------
+This application contains FaJa compiler and bytecode interpreter. Application is written
+in Groovy language and is compiled into Java jar file.
+
+
+(2) PACKAGE FILES
+----------------------
+The following files are included in the FaJa package.
+ |
+ +- Documentation/..............Contains documentation in HTML format (syntax, native classes, example)
+ |
+ +- src/........................Contains Groovy source codes of the program.
+ |  |
+ |  +- src/.....................Contains source files
+ |  |
+ |  +- Main.groovy..............Executable file
+ |  |
+ |  +- Test.groovy..............Execute tests
+ |
+ +- FaJaSrc/SAT/................Contains source codes of program (SAT solver) in FaJa language
+ |
+ +- out/........................Compiled groovy/java class files
+    |
+    +- FaJa.jar.................Compiled program into Java JAR file
+
+
+(3) REQUIRED SYSTEMS
+----------------------
+- java
+
+
+(4) USAGE
+----------------------
+Syntax:
+	java -jar FaJa.jar ClassName [-c] [argument]...
+
+(a) To run compiler, virtual machine and program type:
+
+	$ java -jar out/FaJa.jar FaJaSrc/Main command_line_arguments
+
+  -> this will compile file Main.faja in folder FaJaSrc and interpret them.
+
+(b) To only compile file FaJaSrc/Main.faja into bytecode and print then to stdOut type:
+
+	$ java -jar out/FaJa.jar FaJaSrc/Main -c
   
-It is also possible to run program as groovy script (groovy must be installed in PATH). 
-  cd src
-  groovy Main.groovy ../fajaSrc/Main command_line_arguments
+(c) It is also possible to run program as groovy script (groovy must be installed in PATH).
+
+	$ cd src
+	$ groovy Main.groovy ../FaJaSrc/Main command_line_arguments
+
+
+(5) REQUIREMENTS
+----------------------
+All source FaJa files must be in the same folder and name must match class name.
+
+
+(6) FEATURES
+----------------------
+	* Parser and Compiler
+	* Virtual machine
+	* Closures
+	* Garbage collector
+	* Threads
+	* Read & write from/to file
+
+
+===========================================================================================================
