@@ -1,0 +1,62 @@
+object Thread
+
+	fields
+		t1
+		t2
+		sOut
+	endFields
+
+	methods
+		def main()
+			var closureA, closureB, closureC, n, c
+            self:sOut <- SystemIO.new
+            n <- 5
+
+			closureA <- {
+				var a, cl1
+				a <- "A"
+				cl1 <- {
+					self:sOut.out(a)
+				}
+				n.times(cl1)
+			}
+
+			closureB <- {
+				var b, cl2
+				b <- "B"
+				cl2 <- {
+					self:sOut.out(b)
+				}
+                n.times(cl2)
+            }
+
+            closureC <- {
+                var d, cl3
+                var tm <- 100
+                d <- "C"
+                cl3 <- {
+                    self:sOut.out(d)
+                }
+                tm.times(cl3)
+            }
+
+			self:t1 <- Thread.new
+			self:t2 <- Thread.new
+
+            self:t1.run(closureA)
+            self:t2.run(closureB)
+
+            self:t1.run(closureC)
+
+			self.bar()
+		end
+
+		def bar()
+			self:sOut.out("pred")
+			self:t1.wait()
+			self:sOut.out("mezi")
+			self:t2.wait()
+			self:sOut.out("po")
+		end
+	endMethods
+endClass
