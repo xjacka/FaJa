@@ -25,7 +25,7 @@ class ThreadNatives {
 		}
 
 		StackFrame newStackFrame = new StackFrame()
-		newStackFrame.parent = stackFrame
+		newStackFrame.parent = null
 		newStackFrame.bytecodePtr = 0
 		newStackFrame.bytecode = heap.getBytes(bytecodeStart, bytecodeSize)
 		newStackFrame.locals = []
@@ -34,18 +34,22 @@ class ThreadNatives {
 		newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 		Thread thread = Thread.start {
-			new Interpreter(heap, newStackFrame, classLoader).interpret(false)
+			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
 
-		Integer index = stackFrame.threads.size()
-		stackFrame.threads.add(index,thread)
-		ObjectAccessHelper.setNewValue(heap,threadPtr,0,index)
+		synchronized (classLoader) {
+			Integer index = classLoader.threads.size()
+			classLoader.threads.add(index, thread)
+			ObjectAccessHelper.setNewValue(heap, threadPtr, 0, index)
+		}
+
+		stackFrame.methodStack.push(threadPtr)
 	}
 
 	static wait = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		Integer threadPtr = stackFrame.methodStack.pop()
+		Integer threadPtr = stackFrame.methodStack.last()
 		Integer index = ObjectAccessHelper.valueOf(heap,threadPtr,0)
-		Thread thread = stackFrame.threads.get(index)
+		Thread thread = classLoader.threads.get(index)
 		if(thread == null){
 			throw new InterpretException("There is no thread in current context")
 		}
