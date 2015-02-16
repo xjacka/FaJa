@@ -21,7 +21,7 @@ class ThreadNatives {
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 		if(arguments > 0){
-			throw new InterpretException("Too much arguments for closure in method call(1)")
+			throw new InterpretException("Too much arguments for closure in method run(1)")
 		}
 
 		StackFrame newStackFrame = new StackFrame()
@@ -31,23 +31,24 @@ class ThreadNatives {
 		newStackFrame.locals = []
 		newStackFrame.methodStack = []
 		newStackFrame.environment = ClosureRegister.get(closurePtr)
-		newStackFrame.localCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
+		newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
-		Thread thread = new Thread()
+		Thread thread = Thread.start {
+			new Interpreter(heap, newStackFrame, classLoader).interpret(false)
+		}
 
 		Integer index = stackFrame.threads.size()
 		stackFrame.threads.add(index,thread)
 		ObjectAccessHelper.setNewValue(heap,threadPtr,0,index)
-
-//		thread.start {
-			new Interpreter(heap, newStackFrame, classLoader).interpret()
-//		}
 	}
 
 	static wait = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer threadPtr = stackFrame.methodStack.pop()
 		Integer index = ObjectAccessHelper.valueOf(heap,threadPtr,0)
 		Thread thread = stackFrame.threads.get(index)
+		if(thread == null){
+			throw new InterpretException("There is no thread in current context")
+		}
 		thread.join()
 	}
 }

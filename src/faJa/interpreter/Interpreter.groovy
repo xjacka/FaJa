@@ -22,7 +22,7 @@ class Interpreter {
 		this.classLoader = classLoader
 	}
 
-	def interpret(){
+	def interpret(Boolean pop = true){
 		while(currentStackFrame.bytecode.length > currentStackFrame.bytecodePtr){
 			Integer instrId = currentStackFrame.currentByte
 			switch(instrId){
@@ -65,7 +65,7 @@ class Interpreter {
 				default: throw new InterpretException("Unexpected instruction"+instrId+" found")
 			}
 		}
-		if(currentStackFrame.parent){
+		if(currentStackFrame.parent && pop){
 			try {
 				currentStackFrame.parent.methodStack.push(currentStackFrame.methodStack.pop())
 			}catch (Exception e){
@@ -73,6 +73,12 @@ class Interpreter {
 				throw InterpretException('return value exception')
 			}
 		}
+//		currentStackFrame.threads.each { Thread thread
+//			try {
+//				thread.join()
+//			}
+//			catch (NullPointerException e){}
+//		}
 	}
 
 	def processGetfield() {
