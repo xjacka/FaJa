@@ -18,4 +18,4 @@ to only compile file fajaSrc/Main into bytecode and print then to stdOut type:
   
 It is also possible to run program as groovy script (groovy must be installed in PATH). 
   cd src
-  groovy Main.groovy ../fajaSrc/Main
+  groovy Main.groovy ../fajaSrc/Main command_line_arguments

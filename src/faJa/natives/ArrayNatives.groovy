@@ -244,6 +244,14 @@ class ArrayNatives {
 		Integer indexValue = heap.intFromNumberObject(index)
 
 		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+
+		if(sizeOfInitializedArry == 0){
+			Integer nullObjectPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			stackFrame.methodStack.push(nullObjectPointer)
+			return
+		}
+
 		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,indexValue * Heap.SLOT_SIZE)
 
 		stackFrame.methodStack.push(resultPtr)

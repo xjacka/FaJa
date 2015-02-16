@@ -14,9 +14,9 @@ class FaJaExecutor {
 	Heap heap
 	ClassLoader classLoader
 
-	static final MAIN_METHOD_SIGNATURE = 'main(0)'
+	static final MAIN_METHOD_SIGNATURE = 'main(1)'
 
-	def run(String classPath){
+	def run(String classPath,String [] args){
 
 		String className = classPath.substring(classPath.lastIndexOf('/') + 1)
 		String workingDir = classPath.substring(0,classPath.lastIndexOf('/') + 1)
@@ -35,6 +35,17 @@ class FaJaExecutor {
 			ObjectAccessHelper.setNewValue(heap, mainObjectPointer, field * Heap.SLOT_SIZE, nullObjectPointer)
 		}
 
+		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
+		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
+		Integer arrayPtr = heap.createArray(arrayClassPtr, args.size(), nullObjectPointer)
+		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr, Heap.SLOT_SIZE)
+
+		args.eachWithIndex { String arg, Integer i ->
+			Integer argStringPtr = heap.createString(stringClassPtr, arg)
+			ObjectAccessHelper.setNewValue(heap, arrayObjectPtr,i * Heap.SLOT_SIZE, argStringPtr)
+		}
+		ObjectAccessHelper.setNewValue(heap, arrayPtr, 0, args.size())
+
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
 		if(mainPtr == null){
 			throw new InterpretException('In executed object must be main method!')
@@ -46,7 +57,7 @@ class FaJaExecutor {
 
 		mainStackFrame.bytecode =  heap.getBytes(mainBytecodePtr, mainSize)
 		mainStackFrame.bytecodePtr = 0
-		mainStackFrame.locals = [classLoader.singletonRegister.get(className)] // todo size in method
+		mainStackFrame.locals = [classLoader.singletonRegister.get(className),arrayPtr] // todo size in method
 		mainStackFrame.methodStack = [] // todo size in method
 		mainStackFrame.parent = null
 

@@ -1,4 +1,4 @@
-object Thread
+object ThreadExample
 
 	fields
 		t1
@@ -7,37 +7,31 @@ object Thread
 	endFields
 
 	methods
-		def main()
-			var closureA, closureB, closureC, n, c
+		def main(args)
+			var closureA, closureB, closureC, c
             self:sOut <- SystemIO.new
-            n <- 5
+
+			var neco <- null
 
 			closureA <- {
-				var a, cl1
-				a <- "A"
-				cl1 <- {
-					self:sOut.out(a)
+				var cl1 <- {
+					self:sOut.out("A")
 				}
-				n.times(cl1)
+				5.times(cl1)
 			}
 
 			closureB <- {
-				var b, cl2
-				b <- "B"
-				cl2 <- {
-					self:sOut.out(b)
+				var cl2 <- {
+					self:sOut.out("B")
 				}
-                n.times(cl2)
+                5.times(cl2)
             }
 
             closureC <- {
-                var d, cl3
-                var tm <- 100
-                d <- "C"
-                cl3 <- {
-                    self:sOut.out(d)
+                var cl3 <- {
+                    self:sOut.out("C")
                 }
-                tm.times(cl3)
+                10.times(cl3)
             }
 
 			self:t1 <- Thread.new

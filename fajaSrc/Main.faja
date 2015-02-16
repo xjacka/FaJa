@@ -1,6 +1,6 @@
 object Main
 	methods
-		def main()
+		def main(args)
 			var t1, t2, closureA, closureB, sOut
             sOut <- SystemIO.new
 

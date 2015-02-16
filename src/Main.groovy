@@ -1,6 +1,5 @@
 import faJa.FaJaExecutor
 import faJa.compilator.Compiler
-import faJa.compilator.evaluation.Expression
 import faJa.compilator.representation.ClassFile
 import faJa.exceptions.CompilerException
 import faJa.exceptions.InputException
@@ -15,7 +14,7 @@ try {
 		ClassFile classFile = new Compiler().compile(args[0] + ClassLoader.FAJA_EXTENSION)
 		print(classFile.toString())
 	} else{
-		new FaJaExecutor().run(args.length != 0 ? args[0] : '../fajaSrc/Main') // todo (only Main)
+		new FaJaExecutor().run(args.length != 0 ? args[0] : '../fajaSrc/Main',args.length >= 2 ?args.tail() : new String[0]) // todo (only Main) ? proc ?
 	}
 }
 catch (CompilerException cpE){
