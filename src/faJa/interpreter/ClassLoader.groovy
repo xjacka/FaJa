@@ -19,7 +19,7 @@ class ClassLoader {
 	private String workDir = ''
 	Map classRegister = [:]
 	Map singletonRegister = [:]
-	ArrayList<Thread> threads = [].asSynchronized()
+	Map<Integer,Thread> threads = [:].asSynchronized()
 
 	final static FAJA_EXTENSION = '.faja'
 	Compiler compiler

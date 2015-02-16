@@ -33,14 +33,17 @@ class ThreadNatives {
 		newStackFrame.environment = ClosureRegister.get(closurePtr)
 		newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
-		Thread thread = Thread.start {
+		Thread thread = classLoader.threads.get(threadPtr)
+		if(thread != null) {
+			thread.join()
+		}
+
+		thread = Thread.start {
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
 		}
 
 		synchronized (classLoader) {
-			Integer index = classLoader.threads.size()
-			classLoader.threads.add(index, thread)
-			ObjectAccessHelper.setNewValue(heap, threadPtr, 0, index)
+			classLoader.threads.put(threadPtr, thread)
 		}
 
 		stackFrame.methodStack.push(threadPtr)
@@ -48,8 +51,7 @@ class ThreadNatives {
 
 	static wait = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer threadPtr = stackFrame.methodStack.last()
-		Integer index = ObjectAccessHelper.valueOf(heap,threadPtr,0)
-		Thread thread = classLoader.threads.get(index)
+		Thread thread = classLoader.threads.get(threadPtr)
 		if(thread == null){
 			throw new InterpretException("There is no thread in current context")
 		}

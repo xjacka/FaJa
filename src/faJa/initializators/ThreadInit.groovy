@@ -10,8 +10,6 @@ import faJa.compilator.representation.PrecompiledMethod
  * +--------------------+
  * |   threadClassPtr   |
  * +--------------------+
- * |    threadIndex     |  <- index in stackFrame thread collection
- * +--------------------+
  *
  */
 class ThreadInit extends BaseInit {
@@ -21,8 +19,7 @@ class ThreadInit extends BaseInit {
 		classFile.constantPool.add(Compiler.THREAD_CLASS)
 		classFile.constantPool.add('Object')
 
-		def threadId = classFile.constantPool.add('threadId')
-		classFile.fields = [threadId]
+		classFile.fields = []
 
 //		Method run(1) - Native
 		def run = new PrecompiledMethod()
