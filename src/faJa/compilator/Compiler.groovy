@@ -20,7 +20,7 @@ class Compiler {
 	public static final String SELF_POINTER = 'self'
 	public static final String ASSIGNMENT_OP = '<-'
 	public static final String METHOD_CALL_SEPARATOR = '.'
-	public static final String FIELD_ACESSOR = ':'
+	public static final String FIELD_ACCESSOR = ':'
 	public static final String COMMENT = ':-)'
 	public static final String INHERITANCE_KEYWORD = 'extends'
 	public static final String CONSTRUCTOR_INVOKE_NAME = '.new'
@@ -61,32 +61,6 @@ class Compiler {
 		lines = lines.findAll { line ->
 			line.trim().startsWith(COMMENT) == false && line.trim() != ''
 		}
-
-		// hack for more methods call on one line
-//		List<String> convertedLines = []
-//		lines.each { line ->
-//			if(line.split("\\" + METHOD_CALL_SEPARATOR).size() > 2){
-//				if(line.contains(ASSIGNMENT_OP)){
-//					List<String> splitLine = line.split(ASSIGNMENT_OP)
-//					String var = splitLine[0].trim()
-//					if(splitLine[1].contains(var)){
-//						throw new CompilerException("Could not invoke method chain with assigment to property which is also an argument")
-//					}
-//					List<String> methodCalls = splitLine[1].split("\\" + METHOD_CALL_SEPARATOR)
-//					String targetObject = methodCalls.remove(0).trim()
-//					methodCalls.each { methodCall ->
-//						convertedLines << var + ASSIGNMENT_OP + targetObject + METHOD_CALL_SEPARATOR + methodCall.trim()
-//						targetObject = var
-//					}
-//				}else{
-//					throw new CompilerException("Can not call methods in chain")
-//				}
-//			}else {
-//				convertedLines << line
-//			}
-//		}
-//		lines = convertedLines
-		// end hack (replace with methodBody << line)
 
 		createClass(lines[0])
 		createFields(lines)

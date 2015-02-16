@@ -11,7 +11,7 @@ class LocalVariables {
 
 	def addLocalVariable(String name){
 		if(innerFindIndexByName(name) != null){
-			throw CompilerException('local variable: ' + name + ' already defined')
+			throw new CompilerException('local variable: ' + name + ' already defined')
 		}
 		localVariables.push(name)
 	}

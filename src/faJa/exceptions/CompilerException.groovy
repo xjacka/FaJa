@@ -2,7 +2,7 @@ package faJa.exceptions
 
 class CompilerException extends RuntimeException {
 
-	CompilerException(String mesage){
-		super(mesage)
+	CompilerException(String message){
+		super(message)
 	}
 }
