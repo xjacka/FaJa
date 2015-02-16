@@ -11,10 +11,10 @@ In root folder, there is also runnable jar file faja.jar and documentation.html 
 RUN
 
 to run compiler and virtual machine type:
-  java -jar faja.jar fajaSrc/Main 
+  java -jar FaJa.jar fajaSrc/Main command_line_arguments
   -> this will compile file Main.faja in folder fajaSrc and interpret them.
 to only compile file fajaSrc/Main into bytecode and print then to stdOut type:
-  java -jar faja.jar fajaSrc/Main -c
+  java -jar FaJa.jar fajaSrc/Main -c
   
 It is also possible to run program as groovy script (groovy must be installed in PATH). 
   cd src
