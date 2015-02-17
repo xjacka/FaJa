@@ -1,0 +1,44 @@
+class ProgramInstance 
+	
+	fields
+	    variablesCount
+	    clausesCount
+	    variables
+	    clauses
+    endFields
+
+	methods
+
+	def init(variables,clauses)
+        self:variablesCount <- variables
+        variablesCount.each({
+            var ii <- i.+(1)
+            var variable <- Variable.new
+            variable:id <- ii
+            variable:weight <- 0
+            self:variables.put(ii, variable)
+        })
+    end
+    
+	    def summaryWeight(result){
+	        summaryWeight <- 0
+	        variables.each({ variable |
+	            result.evaluation.get(variable:id).ifTrue({
+	                summaryWeight <- summaryWeight.+(variable.weight)
+	            })
+	        })
+	        summaryWeight
+	    end
+	
+	    def isValid(result)
+	        valid <- true
+	        clauses.each{ clause |
+	            clause.isValid(result).not().ifTrue({
+	                valid <- false
+	            })
+	        }
+	        valid
+	    end
+    endMethods
+
+endClass

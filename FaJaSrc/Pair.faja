@@ -1,0 +1,6 @@
+class Pair
+	fields
+		sign
+		variable
+	endFields
+endClass

@@ -1,0 +1,37 @@
+object Solver
+	methods
+		def solve(instance)
+
+            var best <- null
+            var pow <- 2.**(instance:variablesCount)
+
+            pow.times{ i |
+                var helpResult = Result.new
+                helpResult:variablesCount <- instance:variablesCount
+                helpResult:evaluation <- Array.new
+
+                var numerator <- i
+                instance:variablesCount.times({ j |
+                    numerator.%(2).==(1).ifTrue({
+                        helpResult:evaluation.add(j.+(1),true)
+                    })
+                    numerator <- numerator./(2)
+                })
+
+                helpResult:weight <- instance.summaryWeight(helpResult);
+
+				var condition <- best.isNull().and(instance.isValid(helpResult))
+                condition.ifTrue({
+                    best <- helpResult
+                    best:valid <- instance.isValid(best)
+                })
+
+				var condition <- best.isNull().not().and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
+                condition.ifTrue({
+                    best = helpResult;
+                    best.valid = instance.isValid(best);
+                })
+            }
+		end
+	endMethods
+endClass

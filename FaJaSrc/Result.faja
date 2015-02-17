@@ -1,0 +1,12 @@
+class Result
+	
+	fields
+        weight
+	    variablesCount
+	    evaluation
+	    valid
+	endFields
+	
+	methods
+    endMethods
+endClass

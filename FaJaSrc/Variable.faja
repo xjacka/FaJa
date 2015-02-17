@@ -1,0 +1,9 @@
+class Variable
+    fields
+        id
+        weight
+    endFields
+        
+    methods
+	endMethods
+endClass

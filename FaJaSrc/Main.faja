@@ -1,13 +1,9 @@
 object Main
 	methods
-		def main(args)
-			var sout <- SystemIO.new
-
-			5.times({
-				sout.out("A")
-			})
-
-			var cl3 <- {sout.out("C")}
+		def main
+            var solver <- Solver.new
+            var problemInstance <- ProblemInstance.new
+            var result <- Solver.solve(problemInstance)
 		end
 	endMethods
 endClass
