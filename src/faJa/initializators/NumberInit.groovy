@@ -43,6 +43,12 @@ class NumberInit extends BaseInit {
 		mul.signatureIndex = classFile.constantPool.add('*(1)')
 		classFile.methods.add(mul)
 
+//		Method *(1) - Native
+		def pow = new PrecompiledMethod()
+		pow.signatureIndex = classFile.constantPool.add('**(1)')
+		classFile.methods.add(pow)
+
+
 //		Method /(1) - Native
 		def div = new PrecompiledMethod()
 		div.signatureIndex = classFile.constantPool.add('/(1)')

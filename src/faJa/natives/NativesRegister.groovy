@@ -7,6 +7,7 @@ class NativesRegister {
 	        '+(1)Number' : NumberNatives.plus,
 	        '-(1)Number' : NumberNatives.minus,
 	        '*(1)Number' : NumberNatives.mul,
+	        '**(1)Number' : NumberNatives.pow,
 	        '/(1)Number' : NumberNatives.div,
 	        '%(1)Number' : NumberNatives.mod,
 	        '==(1)Number' : NumberNatives.equals,

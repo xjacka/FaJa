@@ -25,6 +25,10 @@ class NumberNatives {
 		binaryOperation(stackFrame,heap,classLoader,{a,b -> a * b},".*(1)")
 	}
 
+	static pow = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		binaryOperation(stackFrame,heap,classLoader,{a,b -> Math.pow(a,b)},".**(1)")
+	}
+
 	static div = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		binaryOperation(stackFrame,heap,classLoader,{a,b -> a / b},"./(1)")
 	}
