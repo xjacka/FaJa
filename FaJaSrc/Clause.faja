@@ -9,19 +9,21 @@ class Clause
             var pair <- Pair.new
             pair:sign <- sign
             pair:variable <- variable
-            variables.add(pair);
+            self:variables.add(pair)
         end
 
         def isValid(result)
             var valid <- false
-            variables.each({ pair |
+            var cl <- { pair |
                 var variable <- pair:variable
                 var condition1 <- pair:id.or(result:evaluation.get(variable:id))
                 var condition2 <- pair:id.not().or(result:evaluation.get(variable:id).not())
-                condition1.or(condition2).ifTrue({
+                var cl2 <- {
                     valid <- true
-                })
-            })
+                }
+                condition1.or(condition2).ifTrue(cl2)
+            }
+            self:variables.each(cl)
             valid
         end
     endMethods

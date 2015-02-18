@@ -204,7 +204,7 @@ class ArrayNatives {
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
-			arrayObjectPtr = resizeArray(heap,classLoader, index, index + 2, arrayPtr)
+			arrayObjectPtr = resizeArray(heap,classLoader, index, index + 2, arrayPtr, arrayObjectPtr)
 		}
 
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,index * Heap.SLOT_SIZE,addingItemPtr)
@@ -228,7 +228,7 @@ class ArrayNatives {
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
-			arrayObjectPtr = arrayObjectPtr = resizeArray(heap,classLoader, index, itemIndex + (int)(itemIndex / 10), arrayPtr)
+			arrayObjectPtr = resizeArray(heap,classLoader, index, itemIndex + (int)(itemIndex / 10), arrayPtr, arrayObjectPtr)
 		}
 
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,itemIndex * Heap.SLOT_SIZE,addingItemPtr)
@@ -333,7 +333,7 @@ class ArrayNatives {
 		stackFrame.methodStack.push(resultPtr)
 	}
 
-	static Integer resizeArray(Heap heap,ClassLoader classLoader, Integer size, Integer newSize, Integer arrayPtr){
+	static Integer resizeArray(Heap heap,ClassLoader classLoader, Integer size, Integer newSize, Integer arrayPtr, Integer arrayObjectPtr){
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer newArrayObjectPtr = heap.createArrayObject(newSize,nullPtr) // resize 2x
 		ObjectAccessHelper.setNewValue(heap, arrayPtr, ARRAY_OBJECT_POINTER_PROPERTY, newArrayObjectPtr)

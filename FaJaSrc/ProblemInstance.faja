@@ -9,34 +9,38 @@ class ProblemInstance
 
 	methods
 
-	def init(variables,clauses)
-        self:variablesCount <- variables
-        variablesCount.each({
-            var ii <- i.+(1)
-            var variable <- Variable.new
-            variable:id <- ii
-            variable:weight <- 0
-            self:variables.put(ii, variable)
-        })
-    end
+		def init(variables,clauses)
+	        self:variablesCount <- variables
+	        self:variables <- Array.new
+	        var cl <- { i |
+	            var variable <- Variable.new
+	            variable:id <- i
+	            variable:weight <- 0
+	            self:variables.add(i, variable)
+	        }
+	        self:variablesCount.times(cl)
+	    end
     
-	    def summaryWeight(result){
-	        summaryWeight <- 0
-	        variables.each({ variable |
-	            result.evaluation.get(variable:id).ifTrue({
-	                summaryWeight <- summaryWeight.+(variable.weight)
-	            })
-	        })
+	    def summaryWeight(result)
+	        var summaryWeight <- 0
+	        var cl <- { variable |
+	            var cl2 <- {
+                    summaryWeight <- summaryWeight.+(variable:weight)
+                }
+                result:evaluation.get(variable:id).ifTrue(cl2)
+	        self:variables.each(cl)
 	        summaryWeight
 	    end
 	
 	    def isValid(result)
-	        valid <- true
-	        clauses.each{ clause |
-	            clause.isValid(result).not().ifTrue({
-	                valid <- false
-	            })
+	        var valid <- true
+	        var cl <- { clause |
+	            var cl2 <- {
+                    valid <- false
+                }
+	            clause.isValid(result).not().ifTrue(cl2)
 	        }
+	        self:clauses.each(cl)
 	        valid
 	    end
     endMethods

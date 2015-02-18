@@ -4,12 +4,11 @@ object Main
             var solver <- Solver.new
             var problemInstance <- ProblemInstance.new
             
-            
-            problemInstance:variablesCount <- 3
-            problemInstance:clausesCount <- 2
             problemInstance:clauses <- Array.new
+            problemInstance.init(3,2)
             
             var clause <- Clause.new
+            clause:variables <- Array.new
             var variable <- problemInstance:variables.get(1)
             clause.addVariable(false,variable)
             variable <- problemInstance:variables.get(0)
@@ -17,14 +16,19 @@ object Main
             problemInstance:clauses.add(clause)
             
 			clause <- Clause.new
-			variable <- problemInstance:variables.get(2)
+			clause:variables <- Array.new
+			variable <- problemInstance:variables.get(0)
 			clause.addVariable(false,variable)
 			variable <- problemInstance:variables.get(1)
 			clause.addVariable(true,variable)
 			problemInstance:clauses.add(clause)
 
 			var closure <- { variable1 |
-                variable1:weight <- 3
+                var condition <- variable1.==(null).not()
+                var cl <- {
+                    variable1:weight <- 3
+                }
+                condition.ifTrue(cl)
             }
 			problemInstance:variables.each(closure)
 			

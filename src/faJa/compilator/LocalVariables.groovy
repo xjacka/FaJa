@@ -10,6 +10,7 @@ class LocalVariables {
 	}
 
 	def addLocalVariable(String name){
+		name = name.trim()
 		if(innerFindIndexByName(name) != null){
 			throw new CompilerException('local variable: ' + name + ' already defined')
 		}
