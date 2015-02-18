@@ -1,4 +1,4 @@
-class ProgramInstance 
+class ProblemInstance
 	
 	fields
 	    variablesCount

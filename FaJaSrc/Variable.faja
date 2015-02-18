@@ -3,7 +3,4 @@ class Variable
         id
         weight
     endFields
-        
-    methods
-	endMethods
 endClass

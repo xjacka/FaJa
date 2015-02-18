@@ -1,12 +1,8 @@
 class Result
-	
 	fields
         weight
-	    variablesCount
+:-)	    variablesCount
 	    evaluation
 	    valid
 	endFields
-	
-	methods
-    endMethods
 endClass

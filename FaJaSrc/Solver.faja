@@ -5,9 +5,9 @@ object Solver
             var best <- null
             var pow <- 2.**(instance:variablesCount)
 
-            pow.times{ i |
-                var helpResult = Result.new
-                helpResult:variablesCount <- instance:variablesCount
+            var closure <- { i |
+                var helpResult <- Result.new
+:-)                helpResult:variablesCount <- instance:variablesCount
                 helpResult:evaluation <- Array.new
 
                 var numerator <- i
@@ -28,10 +28,12 @@ object Solver
 
 				var condition <- best.isNull().not().and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
                 condition.ifTrue({
-                    best = helpResult;
-                    best.valid = instance.isValid(best);
+                    best = helpResult
+                    best.valid = instance.isValid(best)
                 })
             }
+            
+            pow.times(closure)
 		end
 	endMethods
 endClass
