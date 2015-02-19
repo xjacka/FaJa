@@ -1,6 +1,7 @@
 class Clause
 
 	fields
+:-)		list of Pairs
 		variables	
 	endFields
 
@@ -16,8 +17,8 @@ class Clause
             var valid <- false
             var cl <- { pair |
                 var variable <- pair:variable
-                var condition1 <- pair:id.or(result:evaluation.get(variable:id))
-                var condition2 <- pair:id.not().or(result:evaluation.get(variable:id).not())
+                var condition1 <- pair:sign.and(result:evaluation.get(variable:id))
+                var condition2 <- pair:sign.not().and(result:evaluation.get(variable:id).not())
                 var cl2 <- {
                     valid <- true
                 }

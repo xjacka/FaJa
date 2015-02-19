@@ -1,8 +1,20 @@
 class Result
 	fields
         weight
-:-)	    variablesCount
 	    evaluation
 	    valid
 	endFields
+	
+	methods
+		def init(instance)
+			self:evaluation <- []
+
+			var cl5 <- { i |
+				self:evaluation.add(i,false)
+			}
+			instance:variablesCount.times(cl5)
+
+			self:valid <- false
+		end
+	endMethods
 endClass

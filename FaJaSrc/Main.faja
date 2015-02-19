@@ -3,24 +3,31 @@ object Main
 		def main(args)
             var solver <- Solver.new
             var problemInstance <- ProblemInstance.new
-            
-            problemInstance:clauses <- []
-            problemInstance.init(3,2)
+
+            problemInstance.init(3,3)
             
             var clause <- Clause.new
             clause:variables <- []
-            var variable <- problemInstance:variables.get(1)
-            clause.addVariable(false,variable)
-            variable <- problemInstance:variables.get(0)
+            var variable <- problemInstance:variables.get(0)
+            clause.addVariable(true,variable)
+            variable <- problemInstance:variables.get(1)
             clause.addVariable(true,variable)
             problemInstance:clauses.add(clause)
             
 			clause <- Clause.new
 			clause:variables <- []
+			variable <- problemInstance:variables.get(1)
+			clause.addVariable(false,variable)
+			variable <- problemInstance:variables.get(2)
+			clause.addVariable(true,variable)
+			problemInstance:clauses.add(clause)
+			
+			clause <- Clause.new
+			clause:variables <- []
+			variable <- problemInstance:variables.get(0)
+			clause.addVariable(false,variable)
 			variable <- problemInstance:variables.get(2)
 			clause.addVariable(false,variable)
-			variable <- problemInstance:variables.get(1)
-			clause.addVariable(true,variable)
 			problemInstance:clauses.add(clause)
 
 			var closure <- { variable1 |
@@ -33,6 +40,11 @@ object Main
 			problemInstance:variables.each(closure)
 			
             var result <- solver.solve(problemInstance)
+            
+            var sOut <- SystemIO.new
+            sOut.out(result:evaluation)
+            sOut.out(result:valid)
+            sOut.out(result:weight)
 		end
 	endMethods
 endClass

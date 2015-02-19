@@ -10,7 +10,9 @@ class ProblemInstance
 	methods
 
 		def init(variables,clauses)
+			self:clauses <- []
 	        self:variablesCount <- variables
+	        self:clausesCount <- clauses
 	        self:variables <- []
 	        var cl <- { i |
 	            var variable <- Variable.new
@@ -18,7 +20,7 @@ class ProblemInstance
 	            variable:weight <- 0
 	            self:variables.add(i, variable)
 	        }
-	        self:variablesCount.times(cl)
+	        variables.times(cl)
 	    end
     
 	    def summaryWeight(result)

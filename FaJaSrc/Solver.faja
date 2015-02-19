@@ -7,7 +7,7 @@ object Solver
 
             var closure <- { i |
                 var helpResult <- Result.new
-                helpResult:evaluation <- []
+                helpResult.init(instance)
 
                 var numerator <- i
                 var cl1 <- { j |
@@ -16,7 +16,7 @@ object Solver
 	                }
                    numerator.%(2).==(1).ifTrue(cl2)
                    numerator <- numerator./(2)
-               }
+                }
                 instance:variablesCount.times(cl1)
 
                 helpResult:weight <- instance.summaryWeight(helpResult)
@@ -28,7 +28,14 @@ object Solver
                 }
                 condition.ifTrue(cl3)
 
-				condition <- best.isNull().not().and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
+				condition <- best.isNull().not()
+				var cl5 <- {
+					condition <- condition.and(instance.isValid(helpResult)).and(helpResult:weight.<(best:weight))
+				}
+				var cl6 <- {
+					condition <- condition.and(instance.isValid(helpResult))
+				}
+				condition.ifTrue(cl5).ifFalse(cl6)
 				var cl4 <- {
 	               best <- helpResult
 	               best:valid <- instance.isValid(best)
@@ -37,6 +44,8 @@ object Solver
             }
             
             pow.times(closure)
+            
+            best
 		end
 	endMethods
 endClass
