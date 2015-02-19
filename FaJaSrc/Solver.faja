@@ -30,7 +30,7 @@ object Solver
 
 				condition <- best.isNull().not()
 				var cl5 <- {
-					condition <- condition.and(instance.isValid(helpResult)).and(helpResult:weight.<(best:weight))
+					condition <- condition.and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
 				}
 				var cl6 <- {
 					condition <- condition.and(instance.isValid(helpResult))
