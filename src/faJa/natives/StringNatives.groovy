@@ -1,5 +1,7 @@
 package faJa.natives
 
+import faJa.exceptions.InterpretException
+import faJa.helpers.ClassAccessHelper
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InputException
@@ -77,7 +79,36 @@ class StringNatives {
 			stackFrame.methodStack.push(newNumberPtr)
 		}
 		catch (NumberFormatException e){
-			throw new InputException("String value can not be cast to Number")
+			throw new InputException("String value ${stringObj} can not be cast to Number")
+		}
+	}
+
+	static split = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer thisPtr = stackFrame.methodStack.pop()
+		Integer delimiterPtr = stackFrame.methodStack.pop()
+
+		Integer stringClassPtr = ObjectAccessHelper.getClassPointer(heap, thisPtr)
+		Integer otherClassPtr = ObjectAccessHelper.getClassPointer(heap, delimiterPtr)
+
+		if(stringClassPtr == otherClassPtr){
+			String thisString = heap.stringFromStringObject(thisPtr)
+			String delimiter = heap.stringFromStringObject(delimiterPtr)
+			ArrayList<String> tokens = thisString.split(delimiter)
+			
+			Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
+			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
+			Integer arrayPtr = heap.createArray(arrayClassPtr, tokens.size(), nullPointer)
+			Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+
+			tokens.eachWithIndex { String token, Integer i ->
+				Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),token)
+				ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,i * Heap.SLOT_SIZE,lineStringPtr)
+			}
+			ObjectAccessHelper.setNewValue(heap,arrayPtr,0,tokens.size())
+
+			stackFrame.methodStack.push(arrayPtr) // always push
+		}else{
+			throw new InterpretException("Can not split String using delimiter with class " + ClassAccessHelper.getName(heap,otherClassPtr))
 		}
 	}
 }

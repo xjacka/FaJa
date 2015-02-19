@@ -61,5 +61,10 @@ class StringInit extends BaseInit{
 		def toNumber = new PrecompiledMethod()
 		toNumber.signatureIndex = classFile.constantPool.add('toNumber(0)')
 		classFile.methods.add(toNumber)
+
+//		Method split(1) - Native
+		def split = new PrecompiledMethod()
+		split.signatureIndex = classFile.constantPool.add('split(1)')
+		classFile.methods.add(split)
 	}
 }

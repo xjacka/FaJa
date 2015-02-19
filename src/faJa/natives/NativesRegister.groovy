@@ -20,6 +20,7 @@ class NativesRegister {
 	        '>(1)Number' : NumberNatives.greaterThen,
 	        '>=(1)Number' : NumberNatives.greaterOrEqualThen,
 	        '<=(1)Number' : NumberNatives.lessOrEqualThen,
+	        'abs(0)Number' : NumberNatives.abs,
 
 	        'length(0)String' : StringNatives.length,
 	        '==(1)String' : StringNatives.equals,
@@ -28,6 +29,7 @@ class NativesRegister {
 	        'ifFalse(1)String' : StringNatives.ifFalse,
 	        'toS(0)String' : StringNatives.toS,
 	        'toNumber(0)String' : StringNatives.toNumber,
+	        'split(1)String' : StringNatives.split,
 
 	        '==(1)Bool' : BoolNatives.equals,
 	        'ifTrue(1)Bool' : BoolNatives.ifTrue,

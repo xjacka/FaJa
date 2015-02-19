@@ -65,6 +65,17 @@ class NumberNatives {
 		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> heap.intFromNumberObject(a) > 0},"ifFalse(1)Number")
 	}
 
+	static abs = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
+		Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
+		Integer numPtr = stackFrame.methodStack.pop()
+
+		Integer num = heap.intFromNumberObject(numPtr)
+
+		Integer resultPtr = heap.createNumber(numberClassPtr,(Integer) num.abs())
+
+		stackFrame.methodStack.push(resultPtr)
+	}
+
 	static init = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 
 	}

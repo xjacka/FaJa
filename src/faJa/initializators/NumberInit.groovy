@@ -48,7 +48,6 @@ class NumberInit extends BaseInit {
 		pow.signatureIndex = classFile.constantPool.add('**(1)')
 		classFile.methods.add(pow)
 
-
 //		Method /(1) - Native
 		def div = new PrecompiledMethod()
 		div.signatureIndex = classFile.constantPool.add('/(1)')
@@ -103,5 +102,10 @@ class NumberInit extends BaseInit {
 		def lessOrEqualThen = new PrecompiledMethod()
 		lessOrEqualThen.signatureIndex = classFile.constantPool.add('<=(1)')
 		classFile.methods.add(lessOrEqualThen)
+
+//		Method abs() - Native
+		def abs = new PrecompiledMethod()
+		abs.signatureIndex = classFile.constantPool.add('abs(0)')
+		classFile.methods.add(abs)
 	}
 }
