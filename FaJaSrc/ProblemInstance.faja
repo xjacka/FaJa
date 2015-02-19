@@ -11,7 +11,7 @@ class ProblemInstance
 
 		def init(variables,clauses)
 	        self:variablesCount <- variables
-	        self:variables <- Array.new
+	        self:variables <- []
 	        var cl <- { i |
 	            var variable <- Variable.new
 	            variable:id <- i
@@ -28,6 +28,7 @@ class ProblemInstance
                     summaryWeight <- summaryWeight.+(variable:weight)
                 }
                 result:evaluation.get(variable:id).ifTrue(cl2)
+            }
 	        self:variables.each(cl)
 	        summaryWeight
 	    end

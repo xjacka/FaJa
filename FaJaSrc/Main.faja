@@ -4,11 +4,11 @@ object Main
             var solver <- Solver.new
             var problemInstance <- ProblemInstance.new
             
-            problemInstance:clauses <- Array.new
+            problemInstance:clauses <- []
             problemInstance.init(3,2)
             
             var clause <- Clause.new
-            clause:variables <- Array.new
+            clause:variables <- []
             var variable <- problemInstance:variables.get(1)
             clause.addVariable(false,variable)
             variable <- problemInstance:variables.get(0)
@@ -16,8 +16,8 @@ object Main
             problemInstance:clauses.add(clause)
             
 			clause <- Clause.new
-			clause:variables <- Array.new
-			variable <- problemInstance:variables.get(0)
+			clause:variables <- []
+			variable <- problemInstance:variables.get(2)
 			clause.addVariable(false,variable)
 			variable <- problemInstance:variables.get(1)
 			clause.addVariable(true,variable)

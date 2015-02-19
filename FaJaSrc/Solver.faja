@@ -7,7 +7,7 @@ object Solver
 
             var closure <- { i |
                 var helpResult <- Result.new
-                helpResult:evaluation <- Array.new
+                helpResult:evaluation <- []
 
                 var numerator <- i
                 var cl1 <- { j |
