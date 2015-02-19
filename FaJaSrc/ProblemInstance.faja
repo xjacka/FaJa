@@ -46,6 +46,19 @@ class ProblemInstance
 	        self:clauses.each(cl)
 	        valid
 	    end
+	    
+	    def toS()
+	        var str <- ""
+	        var add <- { vari |
+				str <- str.+(vari)
+	        }
+	        var addClause <- { clause |
+	            str <- str.+(clause)
+	        }
+            self:variables.each(add)
+            self:clauses.each(addClause)
+	        str
+	    end
     endMethods
 
 endClass

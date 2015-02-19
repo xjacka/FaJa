@@ -3,4 +3,10 @@ class Variable
         id
         weight
     endFields
+    
+    methods
+        def toS()
+            var str <- "".+(self:id).+(" w: ").+(self:weight).+(" | ")
+        end
+    endMethods
 endClass

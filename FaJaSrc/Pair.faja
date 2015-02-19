@@ -3,4 +3,15 @@ class Pair
 		sign
 		variable
 	endFields
+	
+	methods
+		def toS()
+			var sign <- " "
+			var setSign <- {
+				sign <- " -"
+			}
+			self:sign.ifFalse(setSign)
+			var str <- "".+(sign).+(self:variable)
+		end
+	endMethods
 endClass

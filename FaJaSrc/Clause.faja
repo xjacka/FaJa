@@ -27,5 +27,14 @@ class Clause
             self:variables.each(cl)
             valid
         end
+        
+        def toS()
+            var str <- "["
+            var addVariable <- { variable |
+                str <- str.+(variable:variable:id).+(" v ")
+            }
+            self:variables.each(addVariable)
+            str.+("] ^ ")
+        end
     endMethods
 endClass

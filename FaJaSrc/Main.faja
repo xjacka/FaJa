@@ -1,50 +1,18 @@
 object Main
 	methods
 		def main(args)
+			var sOut <- SystemIO.new
             var solver <- Solver.new
-            var problemInstance <- ProblemInstance.new
+            var fileName <- args.get(0)
+            var problemInstance <- Parser.new.parse(fileName)
 
-            problemInstance.init(3,3)
-            
-            var clause <- Clause.new
-            clause:variables <- []
-            var variable <- problemInstance:variables.get(0)
-            clause.addVariable(true,variable)
-            variable <- problemInstance:variables.get(1)
-            clause.addVariable(true,variable)
-            problemInstance:clauses.add(clause)
-            
-			clause <- Clause.new
-			clause:variables <- []
-			variable <- problemInstance:variables.get(1)
-			clause.addVariable(false,variable)
-			variable <- problemInstance:variables.get(2)
-			clause.addVariable(true,variable)
-			problemInstance:clauses.add(clause)
-			
-			clause <- Clause.new
-			clause:variables <- []
-			variable <- problemInstance:variables.get(0)
-			clause.addVariable(false,variable)
-			variable <- problemInstance:variables.get(2)
-			clause.addVariable(false,variable)
-			problemInstance:clauses.add(clause)
-
-			var closure <- { variable1 |
-                var condition <- variable1.==(null).not()
-                var cl <- {
-                    variable1:weight <- 3
-                }
-                condition.ifTrue(cl)
-            }
-			problemInstance:variables.each(closure)
+			sOut.out(problemInstance)
 			
             var result <- solver.solve(problemInstance)
-            
-            var sOut <- SystemIO.new
+                        
             sOut.out(result:evaluation)
-            sOut.out(result:valid)
-            sOut.out(result:weight)
+            sOut.out("is valid: ".+(result:valid))
+            sOut.out("weight: ".+(result:weight))
 		end
 	endMethods
 endClass
