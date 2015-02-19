@@ -154,7 +154,7 @@ class NumberNatives {
 		Integer num1 = heap.intFromNumberObject(num1Ptr)
 		Integer num2 = heap.intFromNumberObject(num2Ptr)
 
-		Integer resultPtr = heap.createNumber(numberClassPtr, closure.call(num1, num2))
+		Integer resultPtr = heap.createNumber(numberClassPtr,(Integer) closure.call(num1, num2))
 
 		stackFrame.methodStack.push(resultPtr)
 	}
