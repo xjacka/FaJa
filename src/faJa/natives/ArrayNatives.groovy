@@ -233,7 +233,7 @@ class ArrayNatives {
 
 		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,itemIndex * Heap.SLOT_SIZE,addingItemPtr)
 
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,itemIndex+1)
+		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,[itemIndex+1,index].max())
 
 		stackFrame.methodStack.push(arrayPtr)
 	}
