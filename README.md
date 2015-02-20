@@ -5,10 +5,10 @@ FaJa
 				//  	     FaJa compiler and virtual machine                //
 				////////////////////////////////////////////////////////////////
 
-Name:-      FaJa VM
-Authors:-   Kamil Falta (faltakam)
-			      Lukáš Janeček (janeclu1)
-Date:-      20.2.2015
+Name:-      FaJa VM  
+Authors:-   Kamil Falta (faltakam)  
+			      Lukáš Janeček (janeclu1)  
+Date:-      20.2.2015  
 
 
 (1) INTRODUCTION
@@ -19,23 +19,23 @@ in Groovy language and is compiled into Java jar file.
 
 (2) PACKAGE FILES
 ----------------------
-The following files are included in the FaJa package.
- |
- +- Documentation/..............Contains documentation in HTML format (syntax, native classes, example)
- |
- +- src/........................Contains Groovy source codes of the program
- |  |
- |  +- src/.....................Contains source files
- |  |
- |  +- Main.groovy..............Executable file
- |  |
- |  +- Test.groovy..............Execute tests
- |
- +- FaJaSrc/SAT/................Contains source codes of program (SAT solver) in FaJa language
- |
- +- out/........................Compiled groovy/java class file
-    |
-    +- FaJa.jar.................Compiled program into Java JAR file
+The following files are included in the FaJa package.  
+ |  
+ +- Documentation/..............Contains documentation in HTML format (syntax, native classes, example)  
+ |  
+ +- src/........................Contains Groovy source codes of the program  
+ |  |  
+ |  +- src/.....................Contains source files  
+ |  |  
+ |  +- Main.groovy..............Executable file  
+ |  |  
+ |  +- Test.groovy..............Execute tests  
+ |  
+ +- FaJaSrc/SAT/................Contains source codes of program (SAT solver) in FaJa language  
+ |  
+ +- out/........................Compiled groovy/java class file  
+    |  
+    +- FaJa.jar.................Compiled program into Java JAR file  
 
 
 (3) REQUIRED SYSTEMS
