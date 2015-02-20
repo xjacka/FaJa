@@ -31,7 +31,7 @@ class Clause
         def toS()
             var str <- "["
             var addVariable <- { variable |
-                str <- str.+(variable:variable:id).+(" v ")
+                str <- str.+(variable.toS()).+(" v ")
             }
             self:variables.each(addVariable)
             str.+("] ^ ")

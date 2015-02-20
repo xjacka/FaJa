@@ -11,7 +11,7 @@ class Pair
 				sign <- " -"
 			}
 			self:sign.ifFalse(setSign)
-			var str <- "".+(sign).+(self:variable)
+			sign.+(self:variable:id)
 		end
 	endMethods
 endClass
