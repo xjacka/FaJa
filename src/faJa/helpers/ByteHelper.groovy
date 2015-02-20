@@ -32,6 +32,8 @@ class ByteHelper {
 
 	static String bytesToString(byte [] bytes,Integer ptr){
 		def length = ByteHelper.bytesToIntAt(bytes, ptr)
+		if(length == 0)
+			return  ""
 		def start = ptr+2
 		def end = start + length - 1
 		def stringBytes = bytes[ start..end ].toArray() as byte[]
