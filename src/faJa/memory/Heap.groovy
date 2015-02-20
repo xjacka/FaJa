@@ -18,10 +18,6 @@ class Heap {
 		pointer
 	}
 
-//	def setByte(Integer ptr, Integer newVal){
-//		heap[ptr] = newVal.byteValue()
-//	}
-
 	def getByte(Integer ptr){
 		heap[ptr] // should return unsigned ??
 	}

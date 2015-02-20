@@ -47,6 +47,8 @@ class ClassLoader {
 
 		pointer = heap.load(new SystemIOInit().toBytecode())
 		classRegister.put(Compiler.SYSTEMIO_CLASS,pointer)
+		Integer objPtr = heap.createObject(pointer)
+		singletonRegister.put(Compiler.SYSTEMIO_CLASS, objPtr)
 
 		pointer = heap.load(new ArrayInit().toBytecode())
 		classRegister.put(Compiler.ARRAY_CLASS,pointer)
@@ -56,7 +58,7 @@ class ClassLoader {
 
 		pointer = heap.load(new NullInit().toBytecode())
 		classRegister.put(Compiler.NULL_CLASS,pointer)
-		Integer objPtr = heap.createObject(pointer)
+		objPtr = heap.createObject(pointer)
 		singletonRegister.put(Compiler.NULL_CLASS, objPtr)
 	}
 

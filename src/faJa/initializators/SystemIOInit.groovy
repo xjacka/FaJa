@@ -40,5 +40,7 @@ class SystemIOInit extends BaseInit{
 		def inputB = new PrecompiledMethod()
 		inputB.signatureIndex = classFile.constantPool.add('inBool(0)')
 		classFile.methods.add(inputB)
+
+		classFile.isSingleton = true
 	}
 }
