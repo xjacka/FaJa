@@ -20,7 +20,7 @@ class ClassAccessHelper {
 
 	static Integer getObjectSize(Heap heap, Integer ptr) {
 		def fieldSizePtr = getFieldsSection(heap, ptr)
-		heap.getPointer(fieldSizePtr) + Heap.SLOT_SIZE
+		heap.getPointer(fieldSizePtr) + Heap.HEAP_POINTER_SIZE
 	}
 
 	// returns pointer to method bytecode or null
@@ -96,12 +96,12 @@ class ClassAccessHelper {
 
 	static List<String> getAllFieldNames(Heap heap, Integer classPtr){
 		List result = []
-		Integer fieldsPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
+		Integer fieldsPtr = getFieldsSection(heap,classPtr)
 		Integer classSize = heap.getPointer(fieldsPtr)
 		Integer currentFieldPtr = fieldsPtr + Heap.SLOT_SIZE
 		while(fieldsPtr + classSize > currentFieldPtr){
 			Integer fieldCPPtr = heap.getPointer(currentFieldPtr)
-			Integer fieldNamePtr = ClassAccessHelper.getConstantPoolValue(heap, classPtr, fieldCPPtr)
+			String fieldNamePtr = getConstantPoolValue(heap, classPtr, fieldCPPtr)
 			String fieldName = heap.getString(fieldNamePtr)
 
 			result.add(fieldName)

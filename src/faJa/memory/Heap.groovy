@@ -5,9 +5,10 @@ import faJa.helpers.ClassAccessHelper
 
 class Heap {
 
-	byte [] heap = new byte[65536]
+	byte [] heap = new byte[1000000]
 	Integer insertIndex = 0
 	public static final SLOT_SIZE = 2
+	public static final HEAP_POINTER_SIZE = 4
 
 	// nahraje na volne misto pole bytu
 	synchronized Integer load(byte [] bytes){
@@ -27,13 +28,15 @@ class Heap {
 	}
 
 	synchronized def setPointer(Integer ptr, Integer newVal){
-		def bytes = ByteHelper.IntegerTo2Bytes(newVal)
+		def bytes = ByteHelper.IntegerTo4Bytes(newVal)
 		heap[ptr] = bytes[0]
 		heap[ptr+1] = bytes[1]
+		heap[ptr+2] = bytes[2]
+		heap[ptr+3] = bytes[3]
 	}
 
 	Integer getPointer(Integer ptr){
-		ByteHelper.bytesToIntAt(heap, ptr)
+		ByteHelper.bytesToNumber(heap, ptr)
 	}
 
 	String getString(Integer ptr){
@@ -54,20 +57,24 @@ class Heap {
 
 	synchronized def createObject(Integer classPtr){
 		Integer objectSize = ClassAccessHelper.getObjectSize(this, classPtr)
-		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(classPtr)
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(classPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex] = bytesOfClassPtr[0]
 		heap[insertIndex+1] = bytesOfClassPtr[1]
+		heap[insertIndex+2] = bytesOfClassPtr[2]
+		heap[insertIndex+3] = bytesOfClassPtr[3]
 		insertIndex += objectSize
 
 		objectPtr
 	}
 
 	synchronized Integer createString(Integer stringClassPtr, String value) {
-		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(stringClassPtr)
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(stringClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
+		heap[insertIndex++] = bytesOfClassPtr[2]
+		heap[insertIndex++] = bytesOfClassPtr[3]
 		byte [] bytes = value.bytes
 		byte [] stringLength = ByteHelper.IntegerTo2Bytes(bytes.length)
 		heap[insertIndex++] = stringLength[0]
@@ -81,10 +88,12 @@ class Heap {
 	}
 
 	synchronized Integer createNumber(Integer numberClassPtr, Integer newVal){
-		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(numberClassPtr)
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(numberClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
+		heap[insertIndex++] = bytesOfClassPtr[2]
+		heap[insertIndex++] = bytesOfClassPtr[3]
 
 		def bytes = ByteHelper.IntegerTo4Bytes(newVal)
 		heap[insertIndex++] = bytes[0]
@@ -96,11 +105,13 @@ class Heap {
 	}
 
 	synchronized Integer createBool(Integer boolClassPtr, Boolean newVal) {
-		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(boolClassPtr)
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(boolClassPtr)
 		Integer objectPtr = insertIndex
 		Byte newByteVal = (byte) newVal ? 1 : 0
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
+		heap[insertIndex++] = bytesOfClassPtr[2]
+		heap[insertIndex++] = bytesOfClassPtr[3]
 		heap[insertIndex++] = newByteVal
 
 		objectPtr
@@ -115,17 +126,21 @@ class Heap {
 	}
 
 	Boolean boolFromBoolObject(Integer ptr) {
-		heap[ptr + Heap.SLOT_SIZE] == 0 ? false : true
+		heap[ptr + Heap.HEAP_POINTER_SIZE] == 0 ? false : true
 	}
 
 	synchronized Integer createClosure(Integer closureClassPtr, Integer initClassPtr, Integer closureIdx) {
-		byte [] bytesOfClosureClass = ByteHelper.IntegerTo2Bytes(closureClassPtr)
-		byte [] bytesOfInitClass = ByteHelper.IntegerTo2Bytes(initClassPtr)
+		byte [] bytesOfClosureClass = ByteHelper.IntegerTo4Bytes(closureClassPtr)
+		byte [] bytesOfInitClass = ByteHelper.IntegerTo4Bytes(initClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClosureClass[0]
 		heap[insertIndex++] = bytesOfClosureClass[1]
+		heap[insertIndex++] = bytesOfClosureClass[2]
+		heap[insertIndex++] = bytesOfClosureClass[3]
 		heap[insertIndex++] = bytesOfInitClass[0]
 		heap[insertIndex++] = bytesOfInitClass[1]
+		heap[insertIndex++] = bytesOfInitClass[2]
+		heap[insertIndex++] = bytesOfInitClass[3]
 		heap[insertIndex++] = closureIdx.byteValue()
 
 		objectPtr
@@ -133,10 +148,12 @@ class Heap {
 
 	synchronized Integer createArray(Integer arrayClassPtr, Integer size, Integer initializeObjectPointer) {
 		// creates pointer to Array class
-		byte [] bytesOfClassPtr = ByteHelper.IntegerTo2Bytes(arrayClassPtr)
+		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(arrayClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
 		heap[insertIndex++] = bytesOfClassPtr[1]
+		heap[insertIndex++] = bytesOfClassPtr[2]
+		heap[insertIndex++] = bytesOfClassPtr[3]
 
 		// creates index of last array value
 		byte [] lastInsertedIndex = ByteHelper.IntegerTo2Bytes(0)
@@ -146,9 +163,11 @@ class Heap {
 		// save pointer to pointer to array
 		Integer saveInsertIndex = insertIndex
 		insertIndex += Heap.SLOT_SIZE
-		byte [] arrayPointer = ByteHelper.IntegerTo2Bytes(createArrayObject(size,initializeObjectPointer))
+		byte [] arrayPointer = ByteHelper.IntegerTo4Bytes(createArrayObject(size,initializeObjectPointer))
 		heap[saveInsertIndex] = arrayPointer[0]
 		heap[saveInsertIndex+1] = arrayPointer[1]
+		heap[saveInsertIndex+2] = arrayPointer[2]
+		heap[saveInsertIndex+3] = arrayPointer[3]
 
 		objectPtr
 	}

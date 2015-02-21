@@ -2,6 +2,7 @@ package faJa.compilator.representation
 
 import faJa.helpers.ByteHelper
 import faJa.interpreter.Instruction
+import faJa.memory.Heap
 
 /**
  *                         SERIALIZED CLASS FILE TO BYTES (each space = 2 bytes)
@@ -40,13 +41,13 @@ import faJa.interpreter.Instruction
  * ++==============================++                       :
  * ||         field_1              ||                       :
  * ++------------------------------++       FIELDS          :
- * ||         field_2              ||                       :
- * ++------------------------------++                       :
+ * ||         field_2              || <- pointer to         :
+ * ++------------------------------++    Constant Pool      :
  * ||          ......              ||                       :
  * ++------------------------------++                       :
  * ++//////////////////////////////++.......................:
  * ++==============================++                       :
- * ||         methods_size         ||                       :
+ * ||        methods_size          ||                       :
  * ++==============================++                       :
  * ||        method_size_1         ||                       :
  * ++------------------------------++                       :
