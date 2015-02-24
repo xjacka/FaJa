@@ -13,10 +13,10 @@ class ObjectAccessHelper {
 	}
 
 	static Integer valueOf(Heap heap,Integer objectPtr, Integer fieldIdx){
-		heap.getPointer(objectPtr + fieldIdx + Heap.SLOT_SIZE)
+		heap.getPointer(objectPtr + fieldIdx + Heap.HEAP_POINTER_SIZE)
 	}
 
 	static setNewValue(Heap heap, Integer objectPtr, Integer fieldIdx, Integer newVal){
-		heap.setPointer(objectPtr + fieldIdx + Heap.SLOT_SIZE, newVal)
+		heap.setPointer(objectPtr + fieldIdx + Heap.HEAP_POINTER_SIZE, newVal)
 	}
 }

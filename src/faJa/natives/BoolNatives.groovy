@@ -39,7 +39,7 @@ class BoolNatives {
 
 		def class1Ptr = ObjectAccessHelper.getClassPointer(heap,arg1ptr)
 
-		def pointer = heap.load(ObjectInitHelper.createBool(class1Ptr,heap.getByte(arg1ptr + Heap.SLOT_SIZE) == FALSE))
+		def pointer = heap.load(ObjectInitHelper.createBool(class1Ptr,heap.getByte(arg1ptr + Heap.HEAP_POINTER_SIZE) == FALSE))
 		stackFrame.methodStack.push(pointer)
 		null
 	}

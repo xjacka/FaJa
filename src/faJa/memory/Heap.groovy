@@ -36,7 +36,21 @@ class Heap {
 	}
 
 	Integer getPointer(Integer ptr){
+		if(ptr == 1344){
+			def a
+
+		}
 		ByteHelper.bytesToNumber(heap, ptr)
+	}
+
+	Integer setSlot(Integer ptr, Integer newVal){
+		def bytes = ByteHelper.IntegerTo2Bytes(newVal)
+		heap[ptr] = bytes[0]
+		heap[ptr+1] = bytes[1]
+	}
+
+	Integer getSlot(Integer ptr){
+		ByteHelper.bytesToIntAt(heap, ptr)
 	}
 
 	String getString(Integer ptr){
@@ -44,7 +58,7 @@ class Heap {
 	}
 
 	String stringFromStringObject(Integer ptr){
-		getString(ptr + Heap.SLOT_SIZE)
+		getString(ptr + Heap.HEAP_POINTER_SIZE)
 	}
 
 	def getNumber(Integer ptr){
@@ -52,7 +66,7 @@ class Heap {
 	}
 
 	def intFromNumberObject(Integer ptr){
-		getNumber(ptr + Heap.SLOT_SIZE)
+		getNumber(ptr + Heap.HEAP_POINTER_SIZE)
 	}
 
 	synchronized def createObject(Integer classPtr){
@@ -69,6 +83,10 @@ class Heap {
 	}
 
 	synchronized Integer createString(Integer stringClassPtr, String value) {
+		if(insertIndex == 1344){
+			def a
+
+		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(stringClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
@@ -162,7 +180,7 @@ class Heap {
 
 		// save pointer to pointer to array
 		Integer saveInsertIndex = insertIndex
-		insertIndex += Heap.SLOT_SIZE
+		insertIndex += Heap.HEAP_POINTER_SIZE
 		byte [] arrayPointer = ByteHelper.IntegerTo4Bytes(createArrayObject(size,initializeObjectPointer))
 		heap[saveInsertIndex] = arrayPointer[0]
 		heap[saveInsertIndex+1] = arrayPointer[1]
@@ -183,7 +201,7 @@ class Heap {
 		// insert pointers to null object into array
 		size.times {
 			setPointer(insertIndex,initializeObjectPointer)
-			insertIndex += Heap.SLOT_SIZE
+			insertIndex += Heap.HEAP_POINTER_SIZE
 		}
 
 		objectPtr

@@ -1,6 +1,7 @@
 package faJa.natives
 
 import faJa.exceptions.InterpretException
+import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.memory.Heap
 import faJa.compilator.Compiler
@@ -59,7 +60,7 @@ class StringNatives {
 
 	static length = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer thisPtr = stackFrame.methodStack.pop()
-		Integer size = heap.getPointer(thisPtr + Heap.SLOT_SIZE)
+		Integer size = heap.getSlot(thisPtr + Heap.HEAP_POINTER_SIZE)
 
 		Integer resultPtr = heap.createNumber(classLoader.findClass(heap, Compiler.NUMBER_CLASS), size)
 
@@ -98,13 +99,13 @@ class StringNatives {
 			Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 			Integer arrayPtr = heap.createArray(arrayClassPtr, tokens.size(), nullPointer)
-			Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+			Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ArrayNatives.ARRAY_OBJECT_POINTER_PROPERTY)
 
 			tokens.eachWithIndex { String token, Integer i ->
 				Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),token)
-				ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,i * Heap.SLOT_SIZE,lineStringPtr)
+				ArrayHelper.setNewValue(heap,arrayObjectPtr,i,lineStringPtr)
 			}
-			ObjectAccessHelper.setNewValue(heap,arrayPtr,0,tokens.size())
+			ArrayHelper.setInsertIndex(heap,arrayPtr,tokens.size())
 
 			stackFrame.methodStack.push(arrayPtr) // always push
 		}else{

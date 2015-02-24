@@ -20,18 +20,18 @@ class ClassAccessHelper {
 
 	static Integer getObjectSize(Heap heap, Integer ptr) {
 		def fieldSizePtr = getFieldsSection(heap, ptr)
-		heap.getPointer(fieldSizePtr) + Heap.HEAP_POINTER_SIZE
+		heap.getSlot(fieldSizePtr) + Heap.HEAP_POINTER_SIZE
 	}
 
 	// returns pointer to method bytecode or null
 	static Integer findMethod(Heap heap, Integer ptr, String signature) {
 		def methodSectionPtr = getMethodSection(heap, ptr)
-		def methodSectionSize = heap.getPointer(methodSectionPtr)
+		def methodSectionSize = heap.getSlot(methodSectionPtr)
 		def methodPtr = methodSectionPtr + Heap.SLOT_SIZE
 		while (methodSectionSize + methodSectionPtr > methodPtr) {
 
 			def methodConstPoolPtr = methodPtr + Heap.SLOT_SIZE
-			def methodSignaturePtr = ptr + heap.getPointer(methodConstPoolPtr)
+			def methodSignaturePtr = ptr + heap.getSlot(methodConstPoolPtr)
 			def methodSignature = heap.getString(methodSignaturePtr)
 
 			if (signature == methodSignature) {
@@ -46,7 +46,7 @@ class ClassAccessHelper {
 	// return relative pointer to data area in object
 	static Integer findFieldIndex(Heap heap, Integer ptr, String name) {
 		def fieldsPtr = getFieldsSection(heap, ptr)
-		def fieldsSize = heap.getPointer(fieldsPtr)
+		def fieldsSize = heap.getSlot(fieldsPtr)
 		def fieldCpPointer = fieldsPtr
 		def fieldIndex = 0
 		while (fieldsSize + fieldsPtr > fieldCpPointer) {
@@ -73,12 +73,12 @@ class ClassAccessHelper {
 	}
 
 	static Integer skipSection(Heap heap, int ptr) {
-		def sectionSize = heap.getPointer(ptr)
+		def sectionSize = heap.getSlot(ptr)
 		ptr + Heap.SLOT_SIZE + sectionSize
 	}
 
 	static Integer skipMethod(Heap heap, int ptr) {
-		def sectionSize = heap.getPointer(ptr)
+		def sectionSize = heap.getSlot(ptr)
 		ptr = ptr + Heap.SLOT_SIZE + sectionSize
 		if(sectionSize == 0) {
 			ptr += Heap.SLOT_SIZE //* 2
@@ -97,10 +97,10 @@ class ClassAccessHelper {
 	static List<String> getAllFieldNames(Heap heap, Integer classPtr){
 		List result = []
 		Integer fieldsPtr = getFieldsSection(heap,classPtr)
-		Integer classSize = heap.getPointer(fieldsPtr)
+		Integer classSize = heap.getSlot(fieldsPtr)
 		Integer currentFieldPtr = fieldsPtr + Heap.SLOT_SIZE
 		while(fieldsPtr + classSize > currentFieldPtr){
-			Integer fieldCPPtr = heap.getPointer(currentFieldPtr)
+			Integer fieldCPPtr = heap.getSlot(currentFieldPtr)
 			String fieldNamePtr = getConstantPoolValue(heap, classPtr, fieldCPPtr)
 			String fieldName = heap.getString(fieldNamePtr)
 
@@ -114,11 +114,11 @@ class ClassAccessHelper {
 
 	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantpoolValue){
 		Integer constPoolPtr = classPtr + Heap.SLOT_SIZE
-		Integer cpSize = heap.getPointer(constPoolPtr)
+		Integer cpSize = heap.getSlot(constPoolPtr)
 		Integer cpPointer = constPoolPtr + Heap.SLOT_SIZE
 		Integer counter = 0
 		while(constPoolPtr + cpSize > cpPointer){
-			Integer itemSize = heap.getPointer(cpPointer)
+			Integer itemSize = heap.getSlot(cpPointer)
 			if(heap.getString(cpPointer) == constantpoolValue){
 				return counter
 			}
@@ -128,7 +128,7 @@ class ClassAccessHelper {
 	}
 
 	static Boolean isNative(Heap heap, Integer methodPointer) {
-		heap.getPointer(methodPointer) == 0
+		heap.getSlot(methodPointer) == 0
 	}
 
 	static String getConstantPoolValue(Heap heap, Integer classPtr, Integer constPoolPtr) {

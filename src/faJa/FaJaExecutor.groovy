@@ -2,12 +2,14 @@ package faJa
 
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
+import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
 import faJa.interpreter.ClassLoader
 import faJa.interpreter.Interpreter
 import faJa.interpreter.StackFrame
 import faJa.memory.Heap
+import faJa.natives.ArrayNatives
 
 class FaJaExecutor {
 
@@ -28,7 +30,7 @@ class FaJaExecutor {
 
 		//initialize all fields to null
 		Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,ptr)
-		Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+		Integer fieldsCount = heap.getSlot(fieldsSectionPtr) / Heap.SLOT_SIZE
 		Integer nullObjectPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer mainObjectPointer = classLoader.singletonRegister.get(className)
 		fieldsCount.times { field ->
@@ -38,13 +40,14 @@ class FaJaExecutor {
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 		Integer stringClassPtr = classLoader.findClass(heap, Compiler.STRING_CLASS)
 		Integer arrayPtr = heap.createArray(arrayClassPtr, args.size(), nullObjectPointer)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr, Heap.SLOT_SIZE)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
 		args.eachWithIndex { String arg, Integer i ->
 			Integer argStringPtr = heap.createString(stringClassPtr, arg)
-			ObjectAccessHelper.setNewValue(heap, arrayObjectPtr,i * Heap.SLOT_SIZE, argStringPtr)
+			ArrayHelper.setNewValue(heap, arrayObjectPtr, i , argStringPtr)
 		}
-		ObjectAccessHelper.setNewValue(heap, arrayPtr, 0, args.size())
+		ArrayHelper.setInsertIndex(heap,arrayPtr, args.size())
+
 
 		def mainPtr = ClassAccessHelper.findMethod(heap, ptr, MAIN_METHOD_SIGNATURE)
 		if(mainPtr == null){
@@ -52,7 +55,7 @@ class FaJaExecutor {
 		}
 		def mainBytecodePtr = mainPtr + Heap.SLOT_SIZE + Heap.SLOT_SIZE // mainPtr + bytecodeSize + constPoolPtr
 		StackFrame mainStackFrame = new StackFrame()
-		def mainSize = heap.getPointer(mainPtr) - Heap.SLOT_SIZE // mehtodSize - constPoolPtrSize
+		def mainSize = heap.getSlot(mainPtr) - Heap.SLOT_SIZE // mehtodSize - constPoolPtrSize
 
 
 		mainStackFrame.bytecode =  heap.getBytes(mainBytecodePtr, mainSize)

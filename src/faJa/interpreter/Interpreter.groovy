@@ -217,7 +217,7 @@ class Interpreter {
 
 			//initialize all fields to null
 			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
-			Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+			Integer fieldsCount = heap.getSlot(fieldsSectionPtr) / Heap.SLOT_SIZE
 			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 			fieldsCount.times { field ->
 				ObjectAccessHelper.setNewValue(heap,newObjectPtr,field * Heap.SLOT_SIZE,nullPointer)
