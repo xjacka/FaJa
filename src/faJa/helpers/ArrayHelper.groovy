@@ -9,7 +9,7 @@ class ArrayHelper {
 	}
 	
 	static Integer valueAt(Heap heap, Integer arrayObjectPtr, Integer index){
-		heap.getPointer(arrayObjectPtr+Heap.SLOT_SIZE + index * Heap.HEAP_POINTER_SIZE)
+		heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + index * Heap.HEAP_POINTER_SIZE)
 	}
 	
 	static setInsertIndex(Heap heap, Integer arrayPtr, Integer insertIndex){
@@ -23,6 +23,10 @@ class ArrayHelper {
 	static getArrayObjectPtr(Heap heap, Integer arrayPtr){
 		heap.getPointer(arrayPtr + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE)
 		
+	}
+	
+	static setArrayObjectPtr(Heap heap, Integer ptr,Integer newValue){
+		heap.setPointer(ptr + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE,newValue)
 	}
 	
 	static setValues(Heap heap, Integer arrayObjectPtr ,List vals){

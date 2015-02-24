@@ -20,7 +20,7 @@ class ClassAccessHelper {
 
 	static Integer getObjectSize(Heap heap, Integer ptr) {
 		def fieldSizePtr = getFieldsSection(heap, ptr)
-		heap.getSlot(fieldSizePtr) + Heap.HEAP_POINTER_SIZE
+		((heap.getSlot(fieldSizePtr)/Heap.SLOT_SIZE)*Heap.HEAP_POINTER_SIZE)+ Heap.HEAP_POINTER_SIZE
 	}
 
 	// returns pointer to method bytecode or null
@@ -51,8 +51,7 @@ class ClassAccessHelper {
 		def fieldIndex = 0
 		while (fieldsSize + fieldsPtr > fieldCpPointer) {
 			fieldCpPointer += Heap.SLOT_SIZE
-
-			def fieldNamePtr = ptr + heap.getPointer(fieldCpPointer)
+			def fieldNamePtr = ptr + heap.getSlot(fieldCpPointer)
 			def fieldName = heap.getString(fieldNamePtr)
 
 			if (name == fieldName) {

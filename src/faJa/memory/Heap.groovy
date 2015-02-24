@@ -5,7 +5,7 @@ import faJa.helpers.ClassAccessHelper
 
 class Heap {
 
-	byte [] heap = new byte[1000000]
+	byte [] heap = new byte[10000000]
 	Integer insertIndex = 0
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
@@ -36,10 +36,6 @@ class Heap {
 	}
 
 	Integer getPointer(Integer ptr){
-		if(ptr == 1344){
-			def a
-
-		}
 		ByteHelper.bytesToNumber(heap, ptr)
 	}
 
@@ -83,10 +79,6 @@ class Heap {
 	}
 
 	synchronized Integer createString(Integer stringClassPtr, String value) {
-		if(insertIndex == 1344){
-			def a
-
-		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(stringClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]

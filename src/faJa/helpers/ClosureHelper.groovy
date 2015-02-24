@@ -1,6 +1,5 @@
 package faJa.helpers
 
-import faJa.interpreter.Instruction
 import faJa.memory.Heap
 
 class ClosureHelper {
@@ -22,7 +21,7 @@ class ClosureHelper {
 	}
 
 	static Integer getBytecodeSize(Heap heap, Integer bytecodePtr){
-		heap.getPointer(bytecodePtr) - Heap.SLOT_SIZE - Heap.SLOT_SIZE // argCountSlot and localCountSlot
+		heap.getSlot(bytecodePtr) - Heap.SLOT_SIZE - Heap.SLOT_SIZE // argCountSlot and localCountSlot
 	}
 
 	static Integer getBytecodeArgCount(Heap heap, Integer bytecodePtr){
@@ -43,6 +42,7 @@ class ClosureHelper {
 		Integer closureIdxPtr = objectPtr + Heap.HEAP_POINTER_SIZE + Heap.HEAP_POINTER_SIZE
 		heap.getUnsignedByte(closureIdxPtr)
 	}
+	
 	static Integer getClosureLocalCnt(Heap heap, Integer bytecodePtr){
 		Integer closureLocalCntPtr = bytecodePtr + Heap.SLOT_SIZE + Heap.SLOT_SIZE
 		heap.getSlot(closureLocalCntPtr)

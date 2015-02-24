@@ -98,8 +98,7 @@ class ArrayNatives {
 		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
-
-		ObjectAccessHelper.setNewValue(heap,newArrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		ArrayHelper.setInsertIndex(heap,newArrayPtr,index)
 
 		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
 		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
@@ -189,7 +188,7 @@ class ArrayNatives {
 				}
 			}
 		}
-		ObjectAccessHelper.setNewValue(heap,newArrayPtr,ARRAY_INSERT_INDEX_PROPERTY,selectedItems)
+		ArrayHelper.setInsertIndex(heap,newArrayPtr,selectedItems)
 
 		stackFrame.methodStack.push(newArrayPtr)
 	}
@@ -211,7 +210,7 @@ class ArrayNatives {
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,index,addingItemPtr)
 
 		index += 1
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		ArrayHelper.setInsertIndex(heap,arrayPtr,index)
 
 		stackFrame.methodStack.push(arrayPtr)
 	}
@@ -234,7 +233,7 @@ class ArrayNatives {
 
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,itemIndex,addingItemPtr)
 
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,[itemIndex+1,index].max())
+		ArrayHelper.setInsertIndex(heap,arrayPtr,[itemIndex+1,index].max())
 
 		stackFrame.methodStack.push(arrayPtr)
 	}
@@ -275,7 +274,7 @@ class ArrayNatives {
 		index -= 1
 		Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,index)
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,index ,classLoader.singletonRegister.get(Compiler.NULL_CLASS))
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		ArrayHelper.setInsertIndex(heap,arrayPtr,index)
 
 		stackFrame.methodStack.push(resultPtr)
 	}
@@ -337,7 +336,7 @@ class ArrayNatives {
 	static Integer resizeArray(Heap heap,ClassLoader classLoader, Integer size, Integer newSize, Integer arrayPtr, Integer arrayObjectPtr){
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer newArrayObjectPtr = heap.createArrayObject(newSize,nullPtr) // resize 2x
-		ObjectAccessHelper.setNewValue(heap, arrayPtr, ARRAY_OBJECT_POINTER_PROPERTY, newArrayObjectPtr)
+		ArrayHelper.setArrayObjectPtr(heap,arrayPtr,newArrayObjectPtr)
 		size.times {
 			heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE)))
 		}

@@ -99,7 +99,7 @@ class StringNatives {
 			Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 			Integer arrayPtr = heap.createArray(arrayClassPtr, tokens.size(), nullPointer)
-			Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ArrayNatives.ARRAY_OBJECT_POINTER_PROPERTY)
+			Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap, arrayPtr)
 
 			tokens.eachWithIndex { String token, Integer i ->
 				Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),token)
