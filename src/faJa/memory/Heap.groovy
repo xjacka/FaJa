@@ -9,6 +9,7 @@ class Heap {
 	Integer insertIndex = 0
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
+	Map methodCache = [:]
 
 	// nahraje na volne misto pole bytu
 	synchronized Integer load(byte [] bytes){

@@ -81,6 +81,7 @@ To run example of FaJa program (weighted MAX-SAT) with prepared data set, type:
 ----------------------
 - Parser and Compiler
 - Virtual machine
+	- methods invoke cache
 - Closures
 - Garbage collector
 - Threads

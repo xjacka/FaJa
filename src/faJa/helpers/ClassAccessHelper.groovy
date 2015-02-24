@@ -134,17 +134,24 @@ class ClassAccessHelper {
 		heap.getString(classPtr + constPoolPtr)
 	}
 
-	static List findMethodWithSuper(Heap heap, Integer ptr, String signature, ClassLoader classLoader) {
-		if(ptr == null){
+	static List findMethodWithSuper(Heap heap, Integer classPtr, String signature, ClassLoader classLoader) {
+		if(classPtr == null){
 			throw new InterpretException("Can not invoke method on null object")
 		}
-		def methodPtr = findMethod(heap,ptr,signature)
-		while(methodPtr == null && getName(heap,ptr) != Compiler.DEFAULT_PARENT){
-			String parentName = getParent(heap,ptr)
-			ptr = classLoader.findClass(heap,parentName)
-			methodPtr = findMethod(heap,ptr,signature)
+		List<Integer> cachePointer = heap.methodCache.get(signature + ClassAccessHelper.getName(heap,classPtr))
+		if(cachePointer != null){
+			return cachePointer
 		}
-		[ptr, methodPtr]
+		Integer methodPtr = findMethod(heap,classPtr,signature)
+		while(methodPtr == null && getName(heap,classPtr) != Compiler.DEFAULT_PARENT){
+			String parentName = getParent(heap,classPtr)
+			classPtr = classLoader.findClass(heap,parentName)
+			methodPtr = findMethod(heap,classPtr,signature)
+		}
+		if(methodPtr != null){
+			heap.methodCache.put(signature + ClassAccessHelper.getName(heap,classPtr),[classPtr, methodPtr])
+		}
+		[classPtr, methodPtr]
 	}
 
 	static getClosureSection(Heap heap, int ptr){
