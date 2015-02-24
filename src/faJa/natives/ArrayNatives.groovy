@@ -1,5 +1,6 @@
 package faJa.natives
 
+import faJa.helpers.ArrayHelper
 import faJa.interpreter.ClassLoader
 import faJa.memory.Heap
 import faJa.compilator.Compiler
@@ -17,11 +18,11 @@ class ArrayNatives {
 	public static final Integer ARRAY_OBJECT_POINTER_PROPERTY = Heap.SLOT_SIZE
 
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ObjectAccessHelper.valueOf(heap,a,ARRAY_INSERT_INDEX_PROPERTY) != 0 },"ifTrue(1)Array")
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ArrayHelper.getInsertIndex(heap,a) != 0 },"ifTrue(1)Array")
 	}
 
 	static ifFalse = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
-		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ObjectAccessHelper.valueOf(heap,a,ARRAY_INSERT_INDEX_PROPERTY) == 0 },"ifFalse(1)Array")
+		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ArrayHelper.getInsertIndex(heap,a) == 0 },"ifFalse(1)Array")
 	}
 
 	static toS = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
@@ -29,11 +30,11 @@ class ArrayNatives {
 		Integer arrayPtr = stackFrame.methodStack.pop()
 
 		List<String> arrayStr = []
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'toS(0)',classLoader)
 			Integer itemStrPtr = stackFrame.methodStack.pop()
 			String itemStr = heap.stringFromStringObject(itemStrPtr)
@@ -49,8 +50,8 @@ class ArrayNatives {
 		Integer thisArrayPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
-		Integer index = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
 
 		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
 		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
@@ -58,7 +59,7 @@ class ArrayNatives {
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -87,18 +88,17 @@ class ArrayNatives {
 		Integer thisArrayPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
-		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+		Integer sizeOfInitializedArry = heap.getSlot(arrayObjectPtr)
 
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
-		Integer newArrayObjectPtr = ObjectAccessHelper.valueOf(heap,newArrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
-		Integer index = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
-
-		ObjectAccessHelper.setNewValue(heap,newArrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
+		ArrayHelper.setInsertIndex(heap,newArrayPtr,index)
 
 		Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
 		Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
@@ -106,7 +106,7 @@ class ArrayNatives {
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -128,7 +128,7 @@ class ArrayNatives {
 
 			Integer closureResult = stackFrame.methodStack.pop()
 
-			ObjectAccessHelper.setNewValue(heap,newArrayObjectPtr,it * Heap.SLOT_SIZE,closureResult)
+			ArrayHelper.setNewValue(heap,newArrayObjectPtr,it,closureResult)
 		}
 
 		stackFrame.methodStack.push(newArrayPtr)
@@ -139,16 +139,16 @@ class ArrayNatives {
 		Integer thisArrayPtr = stackFrame.methodStack.pop()
 		Integer closurePtr = stackFrame.methodStack.pop()
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
-		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+		Integer sizeOfInitializedArry = heap.getSlot(arrayObjectPtr)
 
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
-		Integer newArrayObjectPtr = ObjectAccessHelper.valueOf(heap,newArrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
-		Integer index = ObjectAccessHelper.valueOf(heap,thisArrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
 
 		Integer selectedItems = 0
 
@@ -158,7 +158,7 @@ class ArrayNatives {
 		Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
 			StackFrame newStackFrame = new StackFrame()
 			newStackFrame.parent = stackFrame
@@ -183,12 +183,12 @@ class ArrayNatives {
 
 			if(resultClass == Compiler.BOOL_CLASS) {
 				if (heap.boolFromBoolObject(closureResult) == true) {
-					ObjectAccessHelper.setNewValue(heap,newArrayObjectPtr,selectedItems * Heap.SLOT_SIZE,resultPtr)
+					ArrayHelper.setNewValue(heap,newArrayObjectPtr,selectedItems,resultPtr)
 					selectedItems++
 				}
 			}
 		}
-		ObjectAccessHelper.setNewValue(heap,newArrayPtr,ARRAY_INSERT_INDEX_PROPERTY,selectedItems)
+		ArrayHelper.setInsertIndex(heap,newArrayPtr,selectedItems)
 
 		stackFrame.methodStack.push(newArrayPtr)
 	}
@@ -197,20 +197,20 @@ class ArrayNatives {
 		Integer arrayPtr = stackFrame.methodStack.pop()
 		Integer addingItemPtr = stackFrame.methodStack.pop()
 
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
-		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+		Integer sizeOfInitializedArry = heap.getSlot(arrayObjectPtr)
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
 			arrayObjectPtr = resizeArray(heap,classLoader, index, index + 2, arrayPtr, arrayObjectPtr)
 		}
 
-		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,index * Heap.SLOT_SIZE,addingItemPtr)
+		ArrayHelper.setNewValue(heap,arrayObjectPtr,index,addingItemPtr)
 
 		index += 1
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		ArrayHelper.setInsertIndex(heap,arrayPtr,index)
 
 		stackFrame.methodStack.push(arrayPtr)
 	}
@@ -221,19 +221,19 @@ class ArrayNatives {
 		Integer itemIndexPtr = stackFrame.methodStack.pop()
 		Integer itemIndex = heap.intFromNumberObject(itemIndexPtr)
 
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
-		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+		Integer sizeOfInitializedArry = heap.getSlot(arrayObjectPtr)
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
 			arrayObjectPtr = resizeArray(heap,classLoader, index, itemIndex + (int)(itemIndex / 10), arrayPtr, arrayObjectPtr)
 		}
 
-		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,itemIndex * Heap.SLOT_SIZE,addingItemPtr)
+		ArrayHelper.setNewValue(heap,arrayObjectPtr,itemIndex,addingItemPtr)
 
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,[itemIndex+1,index].max())
+		ArrayHelper.setInsertIndex(heap,arrayPtr,[itemIndex+1,index].max())
 
 		stackFrame.methodStack.push(arrayPtr)
 	}
@@ -243,8 +243,8 @@ class ArrayNatives {
 		Integer index = stackFrame.methodStack.pop()
 		Integer indexValue = heap.intFromNumberObject(index)
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
-		Integer sizeOfInitializedArry = heap.getPointer(arrayObjectPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+		Integer sizeOfInitializedArry = heap.getSlot(arrayObjectPtr)
 
 		if(sizeOfInitializedArry == 0){
 			Integer nullObjectPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
@@ -252,7 +252,7 @@ class ArrayNatives {
 			return
 		}
 
-		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,indexValue * Heap.SLOT_SIZE)
+		Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,indexValue)
 
 		stackFrame.methodStack.push(resultPtr)
 	}
@@ -263,41 +263,41 @@ class ArrayNatives {
 
 	static pop = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer arrayPtr = stackFrame.methodStack.pop()
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
 		if(index <= 0){
 			throw new InterpretException("Array out of bound")
 		}
 
 		index -= 1
-		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,index * Heap.SLOT_SIZE)
-		ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,index * Heap.SLOT_SIZE,classLoader.singletonRegister.get(Compiler.NULL_CLASS))
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY,index)
+		Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,index)
+		ArrayHelper.setNewValue(heap,arrayObjectPtr,index ,classLoader.singletonRegister.get(Compiler.NULL_CLASS))
+		ArrayHelper.setInsertIndex(heap,arrayPtr,index)
 
 		stackFrame.methodStack.push(resultPtr)
 	}
 
 	static top = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer arrayPtr = stackFrame.methodStack.pop()
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
-		Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,(index - 1) * Heap.SLOT_SIZE)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+		Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,(index - 1) )
 
 		stackFrame.methodStack.push(resultPtr)
 	}
 
 	static size = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		Integer arrayPtr = stackFrame.methodStack.pop()
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
 
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer items = 0
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 			if(resultPtr != nullPtr){
 				items++
 			}
@@ -313,10 +313,10 @@ class ArrayNatives {
 		Integer objectPtr = stackFrame.methodStack.pop()
 
 		Boolean result = false
-		Integer index = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_INSERT_INDEX_PROPERTY)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,ARRAY_OBJECT_POINTER_PROPERTY)
+		Integer index = ArrayHelper.getInsertIndex(heap,arrayPtr)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 		index.times{
-			Integer resultPtr = ObjectAccessHelper.valueOf(heap,arrayObjectPtr,it * Heap.SLOT_SIZE)
+			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'==(1)',classLoader,[objectPtr])
 			Integer compareResult = stackFrame.methodStack.pop()
@@ -336,9 +336,9 @@ class ArrayNatives {
 	static Integer resizeArray(Heap heap,ClassLoader classLoader, Integer size, Integer newSize, Integer arrayPtr, Integer arrayObjectPtr){
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer newArrayObjectPtr = heap.createArrayObject(newSize,nullPtr) // resize 2x
-		ObjectAccessHelper.setNewValue(heap, arrayPtr, ARRAY_OBJECT_POINTER_PROPERTY, newArrayObjectPtr)
+		ArrayHelper.setArrayObjectPtr(heap,arrayPtr,newArrayObjectPtr)
 		size.times {
-			heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.SLOT_SIZE)))
+			heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE)))
 		}
 		newArrayObjectPtr
 	}

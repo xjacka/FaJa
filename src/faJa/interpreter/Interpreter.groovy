@@ -116,7 +116,6 @@ class Interpreter {
 		// set new field value
 		ObjectAccessHelper.setNewValue(heap,targetObjectPtr, fieldIdx, newValue)
 		currentStackFrame.incrementBP(Instruction.PUTFIELD.params)
-
 		currentStackFrame.methodStack.push(newValue)
 	}
 
@@ -133,7 +132,6 @@ class Interpreter {
 		Integer value = currentStackFrame.methodStack.pop()
 		currentStackFrame.storeLocal(localIdx, value)
 		currentStackFrame.incrementBP(Instruction.STORE.params)
-
 		currentStackFrame.methodStack.push(value)
 
 	}
@@ -217,7 +215,7 @@ class Interpreter {
 
 			//initialize all fields to null
 			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
-			Integer fieldsCount = heap.getPointer(fieldsSectionPtr) / Heap.SLOT_SIZE
+			Integer fieldsCount = heap.getSlot(fieldsSectionPtr) / Heap.SLOT_SIZE
 			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 			fieldsCount.times { field ->
 				ObjectAccessHelper.setNewValue(heap,newObjectPtr,field * Heap.SLOT_SIZE,nullPointer)

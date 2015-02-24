@@ -1,5 +1,6 @@
 package faJa.natives
 
+import faJa.helpers.ArrayHelper
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InputException
@@ -37,13 +38,13 @@ class SystemIONatives {
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayPtr = heap.createArray(arrayClassPtr, lines, nullPointer)
-		Integer arrayObjectPtr = ObjectAccessHelper.valueOf(heap,arrayPtr,Heap.SLOT_SIZE)
+		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
 		f.eachLine { String line, Integer i ->
 			Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),line)
-			ObjectAccessHelper.setNewValue(heap,arrayObjectPtr,(i - 1) * Heap.SLOT_SIZE,lineStringPtr)
+			ArrayHelper.setNewValue(heap,arrayObjectPtr,(i - 1),lineStringPtr)
 		}
-		ObjectAccessHelper.setNewValue(heap,arrayPtr,0,lines)
+		ArrayHelper.setInsertIndex(heap,arrayPtr,lines)
 
 		stackFrame.methodStack.push(arrayPtr) // always push
 	}
