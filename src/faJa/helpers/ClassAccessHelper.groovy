@@ -111,14 +111,14 @@ class ClassAccessHelper {
 		result
 	}
 
-	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantpoolValue){
+	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantPoolValue){
 		Integer constPoolPtr = classPtr + Heap.SLOT_SIZE
 		Integer cpSize = heap.getSlot(constPoolPtr)
 		Integer cpPointer = constPoolPtr + Heap.SLOT_SIZE
 		Integer counter = 0
 		while(constPoolPtr + cpSize > cpPointer){
 			Integer itemSize = heap.getSlot(cpPointer)
-			if(heap.getString(cpPointer) == constantpoolValue){
+			if(heap.getString(cpPointer) == constantPoolValue){
 				return counter
 			}
 			counter++

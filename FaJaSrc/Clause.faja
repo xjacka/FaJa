@@ -30,11 +30,16 @@ class Clause
         
         def toS()
             var str <- "["
-            var addVariable <- { variable |
-                str <- str.+(variable.toS()).+(" v ")
+            var length <- self:variables.size()
+            var addVariable <- { variable, index |
+                str <- str.+(variable.toS())
+                var addV <- {
+                    str <- str.+(" v")
+                }
+                index.==(length.-(1)).ifFalse(addV)
             }
             self:variables.each(addVariable)
-            str.+("] ^ ")
+            str.+(" ] ^ ")
         end
     endMethods
 endClass

@@ -71,7 +71,13 @@ class ArrayNatives {
 			if(arguments == 1){
 				newStackFrame.locals.add(resultPtr)
 			}
-			if(arguments > 1){
+			if(arguments == 2){
+				newStackFrame.locals.add(resultPtr)
+				Integer numberClassPtr = classLoader.findClass(heap, Compiler.NUMBER_CLASS)
+				Integer itemIndex = heap.createNumber(numberClassPtr, it)
+				newStackFrame.locals.add(itemIndex)
+			}
+			if(arguments > 2){
 				throw new InterpretException('Too much arguments for closure in method each(1)Array')
 			}
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context

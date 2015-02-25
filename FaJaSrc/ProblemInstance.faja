@@ -48,7 +48,7 @@ class ProblemInstance
 	    end
 	    
 	    def toS()
-	        var str <- ""
+	        var str <- "Weights: "
 	        var add <- { vari |
 				str <- str.+(vari)
 	        }
@@ -56,6 +56,7 @@ class ProblemInstance
 	            str <- str.+(clause)
 	        }
             self:variables.each(add)
+            str <- str.+(" Formula: ")
             self:clauses.each(addClause)
 	        str
 	    end
