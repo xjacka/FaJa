@@ -5,10 +5,12 @@ import faJa.helpers.ClassAccessHelper
 
 class Heap {
 
-	byte [] heap = new byte[10000000]
-	Integer insertIndex = 0
+	public static final Integer HEAP_SIZE = 10000000
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
+	
+	byte [] heap = new byte[HEAP_SIZE]
+	Integer insertIndex = 0
 	Map methodCache = [:]
 
 	// nahraje na volne misto pole bytu

@@ -200,7 +200,7 @@ class Parser {
 
 	// number creation
 	def startNumber(String line){
-		line.find(~/^ *[0-9]+/)
+		line.find(~/^[-]{0,1} *[0-9]+/)
 	}
 
 	def Integer cleanNumber(String line){
