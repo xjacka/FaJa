@@ -13,7 +13,7 @@ class GarbageCollector {
 	ClassLoader classLoader
 	Heap heap
 	List stackFrames
-
+	String specialClasses = [Compiler.ARRAY_CLASS, Compiler.NUMBER_CLASS, Compiler.BOOL_CLASS, Compiler.STRING_CLASS, Compiler.CLOSURE_CLASS]
 	GarbageCollector(ClassLoader classLoader, Heap heap, List stackFrames) {
 		this.classLoader = classLoader
 		this.heap = heap
@@ -40,7 +40,6 @@ class GarbageCollector {
 	}
 	
 	private void copyClass(Integer classPtr, Map<String, Integer> classRegister, String className = null){
-		className = className == null ? ClassAccessHelper.getName(heap, classPtr) : className
 		Integer classSize = ClassAccessHelper.getClassSize(heap, classPtr)
 		Integer newClassPtr = heap.load(heap.getBytes(classPtr,classSize))
 		classRegister.put(className,newClassPtr)
@@ -62,19 +61,50 @@ class GarbageCollector {
 		}
 		Integer classPtr = firstPtr
 		Integer classFirstPtr = heap.getPointer(classPtr)
+		String className = ClassAccessHelper.getName(heap, classPtr)
 		if(!isCopiedClass(classFirstPtr)){
-			copyClass(classPtr, classRegister)
+			copyClass(classPtr, classRegister, className)
 		}
 		
 		Integer objectSize = ClassAccessHelper.getObjectSize(heap,classPtr)
 		Integer newPtr = heap.load(heap.getBytes(objectPtr,objectSize))
-		
+		List refObjects = getReferencedObjects(objectPtr, classPtr, className)
 		newPtr
 	}
 
+	List getReferencedObjects(Integer objectPtr, Integer classPtr,String className){
+		if(isSpecialObject(className)){
+			return processSpecialObject(objectPtr, className)
+		}
+		Integer objectFields = (ClassAccessHelper.getObjectSize(heap, classPtr) - Heap.HEAP_POINTER_SIZE) / Heap.HEAP_POINTER_SIZE
+		List result = []
+		objectFields.times{ i ->
+			Integer fieldPtr = objectPtr + Heap.HEAP_POINTER_SIZE + Heap.HEAP_POINTER_SIZE * i
+			result.add(heap.getPointer(fieldPtr))
+		}
+		result
+	}
+
+	List processSpecialObject(int objectPtr, String className) {
+		switch(className){
+			case Compiler.ARRAY_CLASS:
+				return
+			case Compiler.BOOL_CLASS:
+				return []
+			case Compiler.CLOSURE_CLASS:
+				return
+			case Compiler.NUMBER_CLASS:
+				return []
+			case Compiler.STRING_CLASS:
+				return []
+		}
+	}
+
+	boolean isSpecialObject(String className){
+		specialClasses.contains(className)
+	}
 	boolean isCopiedClass(Integer classPtr){
 		classPtr != 0
-		
 	}
 	boolean isOldPointer(Integer objectPtr) {
 		heap.heapStart > objectPtr || heap.heapEnd < objectPtr
