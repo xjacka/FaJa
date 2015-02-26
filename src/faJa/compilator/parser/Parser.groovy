@@ -40,8 +40,8 @@ class Parser {
 		// check array
 		if(startArray(line) != null){
 			Integer currentLineIdx = code.currentLineIdx()
-			String args = betweenParentheses(line,code, '[', ']')
-			List<String> argList = args.split(',').collect{it.trim()}
+			String args = betweenParentheses(line,code, Compiler.ARRAY_START, Compiler.ARRAY_END)
+			List<String> argList = args.split(Compiler.ARGUMENT_SEPARATOR).collect{it.trim()}
 			ArrayCreation arrayCreation = new ArrayCreation(argList)
 			if(currentLineIdx < code.currentLineIdx()) { // code moved
 				line = code.currentLine()
@@ -54,7 +54,7 @@ class Parser {
 		// check string creation
 		if(startString(line) != null){
 			StringCreation stringCreation = new StringCreation(cleanString(line))
-			String nextToken = line.substring(line.indexOf('"', startString(line).length())+ 1)
+			String nextToken = line.substring(line.indexOf(Compiler.STRING_START, startString(line).length())+ 1)
 			stringCreation.memberAccess = parse(nextToken, code)
 			return stringCreation
 		}
@@ -83,11 +83,11 @@ class Parser {
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
 			if(hasDefinition(line)){
 				String rest = skipToSameLevelComma(line, code) // todo nextToken
-				String nextToken = line.substring(line.indexOf('var') + 'var'.length(), line.length() - rest.length())
+				String nextToken = line.substring(line.indexOf(Compiler.LOCAL_DEFINE) + Compiler.LOCAL_DEFINE.length(), line.length() - rest.length())
 				declaration.definition = parse(nextToken, code)
 			}
 			if(nextDeclaration(line, code).trim() != '' ){
-				declaration.nextDeclaration = parse('var ' + nextDeclaration(line, code), code)
+				declaration.nextDeclaration = parse(Compiler.LOCAL_DEFINE + ' ' + nextDeclaration(line, code), code)
 			}
 			return declaration
 
@@ -165,37 +165,37 @@ class Parser {
 	}
 
 	def cleanString(String line) {
-		int firstQuote = line.indexOf('"')
-		line.substring(firstQuote+1, line.indexOf('"', firstQuote+1))
+		int firstQuote = line.indexOf(Compiler.STRING_START)
+		line.substring(firstQuote+Compiler.STRING_START.length(), line.indexOf(Compiler.STRING_START, firstQuote+Compiler.STRING_START.length()))
 	}
 
 	def startString(String line) {
-		line.find(~/^ *"/)
+		line.find(~/^ *${Compiler.STRING_START}/)
 	}
 
 	// closure array
 	def startArray(String line){
-		line.find(~/^ *\[/)
+		line.find(~/^ *\${Compiler.ARRAY_START}/)
 	}
 	def tokenAfterArray(String line){
 		if(!startArray(line)){
-			line = '[' + line
+			line = Compiler.ARRAY_START + line
 		}
-		String inParenthesses = betweenParentheses(line, null, '[', ']')
-		line.substring(line.indexOf('[') + 1 + inParenthesses.length() + 1)
+		String inParenthesses = betweenParentheses(line, null, Compiler.ARRAY_START, Compiler.ARRAY_END)
+		line.substring(line.indexOf(Compiler.ARRAY_START) + Compiler.ARRAY_START.length() + inParenthesses.length() + Compiler.ARRAY_END.length())
 	}
 
 	// closure creation
 	def startClosure(String line){
-		line.find(~/^ *\{/)
+		line.find(~/^ *\${Compiler.CLOSURE_OPEN_KEYWORD}/)
 	}
 
 	def closureArgList(String line){
-		if(line.indexOf('|') == -1){
+		if(line.indexOf(Compiler.CLOSURE_PARAMS_END_KEYWORD) == -1){
 			return []
 		}
-		String args = line.substring(line.indexOf('{') + 1, line.indexOf('|'))
-		args.split(',').collect { it.trim() }
+		String args = line.substring(line.indexOf(Compiler.CLOSURE_OPEN_KEYWORD) + Compiler.CLOSURE_OPEN_KEYWORD.length(), line.indexOf(Compiler.CLOSURE_PARAMS_END_KEYWORD))
+		args.split(Compiler.ARGUMENT_SEPARATOR).collect { it.trim() }
 	}
 
 	// number creation
@@ -209,7 +209,7 @@ class Parser {
 
 	// field assigment
 	def startFieldAssigment(String line){
-		line.find(~/^ *(:[a-zA-Z0-9]*)? +<\-/)
+		line.find(~/^ *(${Compiler.FIELD_ACCESSOR}[a-zA-Z0-9]*)? +${Compiler.ASSIGNMENT_OP}/)
 	}
 
 	def cleanFieldAssignee(String line){
@@ -218,7 +218,7 @@ class Parser {
 
 	// field access
 	def startAccessField(String line){
-		line.find(~/^ *:[a-z]+[a-zA-Z0-9]*/)
+		line.find(~/^ *${Compiler.FIELD_ACCESSOR}[a-z]+[a-zA-Z0-9]*/)
 	}
 
 	def cleanFieldName(String line){
@@ -227,29 +227,30 @@ class Parser {
 
 	// method call
 	def startMethodCall(String line){
-		line.find(~/^ *\.[^\.^:^\(]+\(/)
+		line.find(~/^ *\.[^\.^:^\(]+\(/) // todo parametrize
 	}
 
 	def cleanMethodName(String line){
-		line.substring(line.indexOf('.') + 1, line.indexOf('('))
+		line.substring(line.indexOf(Compiler.METHOD_CALL_SEPARATOR) + Compiler.METHOD_CALL_SEPARATOR.length(), line.indexOf(Compiler.METHOD_ARGUMENT_START_KEYWORD))
 	}
 
 	def tokenAfterMethod(String line){
 		if(!startMethodCall(line)){
-			line = '(' + line
+			line = Compiler.METHOD_ARGUMENT_START_KEYWORD + line
 		}
 		String inParenthesses = betweenParentheses(line, null)
-		line.substring(line.indexOf('(') + 1 + inParenthesses.length() + 1)
+		line.substring(line.indexOf(Compiler.METHOD_ARGUMENT_START_KEYWORD) + Compiler.METHOD_ARGUMENT_START_KEYWORD.length() 
+				+ inParenthesses.length() + Compiler.METHOD_ARGUMENT_START_END.length())
 	}
 
 	// ObjectCreation
 	def startObjectCreation(String line) {
-		line.find(~/^ *[A-Z]+[a-zA-Z0-9]*\.new/)
+		line.find(~/^ *[A-Z]+[a-zA-Z0-9]*${Compiler.CONSTRUCTOR_INVOKE_NAME}/)
 	}
 
 	def cleanClassName(String line){
 		String tmp = startObjectCreation(line)
-		tmp.substring(0,tmp.length() - '.new'.length()).trim()
+		tmp.substring(0,tmp.length() - Compiler.CONSTRUCTOR_INVOKE_NAME.length()).trim()
 	}
 
 	// ObjectAccess
@@ -267,17 +268,17 @@ class Parser {
 	}
 
 	def startAssignment(String line){
-		line.find(~/^ *[a-z]+[a-zA-Z0-9]* +<\-/)
+		line.find(~/^ *[a-z]+[a-zA-Z0-9]* +${Compiler.ASSIGNMENT_OP}/)
 	}
 
 	// Declaration
 	def cleanDeclaration(String declaration){
-		declaration.substring(declaration.indexOf("var") + "var".length()).trim()
+		declaration.substring(declaration.indexOf(Compiler.LOCAL_DEFINE) + Compiler.LOCAL_DEFINE.length()).trim()
 	}
 
 	def hasDefinition(String line){
 		String followingString = line.substring(startDeclaration(line).length()).trim()
-		if(followingString == "" || followingString.startsWith(',')){
+		if(followingString == "" || followingString.startsWith(Compiler.ARGUMENT_SEPARATOR)){
 			return false
 		}
 		return true
@@ -292,7 +293,7 @@ class Parser {
 	}
 
 	def startDeclaration(String line){
-		String tmp = line.find(~/^ *var +[a-z]+[a-zA-Z0-9]*/)
+		String tmp = line.find(~/^ *${Compiler.LOCAL_DEFINE} +[a-z]+[a-zA-Z0-9]*/)
 		tmp
 	}
 
@@ -313,7 +314,7 @@ class Parser {
 			if(line[cntr] == ')' || line[cntr] == '}' || line[cntr] == ']' ){
 				closeParentheses++
 			}
-			if(openParentheses == closeParentheses && line[cntr] == ','){
+			if(openParentheses == closeParentheses && line[cntr] == Compiler.ARGUMENT_SEPARATOR){
 				break
 			}
 			cntr++
@@ -340,14 +341,14 @@ class Parser {
 	}
 
 	List<String> closureBody(String line, Code code ){
-		String open = '{'
-		String close = '}'
+		String open = Compiler.CLOSURE_OPEN_KEYWORD
+		String close = Compiler.CLOSURE_CLOSE_KEYWORD
 		String endLineSeparator = '\n'
-		String result = betweenParentheses('{', code,  open, close, endLineSeparator)
+		String result = betweenParentheses(Compiler.CLOSURE_OPEN_KEYWORD, code,  open, close, endLineSeparator)
 		result.split(endLineSeparator).toList()
 	}
 
-	String betweenParentheses(String line, Code code, String open = '(', String close = ')', String endLineSeparator = ' '){
+	String betweenParentheses(String line, Code code, String open = Compiler.METHOD_ARGUMENT_START_KEYWORD, String close = Compiler.METHOD_ARGUMENT_START_END, String endLineSeparator = ' '){
 		Integer firstParenthesesIdx = line.indexOf(open)
 		line = line.substring(firstParenthesesIdx + 1)
 		int openParentheses = 1

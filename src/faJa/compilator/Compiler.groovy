@@ -44,6 +44,10 @@ class Compiler {
 	public static final String ARGUMENT_SEPARATOR = ','
 	public static final String CLOSURE_PARAMS_END_KEYWORD = '|'
 	public static final String THREAD_CLASS = "Thread"
+	public static final String STRING_START = '"'
+	public static final String ARRAY_START = '['
+	public static final String ARRAY_END = ']'
+	public static final String VARIABLE_PATTERN = '[a-z]+[a-zA-Z0-9]*'
 
 
 	ClassFile classFile
