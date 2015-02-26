@@ -7,7 +7,7 @@ import faJa.exceptions.InterpretException
 
 class ClassAccessHelper {
 
-	public static int CLASS_NAME_INDEX = 4
+	public static int CLASS_NAME_INDEX = 4 + Heap.HEAP_POINTER_SIZE
 
 	static String getName(Heap heap, Integer ptr) {
 		heap.getString(ptr + CLASS_NAME_INDEX)
@@ -65,7 +65,7 @@ class ClassAccessHelper {
 	}
 
 	static Integer getFieldsSection(Heap heap, int ptr) {
-		def constPoolPtr = ptr + Heap.SLOT_SIZE
+		def constPoolPtr = ptr + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE
 		def fieldsPtr = skipSection(heap, constPoolPtr)
 
 		fieldsPtr
@@ -86,8 +86,7 @@ class ClassAccessHelper {
 	}
 
 	static Integer getMethodSection(Heap heap, int ptr) {
-		def constPoolPtr = ptr + Heap.SLOT_SIZE
-		def fieldsPtr = skipSection(heap, constPoolPtr)
+		def fieldsPtr = getFieldsSection(heap,ptr)
 		def methodsPtr = skipSection(heap, fieldsPtr)
 
 		methodsPtr
@@ -111,20 +110,20 @@ class ClassAccessHelper {
 		result
 	}
 
-	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantPoolValue){
-		Integer constPoolPtr = classPtr + Heap.SLOT_SIZE
-		Integer cpSize = heap.getSlot(constPoolPtr)
-		Integer cpPointer = constPoolPtr + Heap.SLOT_SIZE
-		Integer counter = 0
-		while(constPoolPtr + cpSize > cpPointer){
-			Integer itemSize = heap.getSlot(cpPointer)
-			if(heap.getString(cpPointer) == constantPoolValue){
-				return counter
-			}
-			counter++
-			cpPointer += itemSize + Heap.SLOT_SIZE
-		}
-	}
+//	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantPoolValue){
+//		Integer constPoolPtr = classPtr + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE
+//		Integer cpSize = heap.getSlot(constPoolPtr)
+//		Integer cpPointer = constPoolPtr + Heap.SLOT_SIZE
+//		Integer counter = 0
+//		while(constPoolPtr + cpSize > cpPointer){
+//			Integer itemSize = heap.getSlot(cpPointer)
+//			if(heap.getString(cpPointer) == constantPoolValue){
+//				return counter
+//			}
+//			counter++
+//			cpPointer += itemSize + Heap.SLOT_SIZE
+//		}
+//	}
 
 	static Boolean isNative(Heap heap, Integer methodPointer) {
 		heap.getSlot(methodPointer) == 0
@@ -159,5 +158,9 @@ class ClassAccessHelper {
 		def closuresPtr = skipSection(heap, methodsPtr)
 
 		closuresPtr
+	}
+	
+	static Integer getClassSize(Heap heap, Integer classPtr){
+		heap.getSlot(classPtr + Heap.HEAP_POINTER_SIZE)
 	}
 }

@@ -25,6 +25,7 @@ class FaJaExecutor {
 
 		heap = new Heap()
 		classLoader = new ClassLoader(heap, workingDir)
+		heap.setClassLoader(classLoader)
 
 		def ptr = classLoader.findClass(heap, className)
 

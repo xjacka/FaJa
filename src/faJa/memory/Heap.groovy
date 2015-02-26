@@ -2,6 +2,7 @@ package faJa.memory
 
 import faJa.helpers.ByteHelper
 import faJa.helpers.ClassAccessHelper
+import faJa.interpreter.ClassLoader
 
 class Heap {
 
@@ -9,12 +10,17 @@ class Heap {
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
 	
+	public Integer heapStart = 1
+	public Integer heapEnd = HEAP_SIZE / 2
+	
 	byte [] heap = new byte[HEAP_SIZE]
-	Integer insertIndex = 0
+	Integer insertIndex = 1
 	Map methodCache = [:]
-
+	ClassLoader classLoader
+	
 	// nahraje na volne misto pole bytu
 	synchronized Integer load(byte [] bytes){
+		heapOverflown(bytes.size())
 		Integer pointer = insertIndex
 		bytes.each { b ->
 			heap[insertIndex++] = b
@@ -70,6 +76,9 @@ class Heap {
 
 	synchronized def createObject(Integer classPtr){
 		Integer objectSize = ClassAccessHelper.getObjectSize(this, classPtr)
+		if(heapOverflown(objectSize)){
+			classPtr = getPointer(classPtr)
+		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(classPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex] = bytesOfClassPtr[0]
@@ -82,6 +91,9 @@ class Heap {
 	}
 
 	synchronized Integer createString(Integer stringClassPtr, String value) {
+		if(heapOverflown(Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE + value.length())){
+			stringClassPtr = getPointer(stringClassPtr)
+		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(stringClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
@@ -101,6 +113,9 @@ class Heap {
 	}
 
 	synchronized Integer createNumber(Integer numberClassPtr, Integer newVal){
+		if(heapOverflown(Heap.HEAP_POINTER_SIZE + 4)){
+			numberClassPtr = getPointer(numberClassPtr)
+		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(numberClassPtr)
 		Integer objectPtr = insertIndex
 		heap[insertIndex++] = bytesOfClassPtr[0]
@@ -118,6 +133,9 @@ class Heap {
 	}
 
 	synchronized Integer createBool(Integer boolClassPtr, Boolean newVal) {
+		if(heapOverflown(Heap.HEAP_POINTER_SIZE + 1)){
+			boolClassPtr = getPointer(boolClassPtr)
+		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(boolClassPtr)
 		Integer objectPtr = insertIndex
 		Byte newByteVal = (byte) newVal ? 1 : 0
@@ -143,6 +161,10 @@ class Heap {
 	}
 
 	synchronized Integer createClosure(Integer closureClassPtr, Integer initClassPtr, Integer closureIdx) {
+		if(heapOverflown(Heap.HEAP_POINTER_SIZE + Heap.HEAP_POINTER_SIZE + 1)){
+			closureClassPtr = getPointer(closureClassPtr)
+			initClassPtr = getPointer(initClassPtr)
+		}
 		byte [] bytesOfClosureClass = ByteHelper.IntegerTo4Bytes(closureClassPtr)
 		byte [] bytesOfInitClass = ByteHelper.IntegerTo4Bytes(initClassPtr)
 		Integer objectPtr = insertIndex
@@ -160,6 +182,10 @@ class Heap {
 	}
 
 	synchronized Integer createArray(Integer arrayClassPtr, Integer size, Integer initializeObjectPointer) {
+		if(heapOverflown(Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * size)){
+			initializeObjectPointer = getPointer(initializeObjectPointer)
+			arrayClassPtr = getPointer(arrayClassPtr)
+		}
 		// creates pointer to Array class
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(arrayClassPtr)
 		Integer objectPtr = insertIndex
@@ -186,6 +212,9 @@ class Heap {
 	}
 
 	synchronized Integer createArrayObject(Integer size, Integer initializeObjectPointer) {
+		if(heapOverflown(Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * size)) {
+			initializeObjectPointer = getPointer(initializeObjectPointer)
+		}
 		Integer objectPtr = insertIndex
 
 		// insert length of initialized array
@@ -200,5 +229,19 @@ class Heap {
 		}
 
 		objectPtr
+	}
+	
+	synchronized private Boolean heapOverflown(Integer newObjectSize){
+		if(insertIndex + newObjectSize < heapEnd){
+			return false
+		}
+		
+		heapStart = heapStart == 1 ? heapEnd + 1 : 1
+		heapEnd = heapStart > heapEnd ? HEAP_SIZE - 1 : HEAP_SIZE / 2
+		insertIndex = heapStart
+		
+		List stackFrames = []
+		new GarbageCollector(classLoader,heap,stackFrames).run()
+		return true
 	}
 }

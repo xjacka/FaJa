@@ -3,6 +3,7 @@ package faJa.compilator.representation
 import faJa.helpers.ByteHelper
 import faJa.interpreter.Instruction
 import faJa.memory.Heap
+import sun.net.www.HeaderParser
 
 /**
  *                         SERIALIZED CLASS FILE TO BYTES (each space = 2 bytes)
@@ -17,6 +18,8 @@ import faJa.memory.Heap
 /**
  *   SERIALIZED CLASS FILE TO BYTES
  *       (each space = 2 bytes)
+ * ++------------------------------++
+ * ||       dummy for GC           ||
  * ++------------------------------++........................
  * ||          classSize           ||                       :
  * ++==============================++     CLASS HEAD        :
@@ -94,7 +97,7 @@ import faJa.memory.Heap
  */
 class ClassFile {
 
-	static CONST_POOL_START = 4
+	static CONST_POOL_START = 4 + Heap.HEAP_POINTER_SIZE
 	static SLOT_SIZE = 2
 
 	def constantPool = new ConstantPool()
@@ -107,6 +110,8 @@ class ClassFile {
 
 		List<Byte> bytes = []
 
+		bytes.addAll(new byte[Heap.HEAP_POINTER_SIZE]) // dummy for GC
+		
 		// class size init
 		setClassSize(bytes, 0)
 
@@ -155,7 +160,7 @@ class ClassFile {
 
 		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize  + closuresSizeSlot + closuresSize)
 		setClassSize(bytes, 4 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize + closuresSize)
-
+		
 		bytes.toArray() as byte []
 	}
 
@@ -220,7 +225,7 @@ class ClassFile {
 	}
 
 	def setClassSize(List bytes, int size){
-		setBytes(bytes, 0, size)
+		setBytes(bytes, Heap.HEAP_POINTER_SIZE, size)
 	}
 
 	def setBytes(List bytes,int start,int value){

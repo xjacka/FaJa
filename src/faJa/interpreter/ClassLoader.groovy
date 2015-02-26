@@ -17,9 +17,18 @@ import faJa.initializators.SystemIOInit
 class ClassLoader {
 
 	private String workDir = ''
-	Map classRegister = [:]
-	Map singletonRegister = [:]
+	Map<String, Integer> classRegister = [:]
+	Map<String,Integer> singletonRegister = [:]
 	Map<Integer,Thread> threads = [:].asSynchronized()
+	List embeddedClassList = [Compiler.DEFAULT_PARENT,
+	                        Compiler.BOOL_CLASS,
+	                        Compiler.NUMBER_CLASS,
+	                        Compiler.STRING_CLASS,
+	                        Compiler.CLOSURE_CLASS,
+	                        Compiler.SYSTEMIO_CLASS,
+	                        Compiler.ARRAY_CLASS,
+	                        Compiler.THREAD_CLASS,
+	                        Compiler.NULL_CLASS]
 
 	final static FAJA_EXTENSION = '.faja'
 	Compiler compiler
