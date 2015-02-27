@@ -103,9 +103,13 @@ class GarbageCollector {
 		objectPointersCnt.times{ i ->
 			Integer pointerPtr = objectPtr + Heap.HEAP_POINTER_SIZE * i
 			Integer oldPtr = heap.getPointer(pointerPtr)
-			Integer newPtr = heap.getPointer(oldPtr)
-			heap.setPointer(pointerPtr, newPtr)
+			if(isOldPointer(oldPtr)){
+				Integer newPtr = heap.getPointer(oldPtr)
+				heap.setPointer(pointerPtr, newPtr)
+			}
 		}
+
+		new ObjectDecompiler().decompile(heap, objectPtr)
 
 		if(isArrayObject(classPtr)){
 			updateArrayPointers(objectPtr)
@@ -127,7 +131,7 @@ class GarbageCollector {
 			Integer newPtr = heap.getPointer(oldPtr)
 			heap.setPointer(pointerPtr, newPtr)
 		}
-		
+
 	}	
 	
 	private fillQueue() {
@@ -172,7 +176,7 @@ class GarbageCollector {
 			Integer newClassPtr = heap.load(heap.getBytes(classPtr,classSize))
 			classRegister.put(className,newClassPtr)
 			heap.setPointer(classPtr,newClassPtr)
-			new ClassDecompilator().decompileHeap(heap, newClassPtr)
+//			new ClassDecompilator().decompileHeap(heap, newClassPtr)
 			return newClassPtr
 		}
 		
@@ -196,7 +200,7 @@ class GarbageCollector {
 		copyClass(classPtr)
 
 		Integer newPtr = processObject(objectPtr, classPtr)
-		new ObjectDecompiler().decompile(heap, newPtr, objectPtr)
+//		new ObjectDecompiler().decompile(heap, newPtr)
 		newPtr
 	}
 
