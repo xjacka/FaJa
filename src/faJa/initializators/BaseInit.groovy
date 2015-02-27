@@ -11,6 +11,7 @@ abstract class BaseInit {
 				method.isNative = true
 			}
 		}
+		classFile.closures = []
 		classFile.toByteCode()
 	}
 }
