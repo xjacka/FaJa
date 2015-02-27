@@ -6,10 +6,17 @@ import faJa.interpreter.ClassLoader
 
 class Heap {
 
-	public static final Integer HEAP_SIZE = 10000000
+	public static final Integer HEAP_SIZE = 100000
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
 	
+	public static final ARRAY_SIZE = HEAP_POINTER_SIZE + SLOT_SIZE + HEAP_POINTER_SIZE
+	public static final BOOL_SIZE = HEAP_POINTER_SIZE + 1
+	public static final CLOSURE_SIZE = HEAP_POINTER_SIZE + HEAP_POINTER_SIZE + 1
+	public static final NUMBER_SIZE = HEAP_POINTER_SIZE + 4
+	public static final STRING_HEAD_SIZE = HEAP_POINTER_SIZE + SLOT_SIZE
+	public static final THREAD_SIZE = HEAP_POINTER_SIZE
+
 	public Integer heapStart = 1
 	public Integer heapEnd = HEAP_SIZE / 2
 	
@@ -91,7 +98,7 @@ class Heap {
 	}
 
 	synchronized Integer createString(Integer stringClassPtr, String value) {
-		if(heapOverflown(Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE + value.length())){
+		if(heapOverflown(STRING_HEAD_SIZE + value.length())){
 			stringClassPtr = getPointer(stringClassPtr)
 		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(stringClassPtr)
@@ -113,7 +120,7 @@ class Heap {
 	}
 
 	synchronized Integer createNumber(Integer numberClassPtr, Integer newVal){
-		if(heapOverflown(Heap.HEAP_POINTER_SIZE + 4)){
+		if(heapOverflown(Heap.NUMBER_SIZE)){
 			numberClassPtr = getPointer(numberClassPtr)
 		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(numberClassPtr)
@@ -133,7 +140,7 @@ class Heap {
 	}
 
 	synchronized Integer createBool(Integer boolClassPtr, Boolean newVal) {
-		if(heapOverflown(Heap.HEAP_POINTER_SIZE + 1)){
+		if(heapOverflown(Heap.BOOL_SIZE)){
 			boolClassPtr = getPointer(boolClassPtr)
 		}
 		byte [] bytesOfClassPtr = ByteHelper.IntegerTo4Bytes(boolClassPtr)
@@ -161,7 +168,7 @@ class Heap {
 	}
 
 	synchronized Integer createClosure(Integer closureClassPtr, Integer initClassPtr, Integer closureIdx) {
-		if(heapOverflown(Heap.HEAP_POINTER_SIZE + Heap.HEAP_POINTER_SIZE + 1)){
+		if(heapOverflown(Heap.CLOSURE_SIZE)){
 			closureClassPtr = getPointer(closureClassPtr)
 			initClassPtr = getPointer(initClassPtr)
 		}
@@ -182,7 +189,7 @@ class Heap {
 	}
 
 	synchronized Integer createArray(Integer arrayClassPtr, Integer size, Integer initializeObjectPointer) {
-		if(heapOverflown(Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * size)){
+		if(heapOverflown(Heap.ARRAY_SIZE + (Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * size))){
 			initializeObjectPointer = getPointer(initializeObjectPointer)
 			arrayClassPtr = getPointer(arrayClassPtr)
 		}
@@ -235,13 +242,12 @@ class Heap {
 		if(insertIndex + newObjectSize < heapEnd){
 			return false
 		}
-		
+
 		heapStart = heapStart == 1 ? heapEnd + 1 : 1
 		heapEnd = heapStart > heapEnd ? HEAP_SIZE - 1 : HEAP_SIZE / 2
 		insertIndex = heapStart
-		
-		List stackFrames = []
-		new GarbageCollector(classLoader,heap,stackFrames).run()
+
+		new GarbageCollector(classLoader,this).run()
 		return true
 	}
 }

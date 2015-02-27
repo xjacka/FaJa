@@ -20,6 +20,7 @@ class Interpreter {
 		this.heap = heap
 		this.currentStackFrame = stackFrame
 		this.classLoader = classLoader
+		this.classLoader.stackFrameRegister.put(Thread.currentThread(), currentStackFrame)
 	}
 
 	def interpret(){
@@ -68,6 +69,7 @@ class Interpreter {
 		if(currentStackFrame.parent){
 			try {
 				currentStackFrame.parent.methodStack.push(currentStackFrame.methodStack.pop())
+				classLoader.stackFrameRegister.put(Thread.currentThread(), currentStackFrame.parent)
 			}catch (Exception e){
 				e.printStackTrace()
 				throw InterpretException('return value exception')
@@ -214,7 +216,7 @@ class Interpreter {
 			newObjectPtr = heap.createObject(classOfNewObjectPtr)
 
 			//initialize all fields to null
-			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classPtr)
+			Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,classOfNewObjectPtr)
 			Integer fieldsCount = heap.getSlot(fieldsSectionPtr) / Heap.SLOT_SIZE
 			Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 			fieldsCount.times { field ->

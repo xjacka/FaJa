@@ -11,8 +11,4 @@ class ClosureRegister {
 	static StackFrame get(Integer closurePtr){
 		closureEnvironments.get(closurePtr)
 	}
-	static unregister(Integer closurePtr){
-		closureEnvironments.remove(closurePtr)
-	}
-
 }

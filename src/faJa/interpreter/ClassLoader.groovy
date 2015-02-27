@@ -20,6 +20,7 @@ class ClassLoader {
 	Map<String, Integer> classRegister = [:]
 	Map<String,Integer> singletonRegister = [:]
 	Map<Integer,Thread> threads = [:].asSynchronized()
+	Map<Thread, StackFrame> stackFrameRegister = [:].asSynchronized()
 	List embeddedClassList = [Compiler.DEFAULT_PARENT,
 	                        Compiler.BOOL_CLASS,
 	                        Compiler.NUMBER_CLASS,

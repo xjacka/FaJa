@@ -158,8 +158,8 @@ class ClassFile {
 		// closure size
 		setBytes(bytes, CONST_POOL_START + constPoolSize + fieldsSize + SLOT_SIZE + methodsSize + SLOT_SIZE, closuresSize )
 
-		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize  + closuresSizeSlot + closuresSize)
-		setClassSize(bytes, 4 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize + closuresSize)
+		// class size ( constPoolSizeSlot + constPoolSize + fieldSizeSlot + fieldSize + methodsSizeSlot + methodsSize  + closuresSizeSlot + closuresSize) + dummy pointer
+		setClassSize(bytes, 4 * SLOT_SIZE + constPoolSize + fieldsSize + methodsSize + closuresSize + Heap.HEAP_POINTER_SIZE)
 		
 		bytes.toArray() as byte []
 	}

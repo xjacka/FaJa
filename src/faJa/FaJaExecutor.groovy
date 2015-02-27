@@ -45,7 +45,7 @@ class FaJaExecutor {
 
 		args.eachWithIndex { String arg, Integer i ->
 			Integer argStringPtr = heap.createString(stringClassPtr, arg)
-			ArrayHelper.setNewValue(heap, arrayObjectPtr, i , argStringPtr)
+			ArrayHelper.setNewValue(heap, arrayObjectPtr, i, argStringPtr)
 		}
 		ArrayHelper.setInsertIndex(heap,arrayPtr, args.size())
 

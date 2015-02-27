@@ -17,9 +17,11 @@ class ConstantPool {
 		}
 		idx
 	}
+	
 	String get(Integer idx){
 		constants[idx]
 	}
+	
 	Integer getIdx(String constant){
 		Integer idx = null
 		constants.eachWithIndex { c, i ->
@@ -29,8 +31,7 @@ class ConstantPool {
 		}
 		idx
 	}
-
-
+	
 	byte[] toBytecode(){
 		List<Byte> bytes = []
 		// constant pool
@@ -82,6 +83,7 @@ class ConstantPool {
 			length + ClassFile.SLOT_SIZE
 		}
 	}
+	
 	def size() {
 		lengths().sum(0)
 	}

@@ -42,8 +42,13 @@ enum Instruction {
 
 	private final int params
 	private final int id
-
+	
+	static Instruction getById(Integer id){
+		values().find { it.id == id}
+	}
+	
 	public int getParams() { return params }
+	
 	public int getId() { return id }
 
 }
