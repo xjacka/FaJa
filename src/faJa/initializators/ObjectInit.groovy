@@ -4,10 +4,10 @@ import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *      OBJECT OBJECT
- * +--------------------+
- * |   objectClassPtr   |
- * +--------------------+
+ *        OBJECT OBJECT
+ * +-----------------------+
+ * | 4 |  objectClassPtr   |
+ * +-----------------------+
  *
  */
 class ObjectInit extends BaseInit {

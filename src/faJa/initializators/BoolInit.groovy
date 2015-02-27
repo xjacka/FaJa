@@ -5,12 +5,13 @@ import faJa.compilator.representation.ConstantPool
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *      BOOL OBJECT
- * +--------------------+
- * |    boolClassPtr    |
- * +--------------------+
- * |        val         |  <- only 1 byte
- * +--------------------+
+ *          BOOL OBJECT
+ *  size        |
+ * +----------------------+
+ * | 4 |  boolClassPtr    |
+ * +----------------------+
+ * | 1 |      val         |
+ * +----------------------+
  *
  */
 class BoolInit extends BaseInit{

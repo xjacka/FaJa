@@ -4,14 +4,14 @@ import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *     NUMBER OBJECT
- * +--------------------+
- * |   numberClassPtr   |
- * +--------------------+
- * |                    |
- * +---    value     ---+
- * |                    |
- * +--------------------+
+ *         NUMBER OBJECT
+ * +----------------------+
+ * | 4 |  numberClassPtr  |
+ * +----------------------+
+ * |   |                  |
+ * + 4 |--    value    ---+
+ * |   |                  |
+ * +----------------------+
  *
  */
 class NumberInit extends BaseInit {

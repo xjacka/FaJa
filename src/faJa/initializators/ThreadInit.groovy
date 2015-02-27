@@ -6,10 +6,10 @@ import faJa.compilator.representation.ConstantPool
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *      THREAD OBJECT
- * +--------------------+
- * |   threadClassPtr   |
- * +--------------------+
+ *         THREAD OBJECT
+ * +-----------------------+
+ * | 4 |  threadClassPtr   |
+ * +-----------------------+
  *
  */
 class ThreadInit extends BaseInit {
