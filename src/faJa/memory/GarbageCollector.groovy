@@ -35,7 +35,6 @@ class GarbageCollector {
 		copySingletons()
 
 		fillQueue()
-		updatePointersQueue.addAll(classLoader.singletonRegister.values())
 
 		while(!copyQueue.isEmpty()){
 			Integer objectPtr = copyQueue.poll()
@@ -47,7 +46,6 @@ class GarbageCollector {
 			Integer objectPtr = heap.getPointer(oldPointer)
 			updateObjectPointer(objectPtr)
 		}
-
 		
 		classLoader.classRegister = classRegister
 		classLoader.singletonRegister = singletonRegister
@@ -120,11 +118,11 @@ class GarbageCollector {
 		String className = ClassAccessHelper.getName(heap, classPtr)
 		className == Compiler.ARRAY_CLASS
 	}
-	
+
 	private updateArrayPointers(Integer arrayPtr){
 		Integer arrayObjectPtr= ArrayHelper.getArrayObjectPtr(heap, arrayPtr)
 		Integer size = heap.getSlot(arrayObjectPtr)
-		
+
 		size.times{ i ->
 			Integer pointerPtr = arrayObjectPtr + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * i
 			Integer oldPtr = heap.getPointer(pointerPtr)
@@ -132,8 +130,8 @@ class GarbageCollector {
 			heap.setPointer(pointerPtr, newPtr)
 		}
 
-	}	
-	
+	}
+
 	private fillQueue() {
 		Set pointers = []
 		stackFrames.each{
@@ -144,7 +142,6 @@ class GarbageCollector {
 		}
 		pointers.each {
 			copyQueue.add(it)
-			updatePointersQueue.add(it)
 		}
 	}
 	
@@ -196,6 +193,7 @@ class GarbageCollector {
 			//firstPtr is not class pointer but pointer to object recreated on new heap
 			return firstPtr
 		}
+		updatePointersQueue.add(objectPtr)
 		Integer classPtr = firstPtr
 		copyClass(classPtr)
 
@@ -277,7 +275,8 @@ class GarbageCollector {
 		Integer newInitClassPtr = copyClass(initClassPtr)
 		
 		Integer newPtr = shallowCopy(objectPtr, Heap.CLOSURE_SIZE)
-		heap.setPointer(newPtr + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE, newInitClassPtr) // set new initClassPtr to recreated object
+		// FIXME bylo tady  + Heap.SLOT_SIZE (to je podle me spatne, odstranil jsem)
+		heap.setPointer(newPtr + Heap.HEAP_POINTER_SIZE, newInitClassPtr) // set new initClassPtr to recreated object
 		closureEnvironments.put(newPtr, ClosureRegister.get(objectPtr))
 		
 		newPtr

@@ -16,6 +16,7 @@ class ClassDecompilator {
 
 	def decompileHeap(Heap heap, Integer ptr){
 		int classSize = heap.getSlot(ptr + Heap.HEAP_POINTER_SIZE)
+		println(heap.getPointer(ptr)) // todo remove
 		decompile(heap.getBytes(ptr, classSize))
 	}
 
