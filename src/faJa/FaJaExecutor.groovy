@@ -27,7 +27,7 @@ class FaJaExecutor {
 		classLoader = new ClassLoader(heap, workingDir)
 		heap.setClassLoader(classLoader)
 
-		def ptr = classLoader.findClass(heap, className)
+		Integer ptr = classLoader.findClass(heap, className)
 
 		//initialize all fields to null
 		Integer fieldsSectionPtr = ClassAccessHelper.getFieldsSection(heap,ptr)

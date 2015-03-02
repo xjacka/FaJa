@@ -95,16 +95,15 @@ class ClassAccessHelper {
 	static List<String> getAllFieldNames(Heap heap, Integer classPtr){
 		List result = []
 		Integer fieldsPtr = getFieldsSection(heap,classPtr)
-		Integer classSize = heap.getSlot(fieldsPtr)
+		Integer classCPSize = heap.getSlot(fieldsPtr)
 		Integer currentFieldPtr = fieldsPtr + Heap.SLOT_SIZE
-		while(fieldsPtr + classSize > currentFieldPtr){
+		while(fieldsPtr + classCPSize >= currentFieldPtr){
 			Integer fieldCPPtr = heap.getSlot(currentFieldPtr)
-			String fieldNamePtr = getConstantPoolValue(heap, classPtr, fieldCPPtr)
-			String fieldName = heap.getString(fieldNamePtr)
+			String fieldName = getConstantPoolValue(heap, classPtr, fieldCPPtr)
 
 			result.add(fieldName)
 
-			currentFieldPtr = fieldsPtr + Heap.SLOT_SIZE
+			currentFieldPtr = currentFieldPtr + Heap.SLOT_SIZE
 		}
 
 		result
