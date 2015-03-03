@@ -38,12 +38,14 @@ class SystemIONatives {
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 		Integer nullPointer = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayPtr = heap.createArray(arrayClassPtr, lines, nullPointer)
-		// TODO GC
 		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
 		f.eachLine { String line, Integer i ->
+			stackFrame.currentVariables.add(arrayPtr) // for GC
 			Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),line)
-			// TODO GC
+			arrayPtr = stackFrame.currentVariables.pop()
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			
 			ArrayHelper.setNewValue(heap,arrayObjectPtr,(i - 1),lineStringPtr)
 		}
 		ArrayHelper.setInsertIndex(heap,arrayPtr,lines)

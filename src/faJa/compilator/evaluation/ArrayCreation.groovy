@@ -25,7 +25,6 @@ class ArrayCreation  implements Expression{
 	}
 
 	List<PrecompiledInstruction> initArray(){
-		// todo load args
 		if(!args.empty){
 			throw new CompilerException('current supported only empty array initialization')
 		}

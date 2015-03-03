@@ -13,6 +13,7 @@ class StackFrame {
 	Integer bytecodePtr
 
 	List<Integer> methodStack
+	List<Integer> currentVariables = []
 
 	def incrementBP(int i){
 		bytecodePtr += i

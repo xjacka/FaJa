@@ -69,10 +69,9 @@ class NativesHelper {
 			newStackFrame.environment = ClosureRegister.get(closurePtr)
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
+			stackFrame.currentVariables.add(thisObjectPtr) // for GC
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
-			if(GarbageCollector.isOldPointer(heap, thisObjectPtr)){
-				thisObjectPtr = heap.getPointer(thisObjectPtr)
-			}
+			thisObjectPtr = stackFrame.currentVariables.pop()
 		}
 		stackFrame.methodStack.push(thisObjectPtr)
 	}

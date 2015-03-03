@@ -1,6 +1,5 @@
 package faJa.natives
 
-import faJa.helpers.ArrayHelper
 import faJa.memory.GarbageCollector
 import faJa.memory.Heap
 import faJa.compilator.Compiler
@@ -126,13 +125,13 @@ class NumberNatives {
 				newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
 				newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
+				stackFrame.currentVariables.addAll([closurePtr,thisIntegerPtr]) // for GC
 				new Interpreter(heap, newStackFrame, classLoader).interpret()
-				if(GarbageCollector.isOldPointer(heap,thisIntegerPtr)){
-					thisIntegerPtr = heap.getPointer(thisIntegerPtr)
-					closurePtr = heap.getPointer(closurePtr)
-					bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
-					bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-				}
+				stackFrame.methodStack.pop()
+				thisIntegerPtr = stackFrame.currentVariables.pop()
+				closurePtr = stackFrame.currentVariables.pop()
+				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 			}
 		}
 

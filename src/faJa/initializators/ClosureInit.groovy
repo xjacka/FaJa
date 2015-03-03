@@ -28,9 +28,6 @@ class ClosureInit extends BaseInit{
 		call.signatureIndex = classFile.constantPool.add('call(0)')
 		classFile.methods.add(call)
 
-		// provizorni todo lepsi matchovani
-		def call1 = new PrecompiledMethod()
-		call1.signatureIndex = classFile.constantPool.add('call(1)')
-		classFile.methods.add(call1)
+
 	}
 }

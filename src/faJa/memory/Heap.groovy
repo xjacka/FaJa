@@ -6,7 +6,7 @@ import faJa.interpreter.ClassLoader
 
 class Heap {
 
-	public static final Integer HEAP_SIZE = 5600000
+	public static final Integer HEAP_SIZE = 5500000
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
 	
@@ -36,7 +36,7 @@ class Heap {
 	}
 
 	def getByte(Integer ptr){
-		heap[ptr] // should return unsigned ??
+		heap[ptr]
 	}
 
 	Integer getUnsignedByte(Integer ptr){

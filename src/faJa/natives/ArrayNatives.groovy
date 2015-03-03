@@ -15,9 +15,6 @@ import faJa.interpreter.StackFrame
 
 class ArrayNatives {
 
-	public static final Integer ARRAY_INSERT_INDEX_PROPERTY = 0
-	public static final Integer ARRAY_OBJECT_POINTER_PROPERTY = Heap.SLOT_SIZE
-
 	static ifTrue = { StackFrame stackFrame, Heap heap, ClassLoader classLoader ->
 		NativesHelper.ifClosure(stackFrame,heap,classLoader,{Integer a -> ArrayHelper.getInsertIndex(heap,a) != 0 },"ifTrue(1)Array")
 	}
@@ -36,12 +33,13 @@ class ArrayNatives {
 		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 		index.times{
 			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
+			
+			stackFrame.currentVariables.addAll([stringClassPtr,arrayPtr]) // for GC
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'toS(0)',classLoader)
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				stringClassPtr = heap.getPointer(stringClassPtr)
-				arrayPtr = heap.getPointer(arrayPtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
-			}
+			arrayPtr = stackFrame.currentVariables.pop()
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			stringClassPtr = stackFrame.currentVariables.pop()
+			
 			Integer itemStrPtr = stackFrame.methodStack.pop()
 			String itemStr = heap.stringFromStringObject(itemStrPtr)
 			arrayStr += itemStr
@@ -89,14 +87,14 @@ class ArrayNatives {
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
+			stackFrame.currentVariables.addAll([closurePtr,thisArrayPtr]) // for GC
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				thisArrayPtr = heap.getPointer(thisArrayPtr)
-				closurePtr = heap.getPointer(closurePtr)
-				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
-				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
-			}
+			thisArrayPtr = stackFrame.currentVariables.pop()
+			closurePtr = stackFrame.currentVariables.pop()
+			bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+			bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+
 			stackFrame.methodStack.pop()
 		}
 
@@ -113,12 +111,10 @@ class ArrayNatives {
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
+		stackFrame.currentVariables.addAll([closurePtr,thisArrayPtr]) // for GC
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
-		if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-			thisArrayPtr = heap.getPointer(thisArrayPtr)
-			closurePtr = heap.getPointer(closurePtr)
-			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
-		}
+		arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+
 		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
@@ -148,16 +144,15 @@ class ArrayNatives {
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
+			stackFrame.currentVariables.addAll([newArrayPtr,closurePtr,thisArrayPtr]) // for GC
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				thisArrayPtr = heap.getPointer(thisArrayPtr)
-				closurePtr = heap.getPointer(closurePtr)
-				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
-				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
-				newArrayPtr = heap.getPointer(newArrayPtr)
-				newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
-			}
+			thisArrayPtr = stackFrame.currentVariables.pop()
+			closurePtr = stackFrame.currentVariables.pop()
+			newArrayPtr = stackFrame.currentVariables.pop()
+			bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+			bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+			newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 			Integer closureResult = stackFrame.methodStack.pop()
 
@@ -178,12 +173,12 @@ class ArrayNatives {
 		Integer nullPtr = classLoader.singletonRegister.get(Compiler.NULL_CLASS)
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
+		stackFrame.currentVariables.addAll([closurePtr,thisArrayPtr]) // for GC
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
-		if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-			thisArrayPtr = heap.getPointer(thisArrayPtr)
-			closurePtr = heap.getPointer(closurePtr)
-			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
-		}
+		thisArrayPtr = stackFrame.currentVariables.pop()
+		closurePtr = stackFrame.currentVariables.pop()
+		arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+
 		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
@@ -214,16 +209,15 @@ class ArrayNatives {
 			newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
+			stackFrame.currentVariables.addAll([newArrayPtr,closurePtr,thisArrayPtr]) // for GC
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				thisArrayPtr = heap.getPointer(thisArrayPtr)
-				closurePtr = heap.getPointer(closurePtr)
-				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
-				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
-				newArrayPtr = heap.getPointer(newArrayPtr)
-				newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
-			}
+			thisArrayPtr = stackFrame.currentVariables.pop()
+			closurePtr = stackFrame.currentVariables.pop()
+			newArrayPtr = stackFrame.currentVariables.pop()
+			bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+			bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+			newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 			Integer closureResult = stackFrame.methodStack.pop()
 			String resultClass = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,closureResult))
@@ -251,12 +245,10 @@ class ArrayNatives {
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
+			stackFrame.currentVariables.addAll([addingItemPtr,arrayPtr]) // for GC
 			arrayObjectPtr = resizeArray(heap,classLoader, index, index + 2, arrayPtr, arrayObjectPtr)
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				arrayPtr = heap.getPointer(arrayPtr)
-				addingItemPtr = heap.getPointer(addingItemPtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
-			}
+			arrayPtr = stackFrame.currentVariables.pop()
+			addingItemPtr = stackFrame.currentVariables.pop()
 		}
 
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,index,addingItemPtr)
@@ -280,12 +272,10 @@ class ArrayNatives {
 
 		// resize array
 		if(index >= sizeOfInitializedArry){
+			stackFrame.currentVariables.addAll([addingItemPtr,arrayPtr]) // for GC
 			arrayObjectPtr = resizeArray(heap,classLoader, index, itemIndex + (int)(itemIndex / 10), arrayPtr, arrayObjectPtr)
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				arrayPtr = heap.getPointer(arrayPtr)
-				addingItemPtr = heap.getPointer(addingItemPtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
-			}
+			arrayPtr = stackFrame.currentVariables.pop()
+			addingItemPtr = stackFrame.currentVariables.pop()
 		}
 
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,itemIndex,addingItemPtr)
@@ -375,12 +365,12 @@ class ArrayNatives {
 		index.times{
 			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
+			stackFrame.currentVariables.addAll([objectPtr,arrayPtr]) // for GC
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'==(1)',classLoader,[objectPtr])
-			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
-				arrayPtr = heap.getPointer(arrayPtr)
-				objectPtr = heap.getPointer(objectPtr)
-				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
-			}
+			arrayPtr = stackFrame.currentVariables.pop()
+			objectPtr = stackFrame.currentVariables.pop()
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			
 			Integer compareResult = stackFrame.methodStack.pop()
 
 			if(heap.boolFromBoolObject(compareResult) == true){

@@ -9,14 +9,10 @@ class ClosureHelper {
 		Integer initClass = getInitClassPtr(heap, objectPtr)
 		Integer closureIdx = getClosureIndex(heap, objectPtr)
 		Integer closureSectionPtr = ClassAccessHelper.getClosureSection(heap, initClass)
-//		Integer closureSectionSize = heap.getSlot(closureSectionPtr)
 		Integer bytecodePtr = closureSectionPtr + Heap.SLOT_SIZE
 		closureIdx.times{
 			bytecodePtr = ClassAccessHelper.skipSection(heap, bytecodePtr)
 		}
-//		if(bytecodePtr > closureSectionPtr + closureSectionSize){
-//			throw new InterpretException('closure index points beyond closure section')
-//		}
 		bytecodePtr
 	}
 

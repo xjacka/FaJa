@@ -82,7 +82,7 @@ class Parser {
 		if(startDeclaration(line) != null){
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
 			if(hasDefinition(line)){
-				String rest = skipToSameLevelComma(line, code) // todo nextToken
+				String rest = skipToSameLevelComma(line, code)
 				String nextToken = line.substring(line.indexOf(Compiler.LOCAL_DEFINE) + Compiler.LOCAL_DEFINE.length(), line.length() - rest.length())
 				declaration.definition = parse(nextToken, code)
 			}
@@ -227,7 +227,7 @@ class Parser {
 
 	// method call
 	def startMethodCall(String line){
-		line.find(~/^ *\.[^\.^:^\(]+\(/) // todo parametrize
+		line.find(~/^ *\.[^\.^:^\(]+\(/)
 	}
 
 	def cleanMethodName(String line){
@@ -297,7 +297,6 @@ class Parser {
 		tmp
 	}
 
-	/// skip todo test
 	def String skipToSameLevelComma(String line, Code code = null){
 		int openParentheses = 0
 		int closeParentheses = 0

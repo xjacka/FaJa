@@ -2,9 +2,6 @@ package faJa.helpers
 
 import faJa.memory.Heap
 
-/**
- * todo to be tested
- */
 class MethodHelper {
 
 	static getArgsCount(String signature){

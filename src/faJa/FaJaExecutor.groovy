@@ -61,8 +61,8 @@ class FaJaExecutor {
 
 		mainStackFrame.bytecode =  heap.getBytes(mainBytecodePtr, mainSize)
 		mainStackFrame.bytecodePtr = 0
-		mainStackFrame.locals = [classLoader.singletonRegister.get(className),arrayPtr] // todo size in method
-		mainStackFrame.methodStack = [] // todo size in method
+		mainStackFrame.locals = [classLoader.singletonRegister.get(className),arrayPtr]
+		mainStackFrame.methodStack = []
 		mainStackFrame.parent = null
 
 		new Interpreter(heap, mainStackFrame, classLoader).interpret()

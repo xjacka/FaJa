@@ -28,12 +28,16 @@ class ClassAccessHelper {
 		def methodSectionPtr = getMethodSection(heap, ptr)
 		def methodSectionSize = heap.getSlot(methodSectionPtr)
 		def methodPtr = methodSectionPtr + Heap.SLOT_SIZE
+		// multiple args for closure
+		if(signature.startsWith('call(') && getName(heap, ptr) == Compiler.CLOSURE_CLASS){
+			signature = 'call(0)'
+		}
 		while (methodSectionSize + methodSectionPtr > methodPtr) {
 
 			def methodConstPoolPtr = methodPtr + Heap.SLOT_SIZE
 			def methodSignaturePtr = ptr + heap.getSlot(methodConstPoolPtr)
 			def methodSignature = heap.getString(methodSignaturePtr)
-
+			
 			if (signature == methodSignature) {
 				return methodPtr
 			}
@@ -108,21 +112,6 @@ class ClassAccessHelper {
 
 		result
 	}
-
-//	static Integer getConstantPoolPointer(Heap heap, Integer classPtr, String constantPoolValue){
-//		Integer constPoolPtr = classPtr + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE
-//		Integer cpSize = heap.getSlot(constPoolPtr)
-//		Integer cpPointer = constPoolPtr + Heap.SLOT_SIZE
-//		Integer counter = 0
-//		while(constPoolPtr + cpSize > cpPointer){
-//			Integer itemSize = heap.getSlot(cpPointer)
-//			if(heap.getString(cpPointer) == constantPoolValue){
-//				return counter
-//			}
-//			counter++
-//			cpPointer += itemSize + Heap.SLOT_SIZE
-//		}
-//	}
 
 	static Boolean isNative(Heap heap, Integer methodPointer) {
 		heap.getSlot(methodPointer) == 0

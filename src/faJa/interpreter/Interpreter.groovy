@@ -310,6 +310,9 @@ class Interpreter {
 		}
 		if(ClassAccessHelper.isNative(heap,methodPtr)){
 			String nativeMethodClassName = ClassAccessHelper.getName(heap, resultPair[0]) // result[0] - pointer on class with method bytecode
+			if(nativeMethodClassName == Compiler.CLOSURE_CLASS && methodSignature.startsWith('call(')){
+				methodSignature = 'call(0)'
+			}
 			Closure nativeMethod = NativesRegister.register.get(methodSignature + nativeMethodClassName)
 			reversedArgList.reverse().each {
 				currentStackFrame.methodStack.push(it)

@@ -2,6 +2,7 @@ import faJa.FaJaExecutor
 import faJa.compilator.Compiler
 import faJa.compilator.representation.ClassFile
 import faJa.exceptions.CompilerException
+import faJa.exceptions.GarbageCollectorException
 import faJa.exceptions.InputException
 import faJa.exceptions.InstructionException
 import faJa.exceptions.InterpretException
@@ -14,7 +15,7 @@ try {
 		ClassFile classFile = new Compiler().compile(args[0] + ClassLoader.FAJA_EXTENSION)
 		print(classFile.toString())
 	} else{
-		new FaJaExecutor().run(args.length != 0 ? args[0] : '../FaJaSrc/Main',args.length >= 2 ?args.tail() : (String [])["../FaJaSrc/data/sat1.out"]) // todo (only Main) ? proc ?
+		new FaJaExecutor().run(args.length != 0 ? args[0] : '../FaJaSrc/Main',args.length >= 2 ?args.tail() : (String [])["../FaJaSrc/data/sat1.out"])
 	}
 }
 catch (CompilerException cpE){
@@ -32,6 +33,10 @@ catch (InstructionException isE){
 catch (InterpretException itE){
 	println "interpret ERROR: " + itE.getMessage()
 	e = itE
+}
+catch (GarbageCollectorException gcE){
+	println "interpret ERROR: " + gcE.getMessage()
+	e = gcE
 }
 catch (Exception itE){
 	println "exception ERROR: " + itE.getMessage()
