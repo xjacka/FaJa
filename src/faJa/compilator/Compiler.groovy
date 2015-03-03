@@ -59,6 +59,9 @@ class Compiler {
 		classFile = new ClassFile()
 		def file = new File(path)
 
+		if(!file.exists()){
+			println(path)
+		}
 		List<String> lines = file.readLines()
 
 		// remove comments and empty lines

@@ -1,6 +1,7 @@
 package faJa.helpers
 
 import faJa.interpreter.ClassLoader
+import faJa.memory.GarbageCollector
 import faJa.memory.Heap
 import faJa.exceptions.InterpretException
 import faJa.interpreter.Interpreter
@@ -69,6 +70,9 @@ class NativesHelper {
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
+			if(GarbageCollector.isOldPointer(heap, thisObjectPtr)){
+				thisObjectPtr = heap.getPointer(thisObjectPtr)
+			}
 		}
 		stackFrame.methodStack.push(thisObjectPtr)
 	}

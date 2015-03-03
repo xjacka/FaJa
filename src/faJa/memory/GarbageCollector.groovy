@@ -2,6 +2,8 @@ package faJa.memory
 
 import faJa.decompilator.ClassDecompilator
 import faJa.decompilator.ObjectDecompiler
+import faJa.exceptions.GarbageCollectorException
+import faJa.exceptions.InterpretException
 import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
@@ -55,6 +57,11 @@ class GarbageCollector {
 		}
 		classLoader.threads = thread
 		heap.methodCache = [:]
+		println("insert index: " + (heap.heapEnd - heap.insertIndex))
+		if((heap.heapEnd - heap.insertIndex) <= Heap.HEAP_SIZE / 100){
+			throw new GarbageCollectorException('Heap overflown')
+			
+		}
 	}
 
 	private updateClosureEnvironments(){
@@ -69,11 +76,13 @@ class GarbageCollector {
 		if(!stackFrame){
 			return
 		}
+		Boolean isUpdated = false
 		stackFrame.locals = stackFrame.locals.collect{ valPtr ->
 			if(isOldPointer(valPtr)){
 				return heap.getPointer(valPtr)
 			}
 			else{
+				isUpdated = true
 				return valPtr
 			}
 		}
@@ -82,12 +91,15 @@ class GarbageCollector {
 				return heap.getPointer(valPtr)
 			}
 			else{
+				isUpdated = true
 				return valPtr
 			}
 
 		}
-		updateStackFramePointers(stackFrame.environment)
-		updateStackFramePointers(stackFrame.parent)
+		if(!isUpdated){
+			updateStackFramePointers(stackFrame.environment)
+			updateStackFramePointers(stackFrame.parent)
+		}
 
 	}
 	
@@ -107,7 +119,7 @@ class GarbageCollector {
 			}
 		}
 
-		new ObjectDecompiler().decompile(heap, objectPtr)
+//		new ObjectDecompiler().decompile(heap, objectPtr)
 
 		if(isArrayObject(classPtr)){
 			updateArrayPointers(objectPtr)
@@ -132,17 +144,28 @@ class GarbageCollector {
 
 	}
 
+
 	private fillQueue() {
 		Set pointers = []
-		stackFrames.each{
-			pointers.addAll(getStackPointers(it))
+		Set sfSet = []
+		stackFrames.each {
+			addStackFrames(it, sfSet)
 		}
 		ClosureRegister.closureEnvironments.values().each {
-			pointers.addAll(getStackPointers(it))
+			addStackFrames(it, sfSet)
 		}
-		pointers.each {
-			copyQueue.add(it)
+		
+		sfSet.each {
+			copyQueue.addAll(getStackPointers(it))
 		}
+	}
+	public addStackFrames(StackFrame stackFrame, Set sfSet){
+		if(!stackFrame || sfSet.contains(stackFrame)){
+			return
+		}
+		sfSet.add(stackFrame)
+		addStackFrames(stackFrame.parent, sfSet)
+		addStackFrames(stackFrame.environment, sfSet)
 	}
 	
 	Set<Integer> getStackPointers(StackFrame stackFrame){
@@ -152,8 +175,6 @@ class GarbageCollector {
 		}
 		pointers.addAll(stackFrame.locals)
 		pointers.addAll(stackFrame.methodStack)
-		pointers.addAll(getStackPointers(stackFrame.environment))
-		pointers.addAll(getStackPointers(stackFrame.parent))
 		pointers
 	}
 	
@@ -275,7 +296,6 @@ class GarbageCollector {
 		Integer newInitClassPtr = copyClass(initClassPtr)
 		
 		Integer newPtr = shallowCopy(objectPtr, Heap.CLOSURE_SIZE)
-		// FIXME bylo tady  + Heap.SLOT_SIZE (to je podle me spatne, odstranil jsem)
 		heap.setPointer(newPtr + Heap.HEAP_POINTER_SIZE, newInitClassPtr) // set new initClassPtr to recreated object
 		closureEnvironments.put(newPtr, ClosureRegister.get(objectPtr))
 		
@@ -287,6 +307,10 @@ class GarbageCollector {
 	}
 	
 	boolean isOldPointer(Integer objectPtr) {
+		heap.heapStart > objectPtr || heap.heapEnd < objectPtr
+	}
+	
+	static boolean isOldPointer(Heap heap,Integer objectPtr) {
 		heap.heapStart > objectPtr || heap.heapEnd < objectPtr
 	}
 	

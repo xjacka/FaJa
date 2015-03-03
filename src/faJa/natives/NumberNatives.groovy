@@ -1,5 +1,7 @@
 package faJa.natives
 
+import faJa.helpers.ArrayHelper
+import faJa.memory.GarbageCollector
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
@@ -98,10 +100,8 @@ class NumberNatives {
 			Integer bytecodePtr = ClosureHelper.getBytecodePtr(heap, closurePtr)
 			Integer arguments = ClosureHelper.getBytecodeArgCount(heap,bytecodePtr)
 			Integer bytecodeSize = ClosureHelper.getBytecodeSize(heap, bytecodePtr)
-
 			Integer bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
 
-			def returnFrames = []
 			integerValue.times {
 				StackFrame newStackFrame = new StackFrame()
 				newStackFrame.parent = stackFrame
@@ -112,6 +112,12 @@ class NumberNatives {
 
 				if(arguments == 1){
 					Integer iterationCounter = heap.createNumber(classLoader.findClass(heap,Compiler.NUMBER_CLASS),it)
+					if(GarbageCollector.isOldPointer(heap,thisIntegerPtr)){
+						thisIntegerPtr = heap.getPointer(thisIntegerPtr)
+						closurePtr = heap.getPointer(closurePtr)
+						bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+						bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+					}
 					newStackFrame.locals.add(iterationCounter)
 				}
 				if(arguments > 1){
@@ -120,10 +126,13 @@ class NumberNatives {
 				newStackFrame.environment = ClosureRegister.get(closurePtr) // insert current context
 				newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
-				returnFrames.add(newStackFrame)
-			}
-			returnFrames.each { StackFrame sf ->
-				new Interpreter(heap, sf, classLoader).interpret()
+				new Interpreter(heap, newStackFrame, classLoader).interpret()
+				if(GarbageCollector.isOldPointer(heap,thisIntegerPtr)){
+					thisIntegerPtr = heap.getPointer(thisIntegerPtr)
+					closurePtr = heap.getPointer(closurePtr)
+					bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+					bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+				}
 			}
 		}
 

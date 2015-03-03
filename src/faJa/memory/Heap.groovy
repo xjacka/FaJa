@@ -6,7 +6,7 @@ import faJa.interpreter.ClassLoader
 
 class Heap {
 
-	public static final Integer HEAP_SIZE = 100000
+	public static final Integer HEAP_SIZE = 5600000
 	public static final SLOT_SIZE = 2
 	public static final HEAP_POINTER_SIZE = 4
 	

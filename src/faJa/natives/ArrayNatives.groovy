@@ -2,6 +2,7 @@ package faJa.natives
 
 import faJa.helpers.ArrayHelper
 import faJa.interpreter.ClassLoader
+import faJa.memory.GarbageCollector
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InterpretException
@@ -36,6 +37,11 @@ class ArrayNatives {
 		index.times{
 			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'toS(0)',classLoader)
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				stringClassPtr = heap.getPointer(stringClassPtr)
+				arrayPtr = heap.getPointer(arrayPtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			}
 			Integer itemStrPtr = stackFrame.methodStack.pop()
 			String itemStr = heap.stringFromStringObject(itemStrPtr)
 			arrayStr += itemStr
@@ -84,6 +90,13 @@ class ArrayNatives {
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				thisArrayPtr = heap.getPointer(thisArrayPtr)
+				closurePtr = heap.getPointer(closurePtr)
+				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+			}
 			stackFrame.methodStack.pop()
 		}
 
@@ -101,6 +114,11 @@ class ArrayNatives {
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
+		if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+			thisArrayPtr = heap.getPointer(thisArrayPtr)
+			closurePtr = heap.getPointer(closurePtr)
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+		}
 		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
@@ -131,6 +149,15 @@ class ArrayNatives {
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				thisArrayPtr = heap.getPointer(thisArrayPtr)
+				closurePtr = heap.getPointer(closurePtr)
+				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+				newArrayPtr = heap.getPointer(newArrayPtr)
+				newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
+			}
 
 			Integer closureResult = stackFrame.methodStack.pop()
 
@@ -152,6 +179,11 @@ class ArrayNatives {
 		Integer arrayClassPtr = classLoader.findClass(heap, Compiler.ARRAY_CLASS)
 
 		Integer newArrayPtr = heap.createArray(arrayClassPtr,sizeOfInitializedArry,nullPtr)
+		if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+			thisArrayPtr = heap.getPointer(thisArrayPtr)
+			closurePtr = heap.getPointer(closurePtr)
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+		}
 		Integer newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
 
 		Integer index = ArrayHelper.getInsertIndex(heap,thisArrayPtr)
@@ -183,6 +215,15 @@ class ArrayNatives {
 			newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 			new Interpreter(heap, newStackFrame, classLoader).interpret()
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				thisArrayPtr = heap.getPointer(thisArrayPtr)
+				closurePtr = heap.getPointer(closurePtr)
+				bytecodePtr = ClosureHelper.getBytecodePtr(heap,closurePtr)
+				bytecodeStart = ClosureHelper.getBytecodeStart(bytecodePtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,thisArrayPtr)
+				newArrayPtr = heap.getPointer(newArrayPtr)
+				newArrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,newArrayPtr)
+			}
 
 			Integer closureResult = stackFrame.methodStack.pop()
 			String resultClass = ClassAccessHelper.getName(heap,ObjectAccessHelper.getClassPointer(heap,closureResult))
@@ -211,6 +252,11 @@ class ArrayNatives {
 		// resize array
 		if(index >= sizeOfInitializedArry){
 			arrayObjectPtr = resizeArray(heap,classLoader, index, index + 2, arrayPtr, arrayObjectPtr)
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				arrayPtr = heap.getPointer(arrayPtr)
+				addingItemPtr = heap.getPointer(addingItemPtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			}
 		}
 
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,index,addingItemPtr)
@@ -235,6 +281,11 @@ class ArrayNatives {
 		// resize array
 		if(index >= sizeOfInitializedArry){
 			arrayObjectPtr = resizeArray(heap,classLoader, index, itemIndex + (int)(itemIndex / 10), arrayPtr, arrayObjectPtr)
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				arrayPtr = heap.getPointer(arrayPtr)
+				addingItemPtr = heap.getPointer(addingItemPtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			}
 		}
 
 		ArrayHelper.setNewValue(heap,arrayObjectPtr,itemIndex,addingItemPtr)
@@ -325,6 +376,11 @@ class ArrayNatives {
 			Integer resultPtr = ArrayHelper.valueAt(heap,arrayObjectPtr,it)
 
 			NativesHelper.callMethodFromNative(heap,stackFrame,resultPtr,'==(1)',classLoader,[objectPtr])
+			if(GarbageCollector.isOldPointer(heap,arrayObjectPtr)){
+				arrayPtr = heap.getPointer(arrayPtr)
+				objectPtr = heap.getPointer(objectPtr)
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			}
 			Integer compareResult = stackFrame.methodStack.pop()
 
 			if(heap.boolFromBoolObject(compareResult) == true){
@@ -344,7 +400,11 @@ class ArrayNatives {
 		Integer newArrayObjectPtr = heap.createArrayObject(newSize,nullPtr) // resize 2x
 		ArrayHelper.setArrayObjectPtr(heap,arrayPtr,newArrayObjectPtr)
 		size.times {
-			heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE),heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE)))
+			Integer oldPtr = heap.getPointer(arrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE))
+			if(GarbageCollector.isOldPointer(heap,oldPtr)){
+				oldPtr = heap.getPointer(oldPtr)
+			}
+			heap.setPointer(newArrayObjectPtr + Heap.SLOT_SIZE + (it * Heap.HEAP_POINTER_SIZE),oldPtr)
 		}
 		newArrayObjectPtr
 	}

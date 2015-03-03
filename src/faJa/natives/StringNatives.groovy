@@ -103,6 +103,7 @@ class StringNatives {
 
 			tokens.eachWithIndex { String token, Integer i ->
 				Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),token)
+				// TODO GC
 				ArrayHelper.setNewValue(heap,arrayObjectPtr,i,lineStringPtr)
 			}
 			ArrayHelper.setInsertIndex(heap,arrayPtr,tokens.size())
