@@ -7,7 +7,7 @@ FaJa
 
 Name:-      FaJa VM  
 Authors:-   Kamil Falta (faltakam)  
-			      Lukáš Janeček (janeclu1)  
+	        Lukáš Janeček (janeclu1)
 Date:-      20.2.2015  
 
 
@@ -31,7 +31,11 @@ The following files are included in the FaJa package.
  |  |  
  |  +- Test.groovy..............Execute tests  
  |  
- +- FaJaSrc/SAT/................Contains source codes of program (SAT solver) in FaJa language  
+ +- FaJaSrc/....................Contains FaJa source code
+ | |
+ | +- SAT/......................FaJa program (SAT solver)
+ |    |
+ |    +- data/..................prepared data set
  |  
  +- out/........................Compiled groovy/java class file  
     |  
@@ -41,6 +45,7 @@ The following files are included in the FaJa package.
 (3) REQUIRED SYSTEMS
 ----------------------
 - java
+- groovy (optional)
 
 
 (4) USAGE
@@ -49,7 +54,7 @@ Syntax:
 
 	$ java -jar FaJa.jar ClassName [-c] [argument]...
 
-(a) To run compiler, virtual machine and program type:
+(a) To run compiler, FaJa virtual machine and program type:
 
 	$ java -jar out/FaJa.jar FaJaSrc/Main command_line_arguments
 

@@ -9,7 +9,7 @@ object Main
 			sOut.out(problemInstance)
 			
             var result <- solver.solve(problemInstance)
-                        
+
             sOut.out(result:evaluation)
             sOut.out("is valid: ".+(result:valid))
             sOut.out("weight: ".+(result:weight))
