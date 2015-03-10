@@ -5,10 +5,11 @@ import faJa.compilator.representation.ConstantPool
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *       NULL OBJECT
- * +--------------------+
- * |    nullClassPtr    |
- * +--------------------+
+ *          NULL OBJECT
+ *  size
+ * +-----------------------+
+ * | 4 |   nullClassPtr    |
+ * +-----------------------+
  *
  */
 class NullInit extends BaseInit {

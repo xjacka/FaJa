@@ -1,7 +1,6 @@
 package faJa.memory
 
-import faJa.decompilator.ClassDecompilator
-import faJa.decompilator.ObjectDecompiler
+import faJa.exceptions.GarbageCollectorException
 import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ObjectAccessHelper
@@ -35,7 +34,6 @@ class GarbageCollector {
 		copySingletons()
 
 		fillQueue()
-		updatePointersQueue.addAll(classLoader.singletonRegister.values())
 
 		while(!copyQueue.isEmpty()){
 			Integer objectPtr = copyQueue.poll()
@@ -47,7 +45,6 @@ class GarbageCollector {
 			Integer objectPtr = heap.getPointer(oldPointer)
 			updateObjectPointer(objectPtr)
 		}
-
 		
 		classLoader.classRegister = classRegister
 		classLoader.singletonRegister = singletonRegister
@@ -57,6 +54,10 @@ class GarbageCollector {
 		}
 		classLoader.threads = thread
 		heap.methodCache = [:]
+		if((heap.heapEnd - heap.insertIndex) <= Heap.HEAP_SIZE / 200){
+			throw new GarbageCollectorException('Heap overflown')
+			
+		}
 	}
 
 	private updateClosureEnvironments(){
@@ -71,11 +72,13 @@ class GarbageCollector {
 		if(!stackFrame){
 			return
 		}
+		Boolean isUpdated = false
 		stackFrame.locals = stackFrame.locals.collect{ valPtr ->
 			if(isOldPointer(valPtr)){
 				return heap.getPointer(valPtr)
 			}
 			else{
+				isUpdated = true
 				return valPtr
 			}
 		}
@@ -84,12 +87,25 @@ class GarbageCollector {
 				return heap.getPointer(valPtr)
 			}
 			else{
+				isUpdated = true
 				return valPtr
 			}
 
 		}
-		updateStackFramePointers(stackFrame.environment)
-		updateStackFramePointers(stackFrame.parent)
+		stackFrame.currentVariables = stackFrame.currentVariables.collect{ valPtr ->
+			if(isOldPointer(valPtr)){
+				return heap.getPointer(valPtr)
+			}
+			else{
+				isUpdated = true
+				return valPtr
+			}
+
+		}
+		if(!isUpdated){
+			updateStackFramePointers(stackFrame.environment)
+			updateStackFramePointers(stackFrame.parent)
+		}
 
 	}
 	
@@ -109,8 +125,6 @@ class GarbageCollector {
 			}
 		}
 
-		new ObjectDecompiler().decompile(heap, objectPtr)
-
 		if(isArrayObject(classPtr)){
 			updateArrayPointers(objectPtr)
 		}
@@ -120,11 +134,11 @@ class GarbageCollector {
 		String className = ClassAccessHelper.getName(heap, classPtr)
 		className == Compiler.ARRAY_CLASS
 	}
-	
+
 	private updateArrayPointers(Integer arrayPtr){
 		Integer arrayObjectPtr= ArrayHelper.getArrayObjectPtr(heap, arrayPtr)
 		Integer size = heap.getSlot(arrayObjectPtr)
-		
+
 		size.times{ i ->
 			Integer pointerPtr = arrayObjectPtr + Heap.SLOT_SIZE + Heap.HEAP_POINTER_SIZE * i
 			Integer oldPtr = heap.getPointer(pointerPtr)
@@ -132,20 +146,29 @@ class GarbageCollector {
 			heap.setPointer(pointerPtr, newPtr)
 		}
 
-	}	
-	
+	}
+
 	private fillQueue() {
-		Set pointers = []
-		stackFrames.each{
-			pointers.addAll(getStackPointers(it))
+		Set sfSet = []
+		stackFrames.each {
+			addStackFrames(it, sfSet)
 		}
 		ClosureRegister.closureEnvironments.values().each {
-			pointers.addAll(getStackPointers(it))
+			addStackFrames(it, sfSet)
 		}
-		pointers.each {
-			copyQueue.add(it)
-			updatePointersQueue.add(it)
+		
+		sfSet.each {
+			copyQueue.addAll(getStackPointers(it))
 		}
+	}
+	
+	public addStackFrames(StackFrame stackFrame, Set sfSet){
+		if(!stackFrame || sfSet.contains(stackFrame)){
+			return
+		}
+		sfSet.add(stackFrame)
+		addStackFrames(stackFrame.parent, sfSet)
+		addStackFrames(stackFrame.environment, sfSet)
 	}
 	
 	Set<Integer> getStackPointers(StackFrame stackFrame){
@@ -155,8 +178,7 @@ class GarbageCollector {
 		}
 		pointers.addAll(stackFrame.locals)
 		pointers.addAll(stackFrame.methodStack)
-		pointers.addAll(getStackPointers(stackFrame.environment))
-		pointers.addAll(getStackPointers(stackFrame.parent))
+		pointers.addAll(stackFrame.currentVariables)
 		pointers
 	}
 	
@@ -176,7 +198,6 @@ class GarbageCollector {
 			Integer newClassPtr = heap.load(heap.getBytes(classPtr,classSize))
 			classRegister.put(className,newClassPtr)
 			heap.setPointer(classPtr,newClassPtr)
-//			new ClassDecompilator().decompileHeap(heap, newClassPtr)
 			return newClassPtr
 		}
 		
@@ -196,11 +217,11 @@ class GarbageCollector {
 			//firstPtr is not class pointer but pointer to object recreated on new heap
 			return firstPtr
 		}
+		updatePointersQueue.add(objectPtr)
 		Integer classPtr = firstPtr
 		copyClass(classPtr)
 
 		Integer newPtr = processObject(objectPtr, classPtr)
-//		new ObjectDecompiler().decompile(heap, newPtr)
 		newPtr
 	}
 
@@ -277,7 +298,7 @@ class GarbageCollector {
 		Integer newInitClassPtr = copyClass(initClassPtr)
 		
 		Integer newPtr = shallowCopy(objectPtr, Heap.CLOSURE_SIZE)
-		heap.setPointer(newPtr + Heap.HEAP_POINTER_SIZE + Heap.SLOT_SIZE, newInitClassPtr) // set new initClassPtr to recreated object
+		heap.setPointer(newPtr + Heap.HEAP_POINTER_SIZE, newInitClassPtr) // set new initClassPtr to recreated object
 		closureEnvironments.put(newPtr, ClosureRegister.get(objectPtr))
 		
 		newPtr
@@ -291,94 +312,7 @@ class GarbageCollector {
 		heap.heapStart > objectPtr || heap.heapEnd < objectPtr
 	}
 	
-//	enum SpecialClass {NUMBER(Compiler.NUMBER_CLASS), STRING(Compiler.STRING_CLASS), BOOL(Compiler.BOOL_CLASS),
-//	CLOSURE(Compiler.CLOSURE_CLASS), ARRAY(Compiler.ARRAY_CLASS)
-//
-//		private String name
-//		SpecialClass(String name){
-//			this.name = name
-//		}
-//		def getName(){ == 0
-//			name
-//		}
-//	}
-//	byte [] getClassBytes(Heap heap, Integer classPtr){
-//
-//	}
-//
-//	byte [] getSingletonBytes(Heap heap, Integer singletonPtr){
-//
-//	}
-//
-//	Heap recreateHeap(ClassLoader classLoader,StackFrame currentStackFrame, Heap heap){
-//	 	def newClassRegister = [:]
-//	 	def newSingletonRegister = [:]
-//		Heap newHeap = new Heap()
-//
-//		// load classes
-//		classLoader.classRegister.each{ k,v ->
-//			newClassRegister.put(k, newHeap.load(getClassBytes(heap, v)))
-//		}
-//
-//		// load singletons
-//		classLoader.singletonRegister.each{ k,v ->
-//			newSingletonRegister.put(k, newHeap.load(getSingletonBytes(heap, v)))
-//		}
-//
-//		Set stackPointers = getStackPointers(currentStackFrame)
-//		Map newValues = [:]
-//		stackPointers.each {
-//			newValues.put(it, null)
-//		}
-//
-//		loadStackObjects(heap, newHeap, stackPointers, newValues)
-//
-//
-//		// update pointeres in stackFrame
-//		updateStackFrame(currentStackFrame, newValues)
-//
-//		newHeap
-//	}
-//
-//	def loadStackObjects(Heap heap , Heap newHeap, stackPointers, newValues) {
-//
-//		// todo load object to new heap and add new pointers to newValue collection
-//	}
-//
-//	Set<Integer> getStackPointers(StackFrame stackFrame){
-//		Set pointers = [] as Set
-//		if(!stackFrame){
-//			return []
-//		}
-//		pointers.addAll(stackFrame.locals)
-//		pointers.addAll(stackFrame.methodStack)
-//		pointers.addAll(stackFrame.parent)
-//		pointers.addAll(stackFrame.parent)
-//		pointers
-//	}
-//
-//	def getPointers(Heap heap, Integer objectPtr){
-//
-//	}
-//
-//	def getObjectPointers(){
-//
-//	}
-//
-//
-//	def updateStackFrame(StackFrame stackFrame, Map newValues){
-//		if(!stackFrame){
-//			return
-//		}
-//		def newLocals = stackFrame.locals.collect{
-//			newValues.get(it)
-//		}
-//		stackFrame.locals = newLocals
-//		def newMethodStack = stackFrame.methodStack.collect{
-//			newValues.get(it)
-//		}
-//		stackFrame.methodStack = newMethodStack
-//		updateStackFrame(stackFrame.parent)
-//		updateStackFrame(stackFrame.environment)
-//	}
+	static boolean isOldPointer(Heap heap,Integer objectPtr) {
+		heap.heapStart > objectPtr || heap.heapEnd < objectPtr
+	}
 }

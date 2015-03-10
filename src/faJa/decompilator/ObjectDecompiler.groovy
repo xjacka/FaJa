@@ -1,6 +1,5 @@
 package faJa.decompilator
 
-import faJa.compilator.evaluation.ObjectAccess
 import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
 import faJa.helpers.ClosureHelper
@@ -9,9 +8,10 @@ import faJa.memory.Heap
 
 
 class ObjectDecompiler {
+	
 	def decompile(Heap heap, Integer ptr){
+	
 		String className
-
 		List<String> fields = []
 //		if(oldPtr != null){
 //			Integer oldClassPtr = ObjectAccessHelper.getClassPointer(heap, oldPtr)
@@ -25,30 +25,35 @@ class ObjectDecompiler {
 //		}
 
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap, ptr)
+
 		if(classPtr == 0){
 			println('decompilor error '  + ptr)
 			return
 		}
+		
 		className = ClassAccessHelper.getName(heap, classPtr) + '(' + ptr + ':' + classPtr + ')'
 		Integer objectSize = ClassAccessHelper.getObjectSize(heap, classPtr)
 		Integer objectEnd = ptr + objectSize
 		processSpecialObjects(ptr, heap, fields)
 		ptr += Heap.HEAP_POINTER_SIZE
+		
 		while(objectEnd > ptr){
 			fields.add(getFieldClassName(ptr,heap))
 			ptr += Heap.HEAP_POINTER_SIZE
 		}
 
-		println('object class ' + className)
-		fields.eachWithIndex { name, i ->
+		// printing
+		println('object with class ' + className)
+		fields.eachWithIndex {name, i ->
 			println('\t'+i+': ' + name)
 		}
-		println('object end')
+		fields.size()?println('object end\n'):println()
 	}
 
 	def processSpecialObjects(int ptr,  Heap heap, List fields) {
 		Integer classPtr = ObjectAccessHelper.getClassPointer(heap, ptr)
 		String className = ClassAccessHelper.getName(heap, classPtr)
+		
 		switch(className){
 			case faJa.compilator.Compiler.ARRAY_CLASS:
 				fields.add(ArrayHelper.getInsertIndex(heap, ptr))

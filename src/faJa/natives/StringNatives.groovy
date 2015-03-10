@@ -3,6 +3,7 @@ package faJa.natives
 import faJa.exceptions.InterpretException
 import faJa.helpers.ArrayHelper
 import faJa.helpers.ClassAccessHelper
+import faJa.memory.GarbageCollector
 import faJa.memory.Heap
 import faJa.compilator.Compiler
 import faJa.exceptions.InputException
@@ -102,7 +103,11 @@ class StringNatives {
 			Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap, arrayPtr)
 
 			tokens.eachWithIndex { String token, Integer i ->
+				stackFrame.currentVariables.addAll([arrayPtr]) // for GC
 				Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),token)
+				arrayPtr = stackFrame.currentVariables.pop()
+				arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap, arrayPtr)
+				
 				ArrayHelper.setNewValue(heap,arrayObjectPtr,i,lineStringPtr)
 			}
 			ArrayHelper.setInsertIndex(heap,arrayPtr,tokens.size())

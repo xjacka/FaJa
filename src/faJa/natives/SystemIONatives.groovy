@@ -41,7 +41,11 @@ class SystemIONatives {
 		Integer arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
 
 		f.eachLine { String line, Integer i ->
+			stackFrame.currentVariables.add(arrayPtr) // for GC
 			Integer lineStringPtr = heap.createString(classLoader.findClass(heap,Compiler.STRING_CLASS),line)
+			arrayPtr = stackFrame.currentVariables.pop()
+			arrayObjectPtr = ArrayHelper.getArrayObjectPtr(heap,arrayPtr)
+			
 			ArrayHelper.setNewValue(heap,arrayObjectPtr,(i - 1),lineStringPtr)
 		}
 		ArrayHelper.setInsertIndex(heap,arrayPtr,lines)

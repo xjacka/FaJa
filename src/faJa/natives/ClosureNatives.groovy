@@ -31,7 +31,5 @@ class ClosureNatives {
 		newStackFrame.parentLocalCnt = ClosureHelper.getClosureLocalCnt(heap, bytecodePtr)
 
 		new Interpreter(heap, newStackFrame, classLoader).interpret()
-
-//		stackFrame.methodStack.push(thisPtr) // always push
 	}
 }

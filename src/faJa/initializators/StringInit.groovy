@@ -4,18 +4,19 @@ import faJa.compilator.representation.ClassFile
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *      STRING OBJECT
- * +--------------------+
- * |   stringClassPtr   |
- * +--------------------+
- * |     stringSize     |
- * +====================+
- * |      char_1        |
- * +--------------------+
- * |      char_2        |
- * +--------------------+
- * |       ....         |
- * +--------------------+
+ *          STRING OBJECT
+ *  size          |
+ * +-----------------------+
+ * | 4 |  stringClassPtr   |
+ * +-----------------------+
+ * | 2 |    stringSize     |
+ * +=======================+
+ * | 2 |     char_1        |
+ * +-----------------------+
+ * | 2 |     char_2        |
+ * +-----------------------+
+ * | 2 |      ....         |
+ * +-----------------------+
  *
  */
 class StringInit extends BaseInit{

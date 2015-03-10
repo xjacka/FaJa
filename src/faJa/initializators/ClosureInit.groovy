@@ -5,14 +5,15 @@ import faJa.compilator.representation.ConstantPool
 import faJa.compilator.representation.PrecompiledMethod
 
 /**
- *     CLOSURE OBJECT
- * +--------------------+
- * |   closureClassPtr  |
- * +--------------------+
- * |    initClassPtr    |
- * +--------------------+
- * |    closureIndex    |   <- only 1 byte (index of closure in initClass)
- * +--------------------+
+ *          CLOSURE OBJECT
+ *   size         |
+ * +-----------------------+
+ * |  4 | closureClassPtr  |
+ * +-----------------------+
+ * |  4 |  initClassPtr    |
+ * +-----------------------+
+ * |  1 |  closureIndex    |   <- index of closure in initClass
+ * +-----------------------+
  *
  */
 class ClosureInit extends BaseInit{
@@ -27,9 +28,6 @@ class ClosureInit extends BaseInit{
 		call.signatureIndex = classFile.constantPool.add('call(0)')
 		classFile.methods.add(call)
 
-		// provizorni todo lepsi matchovani
-		def call1 = new PrecompiledMethod()
-		call1.signatureIndex = classFile.constantPool.add('call(1)')
-		classFile.methods.add(call1)
+
 	}
 }

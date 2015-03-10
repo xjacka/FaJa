@@ -231,7 +231,7 @@ class Parser {
 
 	// method call
 	def startMethodCall(String line){
-		line.find(~/^ *\.[^\.^:^\(]+\(/) // todo parametrize
+		line.find(~/^ *\.[^\.^:^\(]+\(/)
 	}
 
 	def cleanMethodName(String line){
@@ -301,7 +301,6 @@ class Parser {
 		tmp
 	}
 
-	/// skip todo test
 	def String skipToSameLevelComma(String line, Code code = null){
 		int openParentheses = 0
 		int closeParentheses = 0
