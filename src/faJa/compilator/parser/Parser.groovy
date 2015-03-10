@@ -82,7 +82,7 @@ class Parser {
 		if(startDeclaration(line) != null){
 			Declaration declaration = new Declaration(cleanDeclaration(startDeclaration(line)))
 			if(hasDefinition(line)){
-				String rest = skipToSameLevelComma(line, code) // todo nextToken
+				String rest = skipToSameLevelComma(line, code)
 				String nextToken = line.substring(line.indexOf(Compiler.LOCAL_DEFINE) + Compiler.LOCAL_DEFINE.length(), line.length() - rest.length())
 				declaration.definition = parse(nextToken, code)
 			}
@@ -191,6 +191,10 @@ class Parser {
 	}
 
 	def closureArgList(String line){
+		Integer idx = line.indexOf('\n')
+		if(idx != -1){
+			line = line.substring(0, idx)
+		}
 		if(line.indexOf(Compiler.CLOSURE_PARAMS_END_KEYWORD) == -1){
 			return []
 		}
@@ -343,12 +347,16 @@ class Parser {
 	List<String> closureBody(String line, Code code ){
 		String open = Compiler.CLOSURE_OPEN_KEYWORD
 		String close = Compiler.CLOSURE_CLOSE_KEYWORD
-		String endLineSeparator = '\n'
-		String result = betweenParentheses(Compiler.CLOSURE_OPEN_KEYWORD, code,  open, close, endLineSeparator)
-		result.split(endLineSeparator).toList()
+		Integer idx = line.indexOf('\n')
+		if(idx != -1){
+			return line.substring(idx + 1, line.length() - 1).split('\n').toList()
+		}
+		String result = betweenParentheses(Compiler.CLOSURE_OPEN_KEYWORD, code,  open, close)
+		result.split('\n').toList()
 	}
 
-	String betweenParentheses(String line, Code code, String open = Compiler.METHOD_ARGUMENT_START_KEYWORD, String close = Compiler.METHOD_ARGUMENT_START_END, String endLineSeparator = ' '){
+	String betweenParentheses(String line, Code code, String open = Compiler.METHOD_ARGUMENT_START_KEYWORD, String close = Compiler.METHOD_ARGUMENT_START_END){
+		String endLineSeparator = '\n';
 		Integer firstParenthesesIdx = line.indexOf(open)
 		line = line.substring(firstParenthesesIdx + 1)
 		int openParentheses = 1

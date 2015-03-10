@@ -14,16 +14,6 @@ class MethodCompiler {
 		this.classFile = classFile
 	}
 
-//	def addSignitureToClassFile(String signature){
-//		def signitureIndex = classFile.constantPool.size()
-////		if(methods.contains(signature)) {
-////			throw new CompilerException('method "' + signature +'" already exists in class ' + classFile.constantPool[0])
-////		}
-////		methods.add(signature)
-//		classFile.constantPool.add(signature)
-//		signitureIndex
-//	}
-
 	def compileMethod(List<String> argList,LocalVariables locals,  Code code){
 		Parser parser = new Parser()
 		locals.addLocalVariable(Compiler.SELF_POINTER)
