@@ -8,30 +8,25 @@ object ThreadExample
 
 	methods
 		def main(args)
-			var closureA, closureB, closureC, c
+			var closureA, closureB, closureC
             self:sOut <- SystemIO.new
 
-			var neco <- null
-
 			closureA <- {
-				var cl1 <- {
-					self:sOut.out("A")
-				}
-				5.times(cl1)
+				5.times({
+                    self:sOut.out("A")
+                })
 			}
 
 			closureB <- {
-				var cl2 <- {
-					self:sOut.out("B")
-				}
-                5.times(cl2)
+                5.times({
+                    self:sOut.out("B")
+                })
             }
 
             closureC <- {
-                var cl3 <- {
-                    self:sOut.out("C")
-                }
-                10.times(cl3)
+                10.times({
+		            self:sOut.out("C")
+		        })
             }
 
 			self:t1 <- Thread.new

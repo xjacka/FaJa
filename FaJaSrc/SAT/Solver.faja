@@ -4,46 +4,40 @@ object Solver
 
             var best <- null
             var pow <- 2.**(instance:variablesCount)
+            
+            pow.times({ i |
+				var helpResult <- Result.new
+				helpResult.init(instance)
+				
+				var numerator <- i
+				
+				instance:variablesCount.times({ j |
+	                numerator.%(2).==(1).ifTrue({
+		                helpResult:evaluation.add(j,true)
+		            })
+	                numerator <- numerator./(2)
+                })
 
-            var closure <- { i |
-                var helpResult <- Result.new
-                helpResult.init(instance)
-
-                var numerator <- i
-                var cl1 <- { j |
-                    var cl2 <- {
-                        helpResult:evaluation.add(j,true)
-	                }
-                   numerator.%(2).==(1).ifTrue(cl2)
-                   numerator <- numerator./(2)
-                }
-                instance:variablesCount.times(cl1)
-
-                helpResult:weight <- instance.summaryWeight(helpResult)
+				helpResult:weight <- instance.summaryWeight(helpResult)
 
 				var condition <- best.isNull().and(instance.isValid(helpResult))
-				var cl3 <- {
-                   best <- helpResult
-                   best:valid <- instance.isValid(best)
-                }
-                condition.ifTrue(cl3)
+				condition.ifTrue({
+                    best <- helpResult
+                    best:valid <- instance.isValid(best)
+                })
 
 				condition <- best.isNull().not()
-				var cl5 <- {
-					condition <- condition.and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
-				}
-				var cl6 <- {
-					condition <- condition.and(instance.isValid(helpResult))
-				}
-				condition.ifTrue(cl5).ifFalse(cl6)
-				var cl4 <- {
-	               best <- helpResult
-	               best:valid <- instance.isValid(best)
-	            }
-                condition.ifTrue(cl4)
-            }
-            
-            pow.times(closure)
+				condition.ifTrue({
+                    condition <- condition.and(instance.isValid(helpResult)).and(helpResult:weight.>(best:weight))
+                }).ifFalse({
+                    condition <- condition.and(instance.isValid(helpResult))
+                })
+
+				condition.ifTrue({
+	                best <- helpResult
+	                best:valid <- instance.isValid(best)
+                })
+			})
             
             best
 		end

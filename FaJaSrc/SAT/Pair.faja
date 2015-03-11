@@ -7,10 +7,9 @@ class Pair
 	methods
 		def toS()
 			var sign <- " "
-			var setSign <- {
-				sign <- " -"
-			}
-			self:sign.ifFalse(setSign)
+			self:sign.ifFalse({
+                sign <- " -"
+            })
 			sign.+(self:variable:id)
 		end
 	endMethods

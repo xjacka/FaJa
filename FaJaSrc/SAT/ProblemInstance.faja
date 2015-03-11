@@ -14,50 +14,43 @@ class ProblemInstance
 	        self:variablesCount <- variables
 	        self:clausesCount <- clauses
 	        self:variables <- []
-	        var cl <- { i |
-	            var variable <- Variable.new
-	            variable:id <- i
-	            variable:weight <- 0
-	            self:variables.add(i, variable)
-	        }
-	        variables.times(cl)
+	        variables.times({ i |
+                var variable <- Variable.new
+                variable:id <- i
+                variable:weight <- 0
+                self:variables.add(i, variable)
+            })
 	    end
     
 	    def summaryWeight(result)
 	        var summaryWeight <- 0
-	        var cl <- { variable |
-	            var cl2 <- {
-                    summaryWeight <- summaryWeight.+(variable:weight)
-                }
-                result:evaluation.get(variable:id).ifTrue(cl2)
-            }
-	        self:variables.each(cl)
+	        self:variables.each({ variable |
+                result:evaluation.get(variable:id).ifTrue({
+					summaryWeight <- summaryWeight.+(variable:weight)
+				})
+            })
 	        summaryWeight
 	    end
 	
 	    def isValid(result)
 	        var valid <- true
-	        var cl <- { clause |
-	            var cl2 <- {
-                    valid <- false
-                }
-	            clause.isValid(result).not().ifTrue(cl2)
-	        }
-	        self:clauses.each(cl)
+	        self:clauses.each({ clause |
+                clause.isValid(result).not().ifTrue({
+					valid <- false
+				})
+            })
 	        valid
 	    end
 	    
 	    def toS()
 	        var str <- "Weights: "
-	        var add <- { vari |
-				str <- str.+(vari)
-	        }
-	        var addClause <- { clause |
-	            str <- str.+(clause)
-	        }
-            self:variables.each(add)
+            self:variables.each({ variable |
+                str <- str.+(variable)
+            })
             str <- str.+(" Formula: ")
-            self:clauses.each(addClause)
+            self:clauses.each({ clause |
+                str <- str.+(clause)
+            })
 	        str
 	    end
     endMethods

@@ -9,10 +9,9 @@ class Result
 		def init(instance)
 			self:evaluation <- []
 
-			var cl5 <- { i |
-				self:evaluation.add(i,false)
-			}
-			instance:variablesCount.times(cl5)
+			instance:variablesCount.times({ i |
+                self:evaluation.add(i,false)
+            })
 
 			self:valid <- false
 		end

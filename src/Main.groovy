@@ -15,7 +15,7 @@ try {
 		ClassFile classFile = new Compiler().compile(args[0] + ClassLoader.FAJA_EXTENSION)
 		print(classFile.toString())
 	} else{
-		new FaJaExecutor().run(args.length != 0 ? args[0] : '../FaJaSrc/Main',args.length >= 2 ?args.tail() : (String [])["../FaJaSrc/data/sat1.out"])
+		new FaJaExecutor().run(args.length != 0 ? args[0] : '../FaJaSrc/SAT/Main',args.length >= 2 ?args.tail() : (String [])["../FaJaSrc/SAT/data/sat1.out"])
 	}
 }
 catch (CompilerException cpE){

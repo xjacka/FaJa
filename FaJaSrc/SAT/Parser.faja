@@ -8,78 +8,46 @@ class Parser
 			var weightNumber <- 0
 
 			var input <- sysIO.readFromFile(fileName)
-			var processLine <- { line |
-				var tokens <- line.split(" ")
-							
-				var createInstance <- {
-                    problemInstance.init(tokens.get(2).toNumber(),tokens.get(3).toNumber())
-                    readClauses <- true
-                }
-                
-                var setReadWeight <- {
-                    readWeight <- true
-                }
-                
-                var createClause <- {
-	                var run <- {
-	                    var clause <- Clause.new
-	                    clause:variables <- []
+			input.each({ line |
+                var tokens <- line.split(" ")
 
-	                    var addVariable <- { token |
-	                        var num <- token.toNumber()
-	                        var create <- {
-	                            var variable <- problemInstance:variables.get(num.abs().-(1))
-	                            clause.addVariable(num.>(0),variable)
-	                        }
-	                        num.==(0).ifFalse(create)
-	                    }
-	                    tokens.each(addVariable)
-	                    problemInstance:clauses.add(clause)
-	                }
-                    tokens.get(0).==("%").or(tokens.get(0).==("#")).ifFalse(run)
-                }
-                
-                var createWeight <- {
-                    readClauses <- false
-                    var run1 <- {
+:-)				pokud jsme v sekci s váhami
+				readWeight.ifTrue({
+					readClauses <- false
+					tokens.get(0).==("#").ifFalse({
 	                    var variable <- problemInstance:variables.get(weightNumber)
 	                    variable:weight <- tokens.get(0).toNumber()
 	                    weightNumber <- weightNumber.+(1)
-                    }
-                    tokens.get(0).==("#").ifFalse(run1)
-                }
-                
-                readWeight.ifTrue(createWeight)
-                readClauses.ifTrue(createClause)
-                tokens.get(0).==("%").ifTrue(setReadWeight)
-				tokens.get(0).==("p").ifTrue(createInstance)
-			}
-			input.each(processLine)
+                    })
+				})
+	                
+				readClauses.ifTrue({
+					tokens.get(0).==("%").or(tokens.get(0).==("#")).ifFalse({
+						var clause <- Clause.new
+						clause:variables <- []
+
+						tokens.each({ token |
+	                        var num <- token.toNumber()
+	                        num.==(0).ifFalse({
+								var variable <- problemInstance:variables.get(num.abs().-(1))
+								clause.addVariable(num.>(0),variable)
+							})
+	                    })
+	                    
+						problemInstance:clauses.add(clause)
+					})
+				})
+				
+				tokens.get(0).==("%").ifTrue({
+					readWeight <- true
+				})
+		           
+                tokens.get(0).==("p").ifTrue({
+                    problemInstance.init(tokens.get(2).toNumber(),tokens.get(3).toNumber())
+                    readClauses <- true
+                })
+            })
             
-:-)            var clause <- Clause.new
-:-)            clause:variables <- []
-:-)            var variable <- problemInstance:variables.get(0)
-:-)            clause.addVariable(true,variable)
-:-)            variable <- problemInstance:variables.get(1)
-:-)            clause.addVariable(true,variable)
-:-)            problemInstance:clauses.add(clause)
-:-)
-:-)			clause <- Clause.new
-:-)			clause:variables <- []
-:-)			variable <- problemInstance:variables.get(1)
-:-)			clause.addVariable(false,variable)
-:-)			variable <- problemInstance:variables.get(2)
-:-)			clause.addVariable(true,variable)
-:-)			problemInstance:clauses.add(clause)
-:-)
-:-)			clause <- Clause.new
-:-)			clause:variables <- []
-:-)			variable <- problemInstance:variables.get(0)
-:-)			clause.addVariable(false,variable)
-:-)			variable <- problemInstance:variables.get(2)
-:-)			clause.addVariable(false,variable)
-:-)			problemInstance:clauses.add(clause)
-			
 			problemInstance
 		end
 	endMethods

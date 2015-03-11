@@ -15,30 +15,26 @@ class Clause
 
         def isValid(result)
             var valid <- false
-            var cl <- { pair |
+            self:variables.each({ pair |
                 var variable <- pair:variable
                 var condition1 <- pair:sign.and(result:evaluation.get(variable:id))
                 var condition2 <- pair:sign.not().and(result:evaluation.get(variable:id).not())
-                var cl2 <- {
+                condition1.or(condition2).ifTrue({
                     valid <- true
-                }
-                condition1.or(condition2).ifTrue(cl2)
-            }
-            self:variables.each(cl)
+                })
+            })
             valid
         end
         
         def toS()
             var str <- "["
             var length <- self:variables.size()
-            var addVariable <- { variable, index |
+            self:variables.each({ variable, index |
                 str <- str.+(variable.toS())
-                var addV <- {
+                index.==(length.-(1)).ifFalse({
                     str <- str.+(" v")
-                }
-                index.==(length.-(1)).ifFalse(addV)
-            }
-            self:variables.each(addVariable)
+                })
+            })
             str.+(" ] ^ ")
         end
     endMethods
