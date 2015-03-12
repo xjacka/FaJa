@@ -6,7 +6,7 @@ class Variable
     
     methods
         def toS()
-            var str <- "".+(self:id).+(" w: ").+(self:weight).+(" | ")
+            var str <- "".+(self:id).+(" weight: ").+(self:weight).+("\n")
         end
     endMethods
 endClass

@@ -4,13 +4,14 @@ import faJa.compilator.representation.ClassFile
 import faJa.interpreter.Instruction
 import faJa.compilator.representation.PrecompiledInstruction
 import faJa.compilator.LocalVariables
+import groovy.json.StringEscapeUtils
 
 class StringCreation implements Expression {
 	String value
 	Expression memberAccess = null
 
 	public StringCreation(String value){
-		this.value = value
+		this.value = StringEscapeUtils.unescapeJava(value)
 	}
 
 	@Override

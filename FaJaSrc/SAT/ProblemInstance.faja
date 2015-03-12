@@ -43,13 +43,17 @@ class ProblemInstance
 	    end
 	    
 	    def toS()
-	        var str <- "Weights: "
+	        var str <- "Weights:\n"
             self:variables.each({ variable |
                 str <- str.+(variable)
             })
-            str <- str.+(" Formula: ")
-            self:clauses.each({ clause |
+            str <- str.+("Formula: ")
+            var clausesCount <- self:clauses.size()
+            self:clauses.each({ clause, it |
                 str <- str.+(clause)
+                it.<(clausesCount.-(1)).ifTrue({
+                    str <- str.+(" ^ ")
+                })
             })
 	        str
 	    end

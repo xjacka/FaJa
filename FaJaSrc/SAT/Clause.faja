@@ -35,7 +35,7 @@ class Clause
                     str <- str.+(" v")
                 })
             })
-            str.+(" ] ^ ")
+            str.+(" ] ")
         end
     endMethods
 endClass
