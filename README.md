@@ -28,8 +28,6 @@ The following files are included in the FaJa package.
  |  +- src/.....................Contains source files  
  |  |  
  |  +- Main.groovy..............Executable file  
- |  |  
- |  +- Test.groovy..............Execute tests  
  |  
  +- FaJaSrc/....................Contains FaJa source code  
    |  
@@ -67,8 +65,8 @@ All source FaJa files must be in the same folder and name must match class name.
 ----------------------
 To run example of FaJa program (weighted MAX-SAT) with prepared data set, type:
 
-	$ cd src
-    $ groovy Main.groovy ../FaJaSrc/Main ../FaJaSrc/data/sat1.out
+  $ cd src
+  $ groovy Main.groovy ../FaJaSrc/SAT/Main ../FaJaSrc/SAT/data/sat1.out
 
 (7) FEATURES
 ----------------------
