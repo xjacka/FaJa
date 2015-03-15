@@ -8,7 +8,7 @@ import faJa.exceptions.InstructionException
 import faJa.exceptions.InterpretException
 import faJa.interpreter.ClassLoader
 
-final Boolean DEBUG = true
+final Boolean DEBUG = false
 Exception e = null
 try {
 	if (args.length == 2 && args[1] == "-c") {

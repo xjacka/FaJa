@@ -7,7 +7,7 @@ FaJa
 
 Name:-      FaJa VM  
 Authors:-   Kamil Falta (faltakam)  
-	        Lukáš Janeček (janeclu1)
+	        Lukáš Janeček (janeclu1)  
 Date:-      20.2.2015  
 
 
@@ -31,44 +31,32 @@ The following files are included in the FaJa package.
  |  |  
  |  +- Test.groovy..............Execute tests  
  |  
- +- FaJaSrc/....................Contains FaJa source code
- | |
- | +- SAT/......................FaJa program (SAT solver)
- |    |
- |    +- data/..................prepared data set
- |  
- +- out/........................Compiled groovy/java class file  
-    |  
-    +- FaJa.jar.................Compiled program into Java JAR file  
+ +- FaJaSrc/....................Contains FaJa source code  
+   |  
+   +- SAT/......................FaJa program (SAT solver)  
+      |  
+      +- data/..................prepared data set  
 
 
 (3) REQUIRED SYSTEMS
 ----------------------
-- java
-- groovy (optional)
+- groovy
 
 
 (4) USAGE
 ----------------------
 Syntax:
 
-	$ java -jar FaJa.jar ClassName [-c] [argument]...
+	$ groovy Main.groovy ClassName [-c] [argument]...
 
-(a) To run compiler, FaJa virtual machine and program type:
-
-	$ java -jar out/FaJa.jar FaJaSrc/Main command_line_arguments
-
-  -> this will compile file Main.faja in folder FaJaSrc and interpret them.
-
-(b) To only compile file FaJaSrc/Main.faja into bytecode and print then to stdOut type:
-
-	$ java -jar out/FaJa.jar FaJaSrc/Main -c
-  
-(c) It is also possible to run program as groovy script (groovy must be installed in PATH).
+(a) Run program as groovy script (groovy must be installed in PATH).
 
 	$ cd src
 	$ groovy Main.groovy ../FaJaSrc/Main command_line_arguments
 
+(b) It is possible to run program from java jar file. Download jar file from [Google drive](https://drive.google.com/file/d/0B7t47lnMahV2dUF3RWpMN25SRTQ/view?usp=sharing) and then type:
+
+	$ java -jar FaJa.jar FaJaSrc/SAT/Main FaJaSrc/SAT/data/sat1.out
 
 (5) REQUIREMENTS
 ----------------------
@@ -79,8 +67,8 @@ All source FaJa files must be in the same folder and name must match class name.
 ----------------------
 To run example of FaJa program (weighted MAX-SAT) with prepared data set, type:
 
-	$ java -jar out/FaJa.jar FaJaSrc/Main FaJaSrc/data/sat1.out
-
+	$ cd src
+    $ groovy Main.groovy ../FaJaSrc/Main ../FaJaSrc/data/sat1.out
 
 (7) FEATURES
 ----------------------
