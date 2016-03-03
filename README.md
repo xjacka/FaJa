@@ -51,14 +51,20 @@ Syntax:
 
 	$ groovy Main.groovy ClassName [-c] [argument]...
 
-(a) Run program as groovy script (groovy must be installed in PATH).
+using __-c__ option you can show compiled bytecode.
+
+1. Run program as groovy script (groovy must be installed in PATH).
 
 	$ cd src
 	$ groovy Main.groovy ../FaJaSrc/Main command_line_arguments
 
-(b) It is possible to run program from java jar file. Download jar file from [releases](https://github.com/xjacka/FaJa/releases/latest) and then type:
+2. It is possible to run program from java jar file. Download jar file from [releases](https://github.com/xjacka/FaJa/releases/latest) and then type:
 
 	$ java -jar FaJa.jar FaJaSrc/SAT/Main FaJaSrc/SAT/data/sat1.out
+	
+3. To only show bytecode of class `FaJaSrc/SAT/Main` type:
+
+	$ java -jar out/FaJa.jar FaJaSrc/SAT/Main -c
 
 (5) REQUIREMENTS
 ----------------------
