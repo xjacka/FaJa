@@ -19,6 +19,11 @@ FaJa
 This application contains FaJa compiler and bytecode interpreter. Application is written
 in Groovy language and is compiled into Java jar file. [Documentation](http://htmlpreview.github.io/?https://github.com/xjacka/FaJa/blob/master/Documentation/documentation.html) can be found in ``Documentation`` folder.
 
+Documentation in code comments:
+- [Bytecode](https://github.com/xjacka/FaJa/blob/master/src/faJa/interpreter/Instruction.groovy)
+- [ClassFile](https://github.com/xjacka/FaJa/blob/master/src/faJa/compilator/representation/ClassFile.groovy)
+- [Structure of natives](https://github.com/xjacka/FaJa/tree/master/src/faJa/initializators)
+
 
 (2) PACKAGE FILES
 ----------------------
