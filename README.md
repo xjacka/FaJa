@@ -55,18 +55,18 @@ using __-c__ option you can show compiled bytecode.
 
 1. Run program as groovy script (groovy must be installed in PATH).
 
-```
-cd src	
-groovy Main.groovy ../FaJaSrc/Main command_line_arguments
-```
+	```
+	cd src	
+	groovy Main.groovy ../FaJaSrc/Main command_line_arguments
+	```
 
 2. It is possible to run program from java jar file. Download jar file from [releases](https://github.com/xjacka/FaJa/releases/latest) and then type:
 
-`java -jar FaJa.jar FaJaSrc/SAT/Main FaJaSrc/SAT/data/sat1.out`
+	`java -jar FaJa.jar FaJaSrc/SAT/Main FaJaSrc/SAT/data/sat1.out`
 	
 3. To only show bytecode of class `FaJaSrc/SAT/Main` type:
 
-`java -jar out/FaJa.jar FaJaSrc/SAT/Main -c`
+	`java -jar out/FaJa.jar FaJaSrc/SAT/Main -c`
 
 (5) REQUIREMENTS
 ----------------------
@@ -80,6 +80,8 @@ To run example of FaJa program (weighted MAX-SAT) with prepared data set, type:
 ```
 cd src
 groovy Main.groovy ../FaJaSrc/SAT/Main ../FaJaSrc/SAT/data/sat1.out
+
+groovy Main.groovy ../FaJaSrc/SAT/Main ../FaJaSrc/SAT/data/sat2.out
 ```
 
 (7) FEATURES
