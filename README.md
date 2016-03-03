@@ -1,27 +1,31 @@
 FaJa
 ======================================
 
-				////////////////////////////////////////////////////////////////
-				//  	     FaJa compiler and virtual machine                //
-				////////////////////////////////////////////////////////////////
+					////////////////////////////////////////////////////////////////
+					//  	     FaJa compiler and virtual machine                //
+					////////////////////////////////////////////////////////////////
 
-Name:-      FaJa VM  
-Authors:-   Kamil Falta (faltakam)  
-	        Lukáš Janeček (janeclu1)  
-Date:-      20.2.2015  
+- Name: 
+  - FaJa VM  
+- Authors: 
+  - Kamil Falta (faltakam)  
+  - Lukáš Janeček (janeclu1)  
+- Date: 
+  - 20.2.2015  
 
 
 (1) INTRODUCTION
 ----------------------
 This application contains FaJa compiler and bytecode interpreter. Application is written
-in Groovy language and is compiled into Java jar file.
+in Groovy language and is compiled into Java jar file. [Documentation](http://htmlpreview.github.io/?https://github.com/xjacka/FaJa/blob/master/Documentation/documentation.html) can be found in ``Documentation`` folder.
 
 
 (2) PACKAGE FILES
 ----------------------
+```
 The following files are included in the FaJa package.  
  |  
- +- Documentation/..............Contains documentation in HTML format (syntax, native classes, example)  
+ +- Documentation/..............Contains documentation in HTML format (syntax, natives, example)  
  |  
  +- src/........................Contains Groovy source codes of the program  
  |  |  
@@ -34,7 +38,7 @@ The following files are included in the FaJa package.
    +- SAT/......................FaJa program (SAT solver)  
       |  
       +- data/..................prepared data set  
-
+```
 
 (3) REQUIRED SYSTEMS
 ----------------------
@@ -52,7 +56,7 @@ Syntax:
 	$ cd src
 	$ groovy Main.groovy ../FaJaSrc/Main command_line_arguments
 
-(b) It is possible to run program from java jar file. Download jar file from [Google drive](https://drive.google.com/file/d/0B7t47lnMahV2dUF3RWpMN25SRTQ/view?usp=sharing) and then type:
+(b) It is possible to run program from java jar file. Download jar file from [releases](https://github.com/xjacka/FaJa/releases/latest) and then type:
 
 	$ java -jar FaJa.jar FaJaSrc/SAT/Main FaJaSrc/SAT/data/sat1.out
 
